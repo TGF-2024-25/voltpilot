@@ -1,7 +1,7 @@
-import { registerRootComponent } from 'expo';
+import { registerRootComponent } from "expo";
 
-import App from './App';
-import FirebaseTest from './firebaseTest';
+import App from "./App";
+import FirebaseTest from "./firebaseTest";
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
