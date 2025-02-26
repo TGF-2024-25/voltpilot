@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { auth } from "./firebaseConfig"; // Asegúrate de importar desde tu archivo de configuración
+import { auth } from "../../backend/src/config/firebaseConfig"; // Asegúrate de importar desde tu archivo de configuración
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const FirebaseTest = () => {

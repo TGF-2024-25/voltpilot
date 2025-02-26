@@ -9,5 +9,6 @@ module.exports = {
   plugins: ["prettier"],
   rules: {
     "prettier/prettier": "warn", // O "error" si prefieres errores
+    "linebreak-style": ["error", "unix"], // Usa "unix" para LF o "windows" para CRLF
   },
 };
