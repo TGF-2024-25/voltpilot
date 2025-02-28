@@ -9,6 +9,9 @@ dist/
 web-build/
 expo-env.d.ts
 
+# API key
+.env
+
 # Native
 *.orig.*
 *.jks

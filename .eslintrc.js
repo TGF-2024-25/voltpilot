@@ -8,7 +8,7 @@ module.exports = {
   ignorePatterns: ["/dist/*"],
   plugins: ["prettier"],
   rules: {
-    "prettier/prettier": "warn", // O "error" si prefieres errores
+    "prettier/prettier": "off", // O "error" si prefieres errores
     "linebreak-style": ["error", "unix"], // Usa "unix" para LF o "windows" para CRLF
   },
 };
