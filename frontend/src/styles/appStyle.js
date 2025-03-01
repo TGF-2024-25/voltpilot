@@ -7,6 +7,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+  searchBarContainer: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    right: 20,
+    zIndex: 1,
+  },
 });
 
 export default styles;
