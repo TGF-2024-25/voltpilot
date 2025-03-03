@@ -1,27 +1,45 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View } from "react-native";
-import "react-native-get-random-values";
-import MapView, {
-  Marker,
-  PROVIDER_GOOGLE,
-  PROVIDER_DEFAULT,
-} from "react-native-maps";
+import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import "react-native-get-random-values";
 import { StyleSheet } from "react-native";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 
 export default function VistaEstaciones() {
   const [region, setRegion] = useState({
-    latitude: 40.416775, // Latitud de Madrid
-    longitude: -3.70379, // Longitud de Madrid
+    latitude: 40.416775,
+    longitude: -3.70379,
     latitudeDelta: 0.1,
     longitudeDelta: 0.1,
   });
 
-  const [direccion, setDireccion] = useState("");
+  const [cargadores, setCargadores] = useState([]);
+  const mapRef = useRef(null);
+
+  const fetchEVChargers = async (latitude, longitude) => {
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1000&type=charging_station&key=${GOOGLE_MAPS_API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.results) {
+        const listaCargadores = data.results.map((cargador) => ({
+          id: cargador.place_id,
+          name: cargador.name,
+          latitude: cargador.geometry.location.lat,
+          longitude: cargador.geometry.location.lng,
+        }));
+        setCargadores(listaCargadores);
+      }
+    } catch (error) {
+      console.error("Error al obtener estaciones de carga:", error);
+    }
+  };
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.searchBarContainer}>
         <GooglePlacesAutocomplete
           fetchDetails={true}
@@ -29,30 +47,27 @@ export default function VistaEstaciones() {
           onPress={(data, details = null) => {
             if (details) {
               const { lat, lng } = details.geometry.location;
-              setRegion({
+              const newRegion = {
                 latitude: lat,
                 longitude: lng,
                 latitudeDelta: 0.015,
                 longitudeDelta: 0.0121,
-              });
-              console.log(region.latitude, region.longitude);
-              setDireccion(data.description);
-            } else {
-              console.log("Detalles no disponibles");
+              };
+              // Actualizar estado de nuevo region
+              setRegion(newRegion);
+
+              // Recuperar estaciones de carga cercanas
+              fetchEVChargers(newRegion.latitude, newRegion.longitude);
+              console.log(cargadores);
+
+              // Actualizar mapa
+              mapRef.current?.animateToRegion(newRegion, 2000);
             }
-          }}
-          onFail={(error) => {
-            console.log(error);
-          }}
-          onError={(error) => {
-            console.log(error);
           }}
           query={{
             key: GOOGLE_MAPS_API_KEY,
-            language: "es", // Idioma de las sugerencias
+            language: "es",
           }}
-          componentRestriction={{ country: "es" }}
-          region={{}}
           styles={{
             textInput: {
               backgroundColor: "white",
@@ -68,14 +83,26 @@ export default function VistaEstaciones() {
           }}
         />
       </View>
+
       <MapView
+        ref={mapRef}
         style={styles.map}
         provider={PROVIDER_DEFAULT}
-        showsUserLocation
-        showsUserLocationButton
-        Region={region}
-      ></MapView>
-      <Marker coordinate={region} />
+        region={region}
+      >
+        <Marker coordinate={region} pinColor="purple"></Marker>
+        {cargadores.map((cargador) => (
+          <Marker
+            key={cargador.id}
+            coordinate={{
+              latitude: cargador.latitude,
+              longitude: cargador.longitude,
+            }}
+            title={cargador.name}
+            pinColor="purple"
+          />
+        ))}
+      </MapView>
     </View>
   );
 }
