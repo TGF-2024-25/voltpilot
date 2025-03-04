@@ -2,8 +2,10 @@ import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import "react-native-get-random-values";
 import { StyleSheet } from "react-native";
+import { Callout } from "react-native-maps";
+import { Text } from "react-native";
+import "react-native-get-random-values";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 
 export default function VistaEstaciones() {
@@ -17,24 +19,55 @@ export default function VistaEstaciones() {
   const [cargadores, setCargadores] = useState([]);
   const mapRef = useRef(null);
 
-  const fetchEVChargers = async (latitude, longitude) => {
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1000&type=charging_station&key=${GOOGLE_MAPS_API_KEY}`;
-
+  const fetchEVChargers = async (lat, lng) => {
     try {
-      const response = await fetch(url);
-      const data = await response.json();
+      const response = await fetch(
+        "https://places.googleapis.com/v1/places:searchNearby",
+        {
+          method: "POST",
+          headers: {
+            "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+            "X-Goog-FieldMask": "places.displayName,places.location,places.id",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            includedTypes: ["electric_vehicle_charging_station"],
+            maxResultCount: 10,
+            locationRestriction: {
+              circle: {
+                center: {
+                  latitude: lat,
+                  longitude: lng,
+                },
+                radius: 500,
+              },
+            },
+          }),
+        }
+      );
 
-      if (data.results) {
-        const listaCargadores = data.results.map((cargador) => ({
-          id: cargador.place_id,
-          name: cargador.name,
-          latitude: cargador.geometry.location.lat,
-          longitude: cargador.geometry.location.lng,
+      if (!response.ok) {
+        throw new Error(`${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data.places);
+
+      if (data?.places) {
+        const listaCargadores = data.places.map((cargador) => ({
+          id: cargador.id,
+          name: cargador.displayName?.text || "Desconocido",
+          latitude: cargador.location.latitude,
+          longitude: cargador.location.longitude,
         }));
+        console.log(listaCargadores);
         setCargadores(listaCargadores);
+      } else {
+        console.log("No se encontraron cargadores.");
+        setCargadores([]);
       }
     } catch (error) {
-      console.error("Error al obtener estaciones de carga:", error);
+      console.log("Error al obtener cargadores:", error);
     }
   };
 
@@ -58,7 +91,6 @@ export default function VistaEstaciones() {
 
               // Recuperar estaciones de carga cercanas
               fetchEVChargers(newRegion.latitude, newRegion.longitude);
-              console.log(cargadores);
 
               // Actualizar mapa
               mapRef.current?.animateToRegion(newRegion, 2000);
@@ -90,7 +122,6 @@ export default function VistaEstaciones() {
         provider={PROVIDER_DEFAULT}
         region={region}
       >
-        <Marker coordinate={region} pinColor="purple"></Marker>
         {cargadores.map((cargador) => (
           <Marker
             key={cargador.id}
@@ -98,9 +129,17 @@ export default function VistaEstaciones() {
               latitude: cargador.latitude,
               longitude: cargador.longitude,
             }}
-            title={cargador.name}
             pinColor="purple"
-          />
+          >
+            <Callout>
+              <View>
+                <Text>{cargador.id}</Text>
+                <Text>{cargador.name}</Text>
+                <Text>{cargador.latitude}</Text>
+                <Text>{cargador.longitude}</Text>
+              </View>
+            </Callout>
+          </Marker>
         ))}
       </MapView>
     </View>
