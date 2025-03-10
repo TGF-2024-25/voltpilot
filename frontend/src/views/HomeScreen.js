@@ -6,6 +6,7 @@ import { StyleSheet } from "react-native";
 import { Callout } from "react-native-maps";
 import { Text } from "react-native";
 import "react-native-get-random-values";
+// eslint-disable-next-line import/no-unresolved
 import { GOOGLE_MAPS_API_KEY } from "@env";
 
 export default function VistaEstaciones() {
