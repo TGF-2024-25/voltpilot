@@ -2,17 +2,25 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from "../styles/loginStyle";
-
+import { auth } from '../../../backend/src/config/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Handle login logic here
-    console.log('Login:', email, password);
-  };
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login successful:', userCredential.user);
+      // Navigate to the main screen or perform other actions
+      navigation.navigate('Main');
+    } catch (error) {
+      console.error('Login failed:', error.message);
+      // Show an error message to the user
+    }  };
 
   const handleRegister = () => {
     navigation.navigate('Register');
