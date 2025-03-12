@@ -1,0 +1,518 @@
+{
+    "places":[
+       {
+          "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q",
+          "id":"ChIJ7ab2M4EoQg0RgMOpaaQK99Q",
+          "types":[
+             "electric_vehicle_charging_station",
+             "point_of_interest",
+             "establishment"
+          ],
+          "nationalPhoneNumber":"800 760 255",
+          "internationalPhoneNumber":"+34 800 760 255",
+          "formattedAddress":"C. de Alcalá, 27, Centro, 28014 Madrid, España",
+          "addressComponents":[
+             {
+                "longText":"27",
+                "shortText":"27",
+                "types":[
+                   "street_number"
+                ],
+                "languageCode":"es-ES"
+             },
+             {
+                "longText":"Calle de Alcalá",
+                "shortText":"C. de Alcalá",
+                "types":[
+                   "route"
+                ],
+                "languageCode":"es"
+             },
+             {
+                "longText":"Centro",
+                "shortText":"Centro",
+                "types":[
+                   "sublocality_level_1",
+                   "sublocality",
+                   "political"
+                ],
+                "languageCode":"es"
+             },
+             {
+                "longText":"Madrid",
+                "shortText":"Madrid",
+                "types":[
+                   "locality",
+                   "political"
+                ],
+                "languageCode":"es"
+             },
+             {
+                "longText":"Madrid",
+                "shortText":"M",
+                "types":[
+                   "administrative_area_level_2",
+                   "political"
+                ],
+                "languageCode":"es"
+             },
+             {
+                "longText":"Comunidad de Madrid",
+                "shortText":"MD",
+                "types":[
+                   "administrative_area_level_1",
+                   "political"
+                ],
+                "languageCode":"es"
+             },
+             {
+                "longText":"España",
+                "shortText":"ES",
+                "types":[
+                   "country",
+                   "political"
+                ],
+                "languageCode":"es"
+             },
+             {
+                "longText":"28014",
+                "shortText":"28014",
+                "types":[
+                   "postal_code"
+                ],
+                "languageCode":"es-ES"
+             }
+          ],
+          "plusCode":{
+             "globalCode":"8CGRC892+46",
+             "compoundCode":"C892+46 Madrid, España"
+          },
+          "location":{
+             "latitude":40.4178278,
+             "longitude":-3.6994284000000004
+          },
+          "viewport":{
+             "low":{
+                "latitude":40.4164835197085,
+                "longitude":-3.7007595802915025
+             },
+             "high":{
+                "latitude":40.4191814802915,
+                "longitude":-3.6980616197084979
+             }
+          },
+          "rating":3,
+          "googleMapsUri":"https://maps.google.com/?cid=15345745956551902080",
+          "websiteUri":"https://www.endesax.com/",
+          "regularOpeningHours":{
+             "openNow":true,
+             "periods":[
+                {
+                   "open":{
+                      "day":0,
+                      "hour":0,
+                      "minute":0
+                   }
+                }
+             ],
+             "weekdayDescriptions":[
+                "lunes: Abierto 24 horas",
+                "martes: Abierto 24 horas",
+                "miércoles: Abierto 24 horas",
+                "jueves: Abierto 24 horas",
+                "viernes: Abierto 24 horas",
+                "sábado: Abierto 24 horas",
+                "domingo: Abierto 24 horas"
+             ]
+          },
+          "utcOffsetMinutes":60,
+          "adrFormatAddress":"\u003cspan class=\"street-address\"\u003eC. de Alcalá, 27\u003c/span\u003e, \u003cspan class=\"extended-address\"\u003eCentro\u003c/span\u003e, \u003cspan class=\"postal-code\"\u003e28014\u003c/span\u003e \u003cspan class=\"locality\"\u003eMadrid\u003c/span\u003e, \u003cspan class=\"country-name\"\u003eEspaña\u003c/span\u003e",
+          "businessStatus":"OPERATIONAL",
+          "userRatingCount":4,
+          "iconMaskBaseUri":"https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+          "iconBackgroundColor":"#7B9EB0",
+          "displayName":{
+             "text":"Endesa Charging Station",
+             "languageCode":"en"
+          },
+          "primaryTypeDisplayName":{
+             "text":"Estación de carga de vehículos eléctricos",
+             "languageCode":"es-ES"
+          },
+          "currentOpeningHours":{
+             "openNow":true,
+             "periods":[
+                {
+                   "open":{
+                      "day":4,
+                      "hour":0,
+                      "minute":0,
+                      "truncated":true,
+                      "date":{
+                         "year":2025,
+                         "month":3,
+                         "day":6
+                      }
+                   },
+                   "close":{
+                      "day":3,
+                      "hour":23,
+                      "minute":59,
+                      "truncated":true,
+                      "date":{
+                         "year":2025,
+                         "month":3,
+                         "day":12
+                      }
+                   }
+                }
+             ],
+             "weekdayDescriptions":[
+                "lunes: Abierto 24 horas",
+                "martes: Abierto 24 horas",
+                "miércoles: Abierto 24 horas",
+                "jueves: Abierto 24 horas",
+                "viernes: Abierto 24 horas",
+                "sábado: Abierto 24 horas",
+                "domingo: Abierto 24 horas"
+             ]
+          },
+          "primaryType":"electric_vehicle_charging_station",
+          "shortFormattedAddress":"C. de Alcalá, 27, Madrid",
+          "reviews":[
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/reviews/ChdDSUhNMG9nS0VJQ0FnSUNYaHVyQWlRRRAB",
+                "relativePublishTimeDescription":"Hace 4 meses",
+                "rating":1,
+                "text":{
+                   "text":"Entendí que la EMT había montado una zona de cargadores para los ciudadanos, pero me encontré con una zona para que carguen y aparquen los vehículos de car sharing.\n\nY una información totalmente deficiente",
+                   "languageCode":"es"
+                },
+                "originalText":{
+                   "text":"Entendí que la EMT había montado una zona de cargadores para los ciudadanos, pero me encontré con una zona para que carguen y aparquen los vehículos de car sharing.\n\nY una información totalmente deficiente",
+                   "languageCode":"es"
+                },
+                "authorAttribution":{
+                   "displayName":"carlos palou",
+                   "uri":"https://www.google.com/maps/contrib/110845271261614889464/reviews",
+                   "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjXkb7Yh3mxzdmdCQwqdHYlYsbfLldIB7WaJJLogrRr-bIL-nLxw=s128-c0x00000000-cc-rp-mo-ba4"
+                },
+                "publishTime":"2024-10-15T19:41:28.733530Z",
+                "flagContentUri":"https://www.google.com/local/review/rap/report?postId=ChdDSUhNMG9nS0VJQ0FnSUNYaHVyQWlRRRAB&d=17924085&t=1",
+                "googleMapsUri":"https://www.google.com/maps/reviews/data=!4m6!14m5!1m4!2m3!1sChdDSUhNMG9nS0VJQ0FnSUNYaHVyQWlRRRAB!2m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/reviews/ChdDSUhNMG9nS0VJQ0FnSUNobHJtSzdBRRAB",
+                "relativePublishTimeDescription":"Hace 2 años",
+                "rating":1,
+                "text":{
+                   "text":"Lamentable servicio el de intercambio de baterías para las motos. Horarios ridiculos cuando es 100% autoservicio",
+                   "languageCode":"es"
+                },
+                "originalText":{
+                   "text":"Lamentable servicio el de intercambio de baterías para las motos. Horarios ridiculos cuando es 100% autoservicio",
+                   "languageCode":"es"
+                },
+                "authorAttribution":{
+                   "displayName":"Alejandro García",
+                   "uri":"https://www.google.com/maps/contrib/107140761795124759774/reviews",
+                   "photoUri":"https://lh3.googleusercontent.com/a/ACg8ocIHTO3zbPEzhwJeqWXJCdFaBxjBhvhTybD1tLkVo_3p2CBzQA=s128-c0x00000000-cc-rp-mo-ba4"
+                },
+                "publishTime":"2023-02-12T07:04:30.743140Z",
+                "flagContentUri":"https://www.google.com/local/review/rap/report?postId=ChdDSUhNMG9nS0VJQ0FnSUNobHJtSzdBRRAB&d=17924085&t=1",
+                "googleMapsUri":"https://www.google.com/maps/reviews/data=!4m6!14m5!1m4!2m3!1sChdDSUhNMG9nS0VJQ0FnSUNobHJtSzdBRRAB!2m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/reviews/ChZDSUhNMG9nS0VJQ0FnSURwNkxTZlFREAE",
+                "relativePublishTimeDescription":"Hace un año",
+                "rating":5,
+                "authorAttribution":{
+                   "displayName":"Samuel Contreras",
+                   "uri":"https://www.google.com/maps/contrib/111110881980809150500/reviews",
+                   "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjVlxfjSnK61_5LuohvYUrnPtEwpZ1A1lmVFep83dLTou3SHxxbujA=s128-c0x00000000-cc-rp-mo-ba4"
+                },
+                "publishTime":"2023-08-15T12:28:32.733747Z",
+                "flagContentUri":"https://www.google.com/local/review/rap/report?postId=ChZDSUhNMG9nS0VJQ0FnSURwNkxTZlFREAE&d=17924085&t=1",
+                "googleMapsUri":"https://www.google.com/maps/reviews/data=!4m6!14m5!1m4!2m3!1sChZDSUhNMG9nS0VJQ0FnSURwNkxTZlFREAE!2m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/reviews/ChdDSUhNMG9nS0VJQ0FnSURKbk1fOGxnRRAB",
+                "relativePublishTimeDescription":"Hace un año",
+                "rating":5,
+                "authorAttribution":{
+                   "displayName":"Seagull Running",
+                   "uri":"https://www.google.com/maps/contrib/114877103502847162547/reviews",
+                   "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjVuIpzkfDxBb3YxCG9eQXtCQlZbvGgoox3F7_QDAm5D2G9Z9fZ_Ww=s128-c0x00000000-cc-rp-mo-ba4"
+                },
+                "publishTime":"2023-07-12T18:22:55.625989Z",
+                "flagContentUri":"https://www.google.com/local/review/rap/report?postId=ChdDSUhNMG9nS0VJQ0FnSURKbk1fOGxnRRAB&d=17924085&t=1",
+                "googleMapsUri":"https://www.google.com/maps/reviews/data=!4m6!14m5!1m4!2m3!1sChdDSUhNMG9nS0VJQ0FnSURKbk1fOGxnRRAB!2m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             }
+          ],
+          "photos":[
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ0fuc6jsRa7ktAu0d37H58AoKvHUJCx8eM2MSMcBM9EE3i2JJSg7U4DNwLxstmQlW7buhTbzqKNZJnHk5lOTiXQW-3zXECBF1MFV-c5dXjLEFhht0Ac54UiyrmLawaZTCB-4LQgpnIj4NYoYUgjOLSR7uqKmXcl-RPktEh3BVgW8y3DHElZkXTLtrBx1LwmjN3-4eefdsaHW-AN8b5Oo7Wmwk-5w0aQ4uWRYBj5Kf5jpGxpqcSs9wLOfD7MjWGGfZUuZcBYY-8-3VjobHZ5j_EmzF9c8nqFb6oOqihd3bYc1qAPtc3_tp7zTm5bA_N49iivZGhticuEukcT6KYSCTiTv9acUeGS2-Hdm8-8bo-nSuOI78OWeNalPAo27O89fFPx80mSlqOeoDNtu8P9a5hYertX54MQ",
+                "widthPx":3024,
+                "heightPx":4032,
+                "authorAttributions":[
+                   {
+                      "displayName":"Sandra Yolima Peralta Avila",
+                      "uri":"https://maps.google.com/maps/contrib/105703339402227174260",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjUQngR9_yNSF0W6RsVlGx08nNEBq9P6GaOS5WCyJpPBBhEj0XJu=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIClj4-Edw&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIClj4-Edw!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ2Wak1SMMZFm2r8PCZO_qnFhLu6xBLy-eRaoQAl3mDxZJzUpZuGstzcAtBmvy8wvNU5tt57YrgZrepjV9hfpXadbWwWN9RUatG2caCL6GNzLMycHkphhmKgZAPKtyMp2Iy9z8i6vJnULUgejoHv9KZP0NoCVo0fVDNnWa_xf4doRcfTgmiHHRVsfXDwvHIGFfqIV99NtUjuaiV6Pa6QxN64pkwuEmuPAIKVtr_R__IE7x3QmmQsTpK7i7HI3qkdN_dtiQPvLTk7LCwg_GSUK0hmPMokCnOfHDXTYCumeESAE6oHFubB2CBuJ2svHVM-ERwxioYB5ElWGBylBHmt37ktPjwfrD9HPQloBdnp9J7CerDjw8LpKk46NoEfjsIBFAgQvH1_TeqLYLoYWEg_UIneuf65gwbM2w",
+                "widthPx":4032,
+                "heightPx":2268,
+                "authorAttributions":[
+                   {
+                      "displayName":"Alvaro Nieri",
+                      "uri":"https://maps.google.com/maps/contrib/115646223943188158227",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjVWTzy0E7rdq9Jc7RMs0Rs4G_S0UFvUvrKXaNYfnNYN-Rk0mT7Lyw=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIDp9bbUrQE&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDp9bbUrQE!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ3qPlCTQcBn2Wm-z4imxC5xkMArJhv9RvUhMWdwlV-S6sySbP5l4jNrF-6v9u3A_0AS601AFrzFV1j9gV0Rb3k5qe-XiANnNC40QusDwxi88illr9e_B2lt32XnJ9M_duJfDg6MwdlNXAht5j3zja4HBTZEUdlUMMEpVexR_ysvoAge5I6aMo2JQnslL8YiWjtVXTm6mWogn9-YYvvwAmwubYMQp6INbZaLmyvJHAcbGLI4C56qZRmLIVDZRmJY7OHicF7GNpR17iX8ITDoIp6OG3RMFWo_PluuYDbqIk1cnuYRKeZgnmDn9MXYA4kcpx0_KK9HD8QeCuo4ZAUTyrrRYndvWIXDfc7tDDxayGNQuZTQFBFlgMGn3UbF4Q3sAxrr1qADsHJNUrscx7ZfvYwv_gk4tXwdZA",
+                "widthPx":1932,
+                "heightPx":2576,
+                "authorAttributions":[
+                   {
+                      "displayName":"Przemyslaw K",
+                      "uri":"https://maps.google.com/maps/contrib/114787645706200353384",
+                      "photoUri":"https://lh3.googleusercontent.com/a/ACg8ocLJgH_Oc_xcsXQqIbl5WmDIbeVVtvZFBr34WUJuD_9y12HJ5g=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIC3-N33nwE&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIC3-N33nwE!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ2RqrQuUGE4NZnQezcqnStjiOSbW1rQtcI_Mwpg4zdj5Aurh9VcgOuSjK-03JYwa1UzLloIIIby7WridrK6ogzTys3ZFir8E7oVOrlfHigF_aTlpKL83C_QiY1uKFbjkhrWoA7MHD5Hc0jkWR9mmPJJWfDJUg3Ts78SEe_l4HYwmKGg1NezwLNrVLiijeuazVnCh4NVfFjlONtdkv7QW534oezgSCaRWZZW7nUvEnnvmUnSOtuag9SyazHmtvN0aBV8TGbvRm_j18Uj65qKfv3pveb4u-8l_niy6nqSiVyRfczFaHnbo8hHhuN_Jn7p5jWt-Vc8Q5-r6s9bOXnwPhqPVyXZW1Ijy1KA-TZ0AL7nCbO-Iw9zYD3tw7DgAUMKV3ozFJi7wtUzOxw2mGvT4XlN0A4z4Sa6Bg",
+                "widthPx":3024,
+                "heightPx":4032,
+                "authorAttributions":[
+                   {
+                      "displayName":"Isabel Rosales",
+                      "uri":"https://maps.google.com/maps/contrib/106192163441160665733",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjXstCDz2IqnUgfyVrVTf2EjM-7acTPpaXdHf2klbRNTuhimAYfYDw=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgICZ1sSenwE&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgICZ1sSenwE!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ1F5_ftDqgYs1WcPiPeBSKlpnBkXr-RKj-NK3P1TkMi2bphwV2_pbvWbmr48824_NY5bAVdPsu4JEMdB3M4tILyOrB4AtmckNFktBAFJPnHkR5B-1A-tLola2cRROFgHPGmVKPi6Ix1sD2__f5Jxmi7PhYzMUTlx_XLpuTW4rEoPR20yaPuvwIdhqSJsR3YC3aC2HE6ZjHCP5a9udRw4nAvpW-f6VrfAmQnX32nXCTR5SvmbTyDcTyObDJsYdofftHgaGdxRgODenDkEyTuDXrkmOb7g8QnQy6eOmSbkvUdofnbEJgcl61QLYKyOq_NuqQK1R1IpTJAQAn88R7hMfDTKYbuxZnBC9ijbwQKL0yIOm9-_oRXOKyCuOLJxfGARzTVmwVw_quvD8k8M5nWhlxK-MGaJHxu0mJy",
+                "widthPx":2160,
+                "heightPx":3840,
+                "authorAttributions":[
+                   {
+                      "displayName":"Luisa Martín Zato",
+                      "uri":"https://maps.google.com/maps/contrib/100008554624977752742",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjWy_RELAb7I8WKjk7EkUYOJ5dwu5NtvS_AE-4BcjuAlEoPB52gc=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIDRjLfmkAE&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDRjLfmkAE!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ0YbL6acSDpGIWTqcSbKSXmZRJn12NgbahCjP_smRXtPmzrCp6MWzUffFWuo8mr_LBM9QqwCiTKmVE_dhjIC3TTRc5qm5bt0LDcv9Fhro4mhwz0GO9No6Nw6vq1SCCXF1emhg2cyh0VXjOdtIMP2R6LbBI0YbB7zc68yW1GY2SDXjLYCHR5KrWvxFM5bPRzTiuMom43ALGPifDrhvBdtX2lTpyfdbetZuxdCDqfY7dec5OfWCWjY5h6MIbiibybWX1N97wOgRmaEJLjB8rJBgYqnXCGaB1v_0e5hTNpH7LTFvy4n_AZKXH4hJGFPxmpP765mz1zYZbWj7bQzcd2RMKTb0FEcdTXOzzVZfYn59tJ7A3O4vaFo--iWJhZiweFLh6rXquFCz-tHymnMRIEpLD9qb9KCfIp",
+                "widthPx":2968,
+                "heightPx":3475,
+                "authorAttributions":[
+                   {
+                      "displayName":"Alvaro Nieri",
+                      "uri":"https://maps.google.com/maps/contrib/115646223943188158227",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjVWTzy0E7rdq9Jc7RMs0Rs4G_S0UFvUvrKXaNYfnNYN-Rk0mT7Lyw=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIDp9bbEPw&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDp9bbEPw!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ29axf8Mpt-pZkz7PnUWmTHOO2QE0U4jm_3e9nsRWawCLCq9N6Llu4SK8lwTdKLIiswvd0ix6tnysE3qqjAnaBK3X0XiZ795r2EeS2RCXGyTpBofY9AN27AZFvXvwDwxxtiojCmy9IhlhEy4kFayPGEKk6iIjeYg-DBWut4lBrCfXbNYMKxrBMowibKEho7GP6GLY6WB47GvpNX0oc_-LFr2B_RJiPlfnxQGbUuEDhvFBYhlc0PMTZGH81ZOXTpUjeY-IhbZy0j68_B58Og4vKi5sUxtLGpkuE8Ditp-SkLTI-tlCPO6ZfjeyDKtunZ5bmpmdqIzL7zpQxwG06JWiZSy_YHfPknjPpHH8n_TgUVPJnspD4yerRYQ5zhTZ4VytZ_SPOOsDKD2S3gnpVn-2OcmNgp_-0H",
+                "widthPx":3024,
+                "heightPx":4032,
+                "authorAttributions":[
+                   {
+                      "displayName":"Concha Gonzalez",
+                      "uri":"https://maps.google.com/maps/contrib/105551560429395878167",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjVOrQ2i_ybXw-wWgNduL1G_h22IC4X6TeyZ3UwLXb8b5xZUJNTT=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIDHpf-9FA&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDHpf-9FA!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ0dM7xbJfgv4jWtt8JKHdUJFwJXhBmGaWT_HO3cYm0nnjWz-bvkdCmBKCKI4Lj19ipEGPoONtxom1ISRaEY-GgrZJby4PxC0eZSeg5VyuGvy_CHrWCpMVkNzHjc4O6stzuVWD2zRXMEHymb1CbILSeIltlZQdSL6fnakvkeDm6wIog1GR6TqHKkSWB_aZJzp-JHMTeFFWlChxUkZtZCPnly2vD3YGP8Xie5Fr7dimRFbKs893X0lArRm8DQPyAK7b_v_oK50TlMIgcQWMjL8ZRnp8ZmUy5wJ2wBoi6zu2eKKZWHBOVA5vD_n4sGWejYxAREvkSsacOkjzKz10gXhw6bOUJp-Z5HyNOsys0n_2Ggg1Lf-HIXGBbWmsvhxnPt7D4meNxFPpdx87hZ-_tv5xtHp6snHYhDfxFQ",
+                "widthPx":3024,
+                "heightPx":4032,
+                "authorAttributions":[
+                   {
+                      "displayName":"Juro Staňo",
+                      "uri":"https://maps.google.com/maps/contrib/116157202210934266981",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjWvyKNlxqH93eFyyXi7sscE-ySLG9M8iAvsZj1bXOebUl8AkQ7k=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIDZytD5rAE&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDZytD5rAE!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             },
+             {
+                "name":"places/ChIJ7ab2M4EoQg0RgMOpaaQK99Q/photos/AUy1YQ1Qdc6inzTBBCLUu3ZTHemOwKAYOR9zNb43IkBRtduUTTxWzxH9SffgAR6a5QD6s5xaBm02FE-CaEndcpOYCPndvl17bThrTD7fcvDuGujbHKcu7QeNR5x3GbcakEMpGS_fwX3zadx09BWQKtPG6UtEXJb4viB0r8jH64H59SqDmNEXwtJ09d6DJpv-2WbKqMvITaAs1Ays_pqsYWQJeTaJITk5LZLhAdUi0YZAWM8d94uwxTMabBTFkoVAUVfZgu0FacLGs36TZAxuUzgjc638sEISYltRBeEswurZDYnD8cQz0dRKU5FoAdqrKx0vQlxuHmhj_V8AMct_-G3oKH-fAIJ7c3U4cd6k9iF30aemInxGISG-sframSlprCNs8uCm6rvpsQFZiNGWhoRh2l2wj_0dNeP0",
+                "widthPx":3024,
+                "heightPx":4032,
+                "authorAttributions":[
+                   {
+                      "displayName":"Itala Ritchelle",
+                      "uri":"https://maps.google.com/maps/contrib/105305328498956684565",
+                      "photoUri":"https://lh3.googleusercontent.com/a-/ALV-UjXDRMRUATTxzv2MzCy3Nr5Y4m0kZQ-Bl8wtSAdtGu4jsRFiMDxInA=s100-p-k-no-mo"
+                   }
+                ],
+                "flagContentUri":"https://www.google.com/local/imagery/report/?cb_client=maps_api_places.places_api&image_key=!1e10!2sCIHM0ogKEICAgIDFyOjNIQ&hl=es-ES",
+                "googleMapsUri":"https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDFyOjNIQ!2e10!4m2!3m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380"
+             }
+          ],
+          "evChargeOptions":{
+             "connectorCount":12,
+             "connectorAggregation":[
+                {
+                   "type":"EV_CONNECTOR_TYPE_TYPE_2",
+                   "maxChargeRateKw":22,
+                   "count":12,
+                   "availableCount":10,
+                   "outOfServiceCount":0,
+                   "availabilityLastUpdateTime":"2025-03-06T07:55:00Z"
+                }
+             ]
+          },
+          "addressDescriptor":{
+             "landmarks":[
+                {
+                   "name":"places/ChIJ6wtIMoEoQg0RvSKJD_Jx5EU",
+                   "placeId":"ChIJ6wtIMoEoQg0RvSKJD_Jx5EU",
+                   "displayName":{
+                      "text":"Flying Tiger Copenhagen",
+                      "languageCode":"es"
+                   },
+                   "types":[
+                      "establishment",
+                      "furniture_store",
+                      "home_goods_store",
+                      "point_of_interest",
+                      "store"
+                   ],
+                   "spatialRelationship":"DOWN_THE_ROAD",
+                   "straightLineDistanceMeters":31.857306,
+                   "travelDistanceMeters":185.31
+                },
+                {
+                   "name":"places/ChIJC5AOSoEoQg0RLg_ZRyjsdXU",
+                   "placeId":"ChIJC5AOSoEoQg0RLg_ZRyjsdXU",
+                   "displayName":{
+                      "text":"Teatro Alcázar",
+                      "languageCode":"es"
+                   },
+                   "types":[
+                      "establishment",
+                      "point_of_interest"
+                   ],
+                   "spatialRelationship":"DOWN_THE_ROAD",
+                   "straightLineDistanceMeters":30.190992,
+                   "travelDistanceMeters":87.43496
+                },
+                {
+                   "name":"places/ChIJW0AASoEoQg0R4ORHCI9O8vk",
+                   "placeId":"ChIJW0AASoEoQg0R4ORHCI9O8vk",
+                   "displayName":{
+                      "text":"Mondo Disko",
+                      "languageCode":"es"
+                   },
+                   "types":[
+                      "establishment",
+                      "night_club",
+                      "point_of_interest"
+                   ],
+                   "spatialRelationship":"ACROSS_THE_ROAD",
+                   "straightLineDistanceMeters":39.381645,
+                   "travelDistanceMeters":35.56052
+                },
+                {
+                   "name":"places/ChIJ1c_3K4EoQg0RfPA8NW0LDuw",
+                   "placeId":"ChIJ1c_3K4EoQg0RfPA8NW0LDuw",
+                   "displayName":{
+                      "text":"NH Collection Real Casino de Madrid",
+                      "languageCode":"es"
+                   },
+                   "types":[
+                      "establishment",
+                      "point_of_interest"
+                   ],
+                   "spatialRelationship":"DOWN_THE_ROAD",
+                   "straightLineDistanceMeters":72.08796,
+                   "travelDistanceMeters":244.08737
+                },
+                {
+                   "name":"places/ChIJ_-t1LoEoQg0RNVeflHaTDZo",
+                   "placeId":"ChIJ_-t1LoEoQg0RNVeflHaTDZo",
+                   "displayName":{
+                      "text":"Hotel Regina Madrid",
+                      "languageCode":"es"
+                   },
+                   "types":[
+                      "establishment",
+                      "lodging",
+                      "point_of_interest"
+                   ],
+                   "spatialRelationship":"DOWN_THE_ROAD",
+                   "straightLineDistanceMeters":40.56733,
+                   "travelDistanceMeters":198.37027
+                }
+             ],
+             "areas":[
+                {
+                   "name":"places/ChIJ-0diIIIoQg0RJAa2Bxht4BM",
+                   "placeId":"ChIJ-0diIIIoQg0RJAa2Bxht4BM",
+                   "displayName":{
+                      "text":"Cortes",
+                      "languageCode":"es"
+                   },
+                   "containment":"OUTSKIRTS"
+                },
+                {
+                   "name":"places/ChIJFWLQn34oQg0RwdDjI_8J4dU",
+                   "placeId":"ChIJFWLQn34oQg0RwdDjI_8J4dU",
+                   "displayName":{
+                      "text":"Centro",
+                      "languageCode":"es"
+                   },
+                   "containment":"WITHIN"
+                },
+                {
+                   "name":"places/ChIJz7ZjFH4oQg0RYS0zuSBBoxQ",
+                   "placeId":"ChIJz7ZjFH4oQg0RYS0zuSBBoxQ",
+                   "displayName":{
+                      "text":"Sol",
+                      "languageCode":"es"
+                   },
+                   "containment":"OUTSKIRTS"
+                }
+             ]
+          },
+          "googleMapsLinks":{
+             "directionsUri":"https://www.google.com/maps/dir//''/data=!4m7!4m6!1m1!4e2!1m2!1m1!1s0xd42288133f6a6ed:0xd4f70aa469a9c380!3e0",
+             "placeUri":"https://maps.google.com/?cid=15345745956551902080",
+             "writeAReviewUri":"https://www.google.com/maps/place//data=!4m3!3m2!1s0xd42288133f6a6ed:0xd4f70aa469a9c380!12e1",
+             "reviewsUri":"https://www.google.com/maps/place//data=!4m4!3m3!1s0xd42288133f6a6ed:0xd4f70aa469a9c380!9m1!1b1",
+             "photosUri":"https://www.google.com/maps/place//data=!4m3!3m2!1s0xd42288133f6a6ed:0xd4f70aa469a9c380!10e5"
+          },
+          "timeZone":{
+             "id":"Europe/Madrid"
+          }
+       }
+    ]
+ }
