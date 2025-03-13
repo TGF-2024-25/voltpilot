@@ -8,13 +8,13 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: "voltpilot.firebaseapp.com",
-  projectId: "voltpilot",
-  storageBucket: "voltpilot.firebasestorage.app",
-  messagingSenderId: "391380693258",
-  appId: "1:391380693258:web:d4b974d0d8fc9e2addcaf3",
-  measurementId: "G-S687YZ2Y7F",
+  apiKey: "",
+  authDomain: "voltpilot-410ae.firebaseapp.com",
+  projectId: "voltpilot-410ae",
+  storageBucket: "voltpilot-410ae.firebasestorage.app",
+  messagingSenderId: "289966534205",
+  appId: "1:289966534205:web:1bd447adcec0b4163c0454",
+  measurementId: "G-KQ00BYXQ3F"
 };
 
 // Initialize Firebase
