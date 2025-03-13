@@ -18,6 +18,14 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 1,
   },
+  option: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  optionText: {
+    fontSize: 18,
+  },
 });
 
 export default styles;
