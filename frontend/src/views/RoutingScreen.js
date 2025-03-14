@@ -47,6 +47,7 @@ export default function VistaRutas() {
         fetchDetails={true}
         placeholder="Selecciona Destinos"
         onPress={(data, details = null) => {
+          
           if (details) {
             const { lat, lng } = details.geometry.location;
             const newDest = {
