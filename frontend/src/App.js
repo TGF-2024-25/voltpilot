@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import { Text, View } from "react-native";
+// eslint-disable-next-line import/no-unresolved
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from "@react-navigation/native";
 import BottomTabNavigator from "./components/BottomTabNavigator";

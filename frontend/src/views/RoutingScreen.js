@@ -47,7 +47,9 @@ export default function VistaRutas() {
         fetchDetails={true}
         placeholder="Selecciona Destinos"
         onPress={(data, details = null) => {
-          
+          console.log("📡 Datos del lugar seleccionado:", data);
+          console.log("📍 Coordenadas del destino:", details?.geometry?.location);
+
           if (details) {
             const { lat, lng } = details.geometry.location;
             const newDest = {

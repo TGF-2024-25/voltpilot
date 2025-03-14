@@ -64,7 +64,7 @@ export default function VistaEstaiones() {
           fetchDetails={true}
           placeholder="Buscar en Mapas"
           onPress={(data, details = null) => {
-            
+
             if (details) {
               const { lat, lng } = details.geometry.location;
               const newRegion = {
