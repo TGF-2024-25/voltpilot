@@ -32,7 +32,7 @@ export default function VistaEstaiones() {
     try {
       const response = await fetch(
         //10.0.2.2 es la ip que Android Emulator accede como localhost el emulador de functions
-        `http://10.0.2.2:5001/voltpilot-410ae/us-central1/api/getChargers`,
+        `http://127.0.0.1:5001/voltpilot-410ae/us-central1/api/getChargers`,
         {
           method: "POST",
           headers: {

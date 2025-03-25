@@ -1,11 +1,14 @@
-import functions from "firebase-functions/v2";
 import express from "express";
 import cors from "cors";
-// import { GOOGLE_MAPS_API_KEY } from "@env";
-// import admin from "firebase-admin";
-
-// // Por si luego se utiliza el FireStore o Auth
+import { onRequest } from "firebase-functions/v2/https";
+import { defineSecret } from "firebase-functions/params";
+// import pkg from "firebase-functions/v2";
+// import * as admin from "firebase-admin";
+// const { functions } = pkg;
 // admin.initializeApp();
+
+// Utiliza el Secret Manager para recupear la api key
+const GOOGLE_MAPS_API_KEY = defineSecret("GOOGLE_MAPS_API_KEY");
 
 // Crea instancia de Express
 const app = express();
@@ -19,6 +22,7 @@ app.use(express.json());
 // Recibe {latitud, longitud} y devuelve el JSON de las estaciones de cargas cercanas
 app.post("/getChargers", async (req, res) => {
   const { latitude, longitude } = req.body;
+  const apiKey = GOOGLE_MAPS_API_KEY.value();
 
   // Fetch de las estaciones de carga
   try {
@@ -27,7 +31,7 @@ app.post("/getChargers", async (req, res) => {
       {
         method: "POST",
         headers: {
-          "X-Goog-Api-Key": "AIzaSyCOCit5fXDeoxDl3BjY30Y97BJtXUmvM7I",
+          "X-Goog-Api-Key": apiKey,
           "X-Goog-FieldMask":
             "places.displayName,places.location,places.id,places.evChargeOptions",
           "Content-Type": "application/json",
@@ -72,5 +76,5 @@ app.post("/getChargers", async (req, res) => {
   }
 });
 
-// Exportar la función para que Firebase la maneje
-export const api = functions.https.onRequest(app);
+// Exportar la función para que Firebase la maneje y decirle que se utiliza un secreto
+export const api = onRequest({ secrets: [GOOGLE_MAPS_API_KEY] }, app);
