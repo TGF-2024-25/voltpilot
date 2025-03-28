@@ -8,14 +8,16 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./frontend/src/assets/splash-icon.png",
+      "image": "./frontend/src/assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "newArchEnabled": false,
       "supportsTablet": true
     },
     "android": {
+      "newArchEnabled": false,
       "package" : "com.voltpilot",
       "adaptiveIcon": {
         "foregroundImage": "./frontend/src/assets/adaptive-icon.png",

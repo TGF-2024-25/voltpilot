@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { StyleSheet } from "react-native";
@@ -24,14 +24,15 @@ export default function VistaEstaiones() {
   const [cargadores, setCargadores] = useState([]);
   const mapRef = useRef(null);
 
-  useEffect(() => {
-    console.log("Cargadores actualizado:", cargadores);
-  }, [cargadores]);
+  // useEffect(() => {
+  //   console.log("Cargadores actualizado:", cargadores);
+  // }, [cargadores]);
 
   const obtenerCargadores = async (lat, lng) => {
     try {
       const response = await fetch(
-        //10.0.2.2 es la ip que Android Emulator accede como localhost el emulador de functions
+        // 10.0.2.2 es la ip que Android Emulator accede como localhost el emulador de functions
+        // Ejecutar si se accede desde dispositivo externo: adb -s b3060cfe reverse tcp:5001 tcp:5001
         `http://127.0.0.1:5001/voltpilot-410ae/us-central1/api/getChargers`,
         {
           method: "POST",
@@ -78,7 +79,7 @@ export default function VistaEstaiones() {
               obtenerCargadores(newRegion.latitude, newRegion.longitude);
 
               // Actualizar mapa
-              mapRef.current?.animateToRegion(newRegion, 2000);
+              mapRef.current?.animateToRegion(newRegion, 1500);
             }
           }}
           query={{
