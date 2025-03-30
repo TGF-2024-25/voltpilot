@@ -33,7 +33,7 @@ app.post("/getChargers", async (req, res) => {
         headers: {
           "X-Goog-Api-Key": apiKey,
           "X-Goog-FieldMask":
-            "places.displayName,places.location,places.id,places.evChargeOptions",
+            "places.displayName,places.location,places.evChargeOptions,places.internationalPhoneNumber,places.formattedAddress,places.currentOpeningHours,places.businessStatus,places.shortFormattedAddress,places.rating,places.websiteUri,places.googleMapsUri,places.userRatingCount",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -65,13 +65,11 @@ app.post("/getChargers", async (req, res) => {
         latitude: cargador.location.latitude,
         longitude: cargador.location.longitude,
       }));
-      res.json(listaCargadores);
+      res.json(data.places);
     } else {
-      console.log("No se encontraron cargadores.");
       res.json([]);
     }
   } catch (error) {
-    console.log("Error al obtener cargadores:", error);
     res.status(500).json({ error: "Error al obtener cargadores." });
   }
 });

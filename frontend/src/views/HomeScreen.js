@@ -112,25 +112,75 @@ export default function VistaEstaiones() {
           <Marker
             key={cargador.id}
             coordinate={{
-              latitude: cargador.latitude,
-              longitude: cargador.longitude,
+              latitude: cargador.location.latitude,
+              longitude: cargador.location.longitude,
             }}
-            pinColor="purple"
+            title={cargador.displayName.text}
+            icon={getIconCargador(cargador)}
+            style={styles.markerImage}
           >
-            <Callout>
+            {/* <Callout>
               <View>
                 <Text>{cargador.id}</Text>
                 <Text>{cargador.name}</Text>
                 <Text>{cargador.latitude}</Text>
                 <Text>{cargador.longitude}</Text>
               </View>
-            </Callout>
+            </Callout> */}
           </Marker>
         ))}
       </MapView>
     </View>
   );
 }
+
+const getIconCargador = (cargador) => {
+  if (!cargador.evChargeOptions) {
+    return require("../assets/Marcador_4.png");
+  }
+
+  let availableCount = 0;
+
+  // Obtiene el availableCount del primer cargador si tiene
+  if (
+    cargador.evChargeOptions.connectorAggregation[0]?.availableCount !==
+    undefined
+  ) {
+    availableCount +=
+      cargador.evChargeOptions.connectorAggregation[0].availableCount;
+  }
+
+  // Recorre el resto de los conectores
+  for (
+    let i = 1;
+    i < cargador.evChargeOptions.connectorAggregation.length;
+    i++
+  ) {
+    const currentConnector = cargador.evChargeOptions.connectorAggregation[i];
+    if (currentConnector?.availableCount !== undefined) {
+      availableCount += currentConnector.availableCount;
+    }
+  }
+
+  // Si no se encontró ningún count disponible, retonar el marcador gris
+  if (availableCount === 0) {
+    return require("../assets/Marcador_3.png");
+  }
+
+  // Calcular la ratio de disponibilidad de los cargadores
+  const availabilityRatio =
+    availableCount / cargador.evChargeOptions.connectorCount;
+
+  // Selecciona el icono basado en la disponibilidad
+  if (availabilityRatio >= 0.5) {
+    return require("../assets/Marcador_1.png");
+  }
+  if (availabilityRatio > 0) {
+    return require("../assets/Marcador_2.png");
+  }
+
+  return require("../assets/Marcador_3.png");
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -149,5 +199,9 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 1,
     padding: 10,
+  },
+  markerImage: {
+    width: 35,
+    height: 35,
   },
 });
