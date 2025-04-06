@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React, { useState, useRef } from "react";
 import { View, TextInput, Button, TouchableOpacity } from "react-native";
-import { StyleSheet } from "react-native";
+import { StyleSheet} from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_API_KEY } from "@env";
@@ -9,7 +9,9 @@ import * as Location from "expo-location";
 import { Entypo } from '@expo/vector-icons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import polyline from "@mapbox/polyline";
-
+import Feather from "react-native-vector-icons/Feather";
+import Favoritos from "../components/Favoritos";
+import Autonomia from "../components/Autonomia";
 
 export default function VistaRutas() {
   const [origen, setOrigen] = useState({
@@ -120,7 +122,11 @@ export default function VistaRutas() {
           />
         ) : (
           <View>
-            <TextInput style={styles.textInput} value="Ubicación actual" editable={false} />
+            <TextInput
+              style={styles.textInput}
+              value="Ubicación actual"
+              editable={false}
+            />
             {destinos.map((_, index) => (
               <GooglePlacesAutocomplete
                 key={index}
@@ -143,21 +149,46 @@ export default function VistaRutas() {
 
         <Menu>
           <MenuTrigger>
-            <Entypo name="dots-three-vertical" size={24} color="black" style={styles.menuIcon} />
+            <Entypo
+              name="dots-three-vertical"
+              size={24}
+              color="darkpruple"
+              style={styles.menuIcon}
+            />
           </MenuTrigger>
           <MenuOptions>
             <MenuOption onSelect={addDestino} text="Agregar nuevo destino" />
-            <MenuOption onSelect={() => alert("Opciones de ruta")} text="Tipo de Ruta" />
-            <MenuOption onSelect={() => alert("Buscar en ruta")} text="Buscar En Ruta" />
+            <MenuOption
+              onSelect={() => alert("Opciones de ruta")}
+              text="Tipo de Ruta"
+            />
+            <MenuOption
+              onSelect={() => alert("Buscar en ruta")}
+              text="Buscar En Ruta"
+            />
           </MenuOptions>
         </Menu>
       </View>
 
-      <MapView style={styles.map} ref={mapRef} region={origen} provider={PROVIDER_DEFAULT}>
+      <View style={styles.floatingLogos}>
+        <Favoritos />
+        <Autonomia />
+      </View>
+
+      <MapView
+        style={styles.map}
+        ref={mapRef}
+        region={origen}
+        provider={PROVIDER_DEFAULT}
+      >
         <Marker coordinate={origen} pinColor="lightblue" />
-        {destinos.map((destino, id) => destino && <Marker key={id} coordinate={destino} />)}
-      
-        {ruta.length > 0 && <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#ba66ff" />}
+        {destinos.map(
+          (destino, id) => destino && <Marker key={id} coordinate={destino} />
+        )}
+
+        {ruta.length > 0 && (
+          <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#ba66ff" />
+        )}
       </MapView>
 
       <TouchableOpacity style={styles.floatingButton} onPress={fetchRoute}>
@@ -204,5 +235,14 @@ const styles = StyleSheet.create({
   },
   menuIcon: {
     marginLeft: 10,
+  },
+  floatingLogos: {
+    position: "absolute",
+    marginTop: 150,
+    right: 20,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 2,
   },
 });
