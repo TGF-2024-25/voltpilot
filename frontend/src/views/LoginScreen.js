@@ -44,10 +44,15 @@ export default function LoginScreen() {
       await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('expiresIn', expiresIn);
 
-      navigation.reset({
+      if (global.updateAuthState) {
+        global.updateAuthState();
+      }
+      // navegar a la pantalla principal
+      /*navigation.reset({
         index: 0,
         routes: [{ name: 'Estaciones' }],
-      });
+      });*/
+      
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     }

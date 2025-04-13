@@ -7,7 +7,7 @@ const userController = {
   createUser: async (req, res) => {
     try {
       const { email, password, name, phoneNumber } = req.body;
-
+      console.log('datos de usuario:', req.body);
       //verificar si el usuario ya existe
       const existingUser = await userModel.findByEmail(email);
       if (existingUser) {

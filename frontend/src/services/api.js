@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // url de ka api backend
-const DEV_API_URL = 'http://192.168.1.243:5000/api';//cambia a la ip de tu backend 
+const DEV_API_URL = 'http://192.168.1.6:5000/api';//cambia a la ip de tu backend 
 const API_URL = DEV_API_URL;
 
 // patrone de facade de api
@@ -48,7 +48,7 @@ export const apiRequest = async (endpoint, method = 'GET', data = null, requires
 // auth API
 export const authAPI = {
   login: (email, password) => apiRequest('/auth/login', 'POST', { email, password }),
-  register: (userData) => apiRequest('/users/register', 'POST', userData),
+  register: (email, password, name) => apiRequest('/users/register', 'POST', { email, password,name }),
   logout: () => apiRequest('/auth/logout', 'POST', {}, true),
   forgotPassword: (email) => apiRequest('/auth/forgot-password', 'POST', { email }),
   changePassword: (currentPassword, newPassword) => 

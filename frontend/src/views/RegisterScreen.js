@@ -16,11 +16,7 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     try {
-      const userData = { 
-        email, 
-        password,
-        name,
-      };
+      
 
       //verifica email, password y nombre
       if (!email || !password || !name) {
@@ -28,7 +24,7 @@ export default function RegisterScreen() {
         return;
       }
       
-      await authAPI.register(userData);
+      await authAPI.register(email, password, name);
 
       navigation.reset({
         index: 0,

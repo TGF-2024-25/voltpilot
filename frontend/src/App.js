@@ -105,6 +105,9 @@ function MainAppStack() {
   );
 }
 
+
+global.updateAuthState = null;
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
@@ -114,6 +117,11 @@ export default function App() {
       await AsyncStorage.setItem('expiresIn', expiresIn); */
   // verification if the user is logged in
   useEffect(() => {
+    global.updateAuthState = () => {
+      // Esto fuerza a verificar el token de nuevo
+      bootstrapAsync();
+    };
+    
     const bootstrapAsync = async () => {
       let token = null;
       try {
