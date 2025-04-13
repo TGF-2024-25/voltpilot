@@ -1,4 +1,6 @@
-// Import the functions you need from the SDKs you need
+
+
+  // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -8,14 +10,14 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "voltpilot-410ae.firebaseapp.com",
-  projectId: "voltpilot-410ae",
-  storageBucket: "voltpilot-410ae.firebasestorage.app",
-  messagingSenderId: "289966534205",
-  appId: "1:289966534205:web:1bd447adcec0b4163c0454",
-  measurementId: "G-KQ00BYXQ3F"
-};
+    apiKey: "AIzaSyBoE8BZGMWDD5oX5oBcvdVu-Sr9CFonpGg",
+    authDomain: "voltpilot-c6e44.firebaseapp.com",
+    projectId: "voltpilot-c6e44",
+    storageBucket: "voltpilot-c6e44.firebasestorage.app",
+    messagingSenderId: "888970558314",
+    appId: "1:888970558314:web:ef0b04b434f1a3a0e5c313",
+    measurementId: "G-S2S4EGWJHW"
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

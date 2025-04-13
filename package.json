@@ -1,46 +1,22 @@
 {
   "name": "voltpilot",
   "version": "1.0.0",
-  "main": "./frontend/src/index.js",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "eslint ."
-  },
-  "dependencies": {
-    "@expo/metro-runtime": "~4.0.0",
-    "@react-native-community/geolocation": "^3.4.0",
-    "@react-navigation/bottom-tabs": "^7.2.0",
-    "@react-navigation/native": "latest",
-    "@react-navigation/stack": "latest",
-    "dotenv": "^16.4.7",
-    "expo": "~52.0.25",
-    "expo-location": "^18.0.7",
-    "expo-status-bar": "~2.0.1",
-    "firebase": "^11.1.0",
-    "package.json": "^2.0.1",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-native": "0.76.6",
-    "react-native-dotenv": "^3.4.11",
-    "react-native-get-random-values": "^1.11.0",
-    "react-native-google-places-autocomplete": "^2.5.7",
-    "react-native-maps": "1.18.0",
-    "react-native-safe-area-context": "^5.2.0",
-    "react-native-screens": "^4.9.1",
-    "react-native-web": "~0.19.13"
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && npm start",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "android": "cd frontend && npm run android",
+    "ios": "cd frontend && npm run ios"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@eslint/js": "^9.21.0",
-    "eslint": "^8.57.1",
-    "eslint-config-expo": "~8.0.1",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-prettier": "^5.2.3",
-    "prettier": "^3.5.1",
-    "@react-native-community/cli": "latest"
+    "concurrently": "^9.1.2"
   },
-  "private": true
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.24.0"
+  }
 }

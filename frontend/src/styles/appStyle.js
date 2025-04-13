@@ -26,6 +26,17 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 18,
   },
+  userInfoContainer: {
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    width: '90%',
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

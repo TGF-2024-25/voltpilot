@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
   },
+  
 });
 
 export default styles;
