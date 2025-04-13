@@ -29,7 +29,12 @@
     "react-native-maps": "1.18.0",
     "react-native-safe-area-context": "^4.12.0",
     "react-native-screens": "^4.4.0",
-    "react-native-web": "~0.19.13"
+    "react-native-web": "~0.19.13",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-popup-menu": "^0.17.0",
+    "@mapbox/polyline": "^1.2.1"
+
+    
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
