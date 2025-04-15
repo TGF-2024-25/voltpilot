@@ -28,11 +28,17 @@ export const apiRequest = async (endpoint, method = 'GET', data = null, requires
         headers,
         body: data ? JSON.stringify(data) : null,
       };
+
+      console.log("Congifig is: ", config);
   
       if (method === 'GET') delete config.body;
+
+      console.log(`Going to: ${API_URL}${endpoint} `)
   
       const response = await fetch(`${API_URL}${endpoint}`, config);
       const responseData = await response.json();
+
+      console.log("Response Data is: ", responseData);
   
       if (!response.ok) {
         throw new Error(responseData.message || 'Request failed');
@@ -40,7 +46,7 @@ export const apiRequest = async (endpoint, method = 'GET', data = null, requires
   
       return responseData;
     } catch (error) {
-      console.error(`API Error (${endpoint}):`, error);
+      console.error(`API Error en api.js (${endpoint}):`, error);
       throw error;
     }
   };
@@ -59,4 +65,10 @@ export const authAPI = {
 export const userAPI = {
   getProfile: () => apiRequest('/users/profile', 'GET', null, true),
   updateProfile: (userData) => apiRequest('/users/profile', 'PUT', userData, true),
+};
+
+// routing API
+export const routingAPI = {
+  getRoute: (origen, destino) => apiRequest('/routing/route', 'POST', { origen, destino }, false),
+  getPlaces: (query) => apiRequest("/routing/places", 'POST', { query }, false),
 };

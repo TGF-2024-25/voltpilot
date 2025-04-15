@@ -2,7 +2,6 @@
 import { auth } from '../config/firebaseAdmin.js';
 import userModel from '../models/userModel.js';
 import fetch from 'node-fetch';
-import { FIREBASE_API_KEY } from "@env";
 
 const authController = {
   
@@ -11,7 +10,7 @@ const authController = {
       const { email, password } = req.body;
       
       // verifica email y contrasenia mediante Firebase Auth REST API
-      const API_KEY = FIREBASE_API_KEY;
+      const API_KEY = process.env.FIREBASE_API_KEY;
       const authResponse = await fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
         {

@@ -11,6 +11,11 @@ expo-env.d.ts
 
 # API key
 .env
+/frontend/.env
+/backend/.env
+
+#service key
+/backend/src/config/serviceAccountKey.json
 
 # Native
 *.orig.*

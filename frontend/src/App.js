@@ -11,6 +11,7 @@ import {
 } from "./views";
 import UserDetails from "./views/UserDetails";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MenuProvider } from 'react-native-popup-menu';
 
 // import patalla login y registro
 import LoginScreen from "./views/LoginScreen";
@@ -142,8 +143,10 @@ export default function App() {
   }
 
   return (
+    <MenuProvider> 
       <NavigationContainer>
         {userToken ? <MainAppStack /> : <AuthStackScreen />}
       </NavigationContainer>
+    </MenuProvider>
   );
 }

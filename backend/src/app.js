@@ -3,11 +3,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import rutaRoutes from './routes/rutaRoutes.js';
 
 // 加载环境变量
 dotenv.config();
 
 const app = express();
+
 app.use(cors()); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
@@ -22,6 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/routing', rutaRoutes);
 
 // 404 
 app.use((req, res) => {

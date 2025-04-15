@@ -1,18 +1,40 @@
-import React, {useState} from 'react';
+/* eslint-disable import/no-unresolved */
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Modal, TextInput, FlatList } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { GOOGLE_MAPS_API_KEY } from "@env";
+import axios from 'axios'
 
 const Favoritos = () => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [favoritos, setFavoritos] = useState([]);
-    const [newFavorito, setNewFavorito] = useState('');
+    const [favoritos, set_favoritos] = useState([]);
 
-    const addFavorito = () => {
-        if(newFavorito.trim() !== '') {
-            setFavoritos([...favoritos, newFavorito]);
-            setNewFavorito('');
-        }
+    useEffect(() => {
+      // Aquí iría la lógica para obtener los favoritos de la base de datos
+      // ejemplo: axios.get('/api/favoritos').then(response => setFavoritos(response.data));
+    }, []);
+
+    const select_function = (data, details) => {
+      const favorito = {
+        description: data.description,
+        location: details.geometry.location,
+      }
+
+      // Guardar favorito en BD
+      axios
+        .post('URL PARA MANEJAR', favorito)
+        .then((response) => {
+          set_favoritos((lst) => [...lst, favorito]); // Añadir a la lista de favoritos locales
+          setModalVisible(false);
+        })
+        .catch((error) => console.error("ERROR >>> Error al guardar el favorito: ", error));
+    }
+
+    const add_destino = (favorito) => {
+      // Logica para guardar el seleccionado favorito como destino
+      console.log("Favorito seleccionado: ", favorito);
     }
 
     return (
@@ -31,30 +53,40 @@ const Favoritos = () => {
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Favoritos</Text>
 
-              <View style={styles.favoritosFijos}>
-                <Text style={styles.fijo}> Casa </Text>
-                <Text style={styles.fijo}> Trabajo </Text>
-              </View>
-
-              <Text style={styles.favoritos}> Otros favoritos: </Text>
               <FlatList
                 data={favoritos}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
-                  <Text style={styles.item}>{item}</Text>
+                  <TouchableOpacity
+                    style={styles.favButton}
+                    onPress={() => add_destino(item)}
+                  >
+                    <Text style={styles.botonTexto}>{item.description}</Text>
+                  </TouchableOpacity>
                 )}
-                style={{ maxHeight: 200 }}
+                ListEmptyComponent={<Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>}
+                style={styles.list}
               />
 
-              <TextInput  
-                placeholder="Nuevo favorito"
-                value={newFavorito}
-                onChangeText={setNewFavorito}
-                style={styles.input}
-              />
-              <TouchableOpacity style={styles.botonAñadir} onPress={addFavorito}>
-                <Text style={styles.botonTexto}>Añadir</Text>
+              {/* Botón para añadir un nuevo favorito */}
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.botonTexto}>Añadir Nuevo Favorito</Text>
               </TouchableOpacity>
+              
+              <GooglePlacesAutocomplete
+                fetchDetails={true}
+                placeholder="Selecciona Destinos"
+                onPress={(data, details = null) => {
+                  if (details) {
+                    select_function(data, details);
+                  }
+                }}
+                query={{ key: GOOGLE_MAPS_API_KEY, language: "es" }}
+                styles={{ textInput: styles.textInput }}
+              />
 
             </View>
           </View>
@@ -66,53 +98,67 @@ const Favoritos = () => {
 export default Favoritos;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modal: {
-        width: 300,
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 20,
-        alignItems: 'stretch',
-        elevation: 6,
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        padding: 10,
-    },
-    botonAñadir: {
-        backgroundColor: '#007AFF',
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    botonTexto: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    logo: {
-        width: 200,
-        height: 200,
-        marginBottom: 20,
-    },
+  container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+  },
+  overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  modalContent: {
+      width: '80%',
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      padding: 20,
+      alignItems: 'center',
+      elevation: 6,
+  },
+  modalTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 15,
+  },
+  favButton: {
+      backgroundColor: '#1FB28A',
+      padding: 15,
+      marginVertical: 10,
+      borderRadius: 5,
+      width: '80%',
+      alignItems: 'center',
+  },
+  addButton: {
+      backgroundColor: '#007AFF',
+      padding: 15,
+      borderRadius: 5,
+      alignItems: 'center',
+      marginTop: 20,
+  },
+  botonTexto: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+  },
+  list: {
+      maxHeight: 200,
+      marginBottom: 15,
+  },
+  textInput: {
+    height: 40,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    width: '100%',
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: '#aaa',
+    textAlign: 'center',
+  },  
 });
