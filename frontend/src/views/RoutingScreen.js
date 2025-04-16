@@ -1,42 +1,23 @@
 /* eslint-disable import/no-unresolved */
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
-import * as Location from "expo-location";
 import { Entypo } from '@expo/vector-icons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Favoritos from "../components/Favoritos";
 import Autonomia from "../components/Autonomia";
 import SearchBar from "../components/SearchBar";
+import UserLocation from "../components/UserLocation.js";
 import styles from "../styles/routesStyle.js";
 import { routingAPI  } from '../services/api.js';
 
 export default function VistaRutas() {
-  const [origen, setOrigen] = useState(null);
+  const [origen, setOrigen] = UserLocation();
   const [destinos, setDestinos] = useState([]);
   const [modRuta, setModRuta] = useState(false);
   const [ruta, setRuta] = useState([]);
 
   const mapRef = useRef(null);
-
-  useEffect(() => {
-    getLocationPermission();
-  }, []);
-
-  async function getLocationPermission() {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      alert("Permission Denied");
-      return;
-    }
-    let location = await Location.getCurrentPositionAsync({});
-    setOrigen({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.1,
-    });
-  }
 
   const addDestino = () => {
     setDestinos([...destinos, null]);

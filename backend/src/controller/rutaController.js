@@ -1,5 +1,6 @@
 import axios from 'axios';
 import polyline from '@mapbox/polyline';
+import autonomiaModel from '../models/autonomiaModel.js';
 
 const rutaController = {
 
@@ -63,29 +64,40 @@ const rutaController = {
         }
     },
 
-   /* getPlaces: async (req, res) => {
-        const { query } = req.body;  // Recibe la consulta de búsqueda desde el frontend
-      
-        const url = `https://maps.googleapis.com/maps/api/place/textsearch/json`;
-      
-        try {
-          const response = await axios.get(url, {
-            params: {
-              query: query,
-              key: GOOGLE_MAPS_API_KEY,
-            },
-          });
-      
-          if (response.data.results) {
-            res.json({ places: response.data.results });
-          } else {
-            res.status(404).json({ message: "No se encontraron lugares" });
-          }
-        } catch (error) {
-          console.error("Error en la obtención de lugares:", error);
-          res.status(500).json({ message: "Error al obtener lugares" });
-        }
-    }*/
+    getAutonomia: async (req, res) => {
+      try {
+        const {uid} = req.query;
+
+        if(!uid) 
+          return res.status(400).json({error: 'No se ha proporcionado el uid del usuario'});
+
+        const data = await autonomiaModel.findById(uid);
+
+        if(!data)
+          return res.status(404).json({ error: "No se ha encontrado la autonimia del usuario" });
+
+        return res.status(200).json(data);
+      } catch (error) {
+        console.error('Error al obtener la autonomia en el servidor:', error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+    
+    setAutonomia: async (req, res) => {
+      try {
+        const data = req.body;
+
+        if(!data || !data.uid)
+          return res.status(400).json({ error: "No se ha proporcionado la autonimia seleccionada" });
+
+        await autonomiaModel.saveOrCreate(data);
+
+        return res.status(200).json({ message: 'Autonomía guardada correctamente', data });
+      } catch (error) {
+        console.error('Error al guardar la autonomia en el servidor:', error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    }
 
 };
 

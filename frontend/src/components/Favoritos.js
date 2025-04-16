@@ -1,11 +1,11 @@
 /* eslint-disable import/no-unresolved */
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Modal, TextInput, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_MAPS_API_KEY } from "@env";
-import axios from 'axios'
+import { routingAPI  } from '../services/api.js';
+import axios from 'axios' // Lo querré borrar seguramente
 
 const Favoritos = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +14,7 @@ const Favoritos = () => {
     useEffect(() => {
       // Aquí iría la lógica para obtener los favoritos de la base de datos
       // ejemplo: axios.get('/api/favoritos').then(response => setFavoritos(response.data));
+      //favoritos = await routingAPI.getRoute(origen, destinos[0]);
     }, []);
 
     const select_function = (data, details) => {

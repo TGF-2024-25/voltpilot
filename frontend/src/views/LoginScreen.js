@@ -37,12 +37,15 @@ export default function LoginScreen() {
       const token = response.data.token;
       const refreshToken = response.data.refreshToken;
       const expiresIn = response.data.expiresIn;
+
+      console.log("userDetail", userDetail);
       
       // guardar el token y los datos del usuario en dispositivo local
       await AsyncStorage.setItem('authToken', token);
       await AsyncStorage.setItem('user', JSON.stringify(userDetail));
       await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('expiresIn', expiresIn);
+      await AsyncStorage.setItem('uid', userDetail.id);
 
       navigation.reset({
         index: 0,

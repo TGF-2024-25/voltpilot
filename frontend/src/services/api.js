@@ -69,6 +69,7 @@ export const userAPI = {
 
 // routing API
 export const routingAPI = {
-  getRoute: (origen, destino) => apiRequest('/routing/route', 'POST', { origen, destino }, false),
-  getPlaces: (query) => apiRequest("/routing/places", 'POST', { query }, false),
+  getRoute: (origen, destino) => apiRequest("/routing/route", "POST", { origen, destino }, false),
+  getAutonomia: (uid) => apiRequest(`/routing/autonomia/${uid}`, "GET", null, false),
+  setAutonomia: (data_autonomia) => apiRequest(`/routing/autonomia`, "POST", data_autonomia, false),
 };

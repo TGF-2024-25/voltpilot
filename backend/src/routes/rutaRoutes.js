@@ -3,7 +3,8 @@ import rutaController from '../controller/rutaController.js';
 
 const router = express.Router();
 
-router.post('/route', rutaController.getRoute);
-//router.post("/places", rutaController.getPlaces);
+router.post("/route", rutaController.getRoute);
+router.get("/autonomia", rutaController.getAutonomia);
+router.post("/autonomia", rutaController.setAutonomia);
 
 export default router;
