@@ -47,6 +47,26 @@ const styles = StyleSheet.create({
       alignItems: "center",
       zIndex: 2,
     },
+    modal: {
+      justifyContent: 'flex-end',
+      margin: 0,
+    },
+    modalContent: {
+      backgroundColor: 'white',
+      padding: 20,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 20,
+    },
   });
 
   export default styles;

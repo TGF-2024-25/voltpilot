@@ -1,5 +1,6 @@
+/* eslint-disable react/display-name */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, ActivityIndicator } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import Slider from '@react-native-community/slider';
@@ -8,12 +9,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { routingAPI } from '../services/api';
 import styles from "../styles/autonomiaStyle";
 
-const Autonomia = () => {
+const Autonomia = forwardRef((props, ref) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading_data, set_loading_data] = useState(true);
   const [ini, set_ini] = useState(30);
   const [fin, set_fin] = useState(60);
   const [min, set_min] = useState(15);
+  const [totalKm, set_totalKm] = useState(100); // Autonomía total del vehículo
   const [uid, set_uid] = useState(null);
 
   const data_autonomia = {
@@ -84,6 +86,14 @@ const Autonomia = () => {
   useEffect(() => {
     if(uid) fetch_autonomia_data();
   }, [uid]);
+
+  useImperativeHandle(ref, () => ({
+    getAutonomia: () => ({
+      inicialKm: (ini / 100) * totalKm,
+      finalKm: (fin / 100) * totalKm,
+      minimaKm: (min / 100) * totalKm,
+    }),
+  })); 
   
   const function_accept = async () => {
     await send_autonomia_data();
@@ -98,6 +108,7 @@ const Autonomia = () => {
 
       <Modal
         animationType="fade"
+        transparent
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
@@ -144,7 +155,10 @@ const Autonomia = () => {
                   <TextInput
                     style={styles.input}
                     value={min.toString()}
-                    onChangeText={(text) => set_min(Number(text))}
+                    onChangeText={(text) => {
+                      const numericValue = text.replace(/[^0-9]/g, '');
+                      set_min(Number(numericValue));
+                    }}
                     keyboardType="numeric"
                   />
                 </View>
@@ -155,6 +169,13 @@ const Autonomia = () => {
                 >
                   <Text style={styles.buttonText}>Aceptar</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.buttonText}>Cancelar</Text>
+                </TouchableOpacity>
               </>
             )}
           </View>
@@ -162,6 +183,7 @@ const Autonomia = () => {
       </Modal>
     </View>
   );
-};
+
+});
 
 export default Autonomia;
