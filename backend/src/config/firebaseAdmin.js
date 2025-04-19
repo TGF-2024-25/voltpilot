@@ -1,7 +1,7 @@
-import admin from 'firebase-admin';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import * as fs from 'fs';
+import admin from "firebase-admin";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import * as fs from "fs";
 
 // configuracion __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -14,22 +14,27 @@ let _auth = null;
 //inicializa firebase admin
 function initializeFirebaseAdmin() {
   try {
-    const serviceAccountPath = join(__dirname, './serviceAccountKey.json'); // depende donde esta serviceAccountKey.json
-    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+    const serviceAccountPath = join(__dirname, "./serviceAccountKey.json"); // depende donde esta serviceAccountKey.json
+    const serviceAccount = JSON.parse(
+      fs.readFileSync(serviceAccountPath, "utf8")
+    );
 
     // inicializar Firebase Admin
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+      credential: admin.credential.cert(serviceAccount),
     });
-    
+
     // initialize Firestore and Auth
     _db = admin.firestore();
     _auth = admin.auth();
-    
-    console.log('Firestore y Auth han sido inicializados correctamente');
+
+    console.log("Firestore y Auth han sido inicializados correctamente");
     return true;
   } catch (error) {
-    console.error('Firebase Admin no ha sido inicializados in correctamente:', error);
+    console.error(
+      "Firebase Admin no ha sido inicializados incorrectamente:",
+      error
+    );
     return false;
   }
 }

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.voltpilot.app-mergeDebugResources-64:/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Daixiang\\.gradle\\caches\\8.10.2\\transforms\\19e6255a7adc945939ca1ea0945466cc\\transformed\\appcompat-1.6.1\\res\\values-v16\\values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "223"
+                    }
+                }
+            ]
+        }
+    ]
+}
