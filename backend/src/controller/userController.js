@@ -1,133 +1,155 @@
-import userModel from '../models/userModel.js';
-import { auth } from '../config/firebaseAdmin.js';
+import userModel from "../models/userModel.js";
+import { auth } from "../config/firebaseAdmin.js";
 
 const userController = {
-  //creare usuario 
-  // los datos que se guarda en firestore: uid, email, name, [phoneNumber]
+  /**
+   * Crea un nuevo usuario
+   * POST /api/users/createUser
+   * Los datos que se guardan en Firestore: uid, email, name, [phoneNumber]
+   */
   createUser: async (req, res) => {
     try {
       const { email, password, name, phoneNumber } = req.body;
 
-      //verificar si el usuario ya existe
+      // Verifica si el usuario ya existe
       const existingUser = await userModel.findByEmail(email);
       if (existingUser) {
-        return res.status(409).json({ 
-          success: false, 
-          message: 'el email ya está registrado' 
+        return res.status(409).json({
+          success: false,
+          message: "El email ya está registrado",
         });
       }
 
-      // creaer el usuario en firebaseAdmin
+      // Crea el usuario en Firebase Admin
       const userRecord = await auth.createUser({
         email,
         password,
-        displayName: name || '',
+        displayName: name || "",
         phoneNumber: phoneNumber || undefined,
-        emailVerified: false
+        emailVerified: false,
       });
 
-      // guarda usuario en Firestore
+      // Guarda el usuario en Firestore
       const userData = {
         id: userRecord.uid,
         email,
-        name: name || '',
+        name: name || "",
         phoneNumber: phoneNumber || null,
       };
 
       await userModel.createUser(userData);
 
-      //delevuelve el mensaje usuario creado
+      // Devuelve el mensaje de usuario creado
       res.status(201).json({
         success: true,
-        message: 'Usuario creado exitosamente',
+        message: "Usuario creado exitosamente",
       });
-
     } catch (error) {
-      console.error('Usuario no ha sido creado correctamente:', error);
+      console.error("Usuario no ha sido creado correctamente:", error);
       res.status(500).json({
         success: false,
-        message: 'erro al crear el usuario',
-        error: error.message
+        message: "Error al crear el usuario",
+        error: error.message,
       });
     }
   },
 
+  /**
+   * Obtiene el perfil del usuario
+   * GET /api/users/getUserProfile
+   */
   getUserProfile: async (req, res) => {
     try {
-      const userId = req.user.uid; 
-      
-      // sacar datos de usuario de firestore
+      const userId = req.user.uid;
+
+      // Obtiene los datos del usuario desde Firestore
       const userProfile = await userModel.findById(userId);
-      
-      // 返回用户资料，排除敏感信息      
+
+      // Devuelve el perfil del usuario, excluyendo información sensible
       res.status(200).json({
         success: true,
-        user: userProfile
+        user: userProfile,
       });
     } catch (error) {
-      console.error('error consiguir datos de usuario:', error);
+      console.error("Error al conseguir datos de usuario:", error);
       res.status(500).json({
         success: false,
-        message: 'ha sido error al conseguir datos de usuario',
-        error: error.message
+        message: "Ha ocurrido un error al conseguir datos de usuario",
+        error: error.message,
       });
     }
   },
-  
+
+  /**
+   * Actualiza el perfil del usuario
+   * PUT /api/users/updateUserProfile
+   */
   updateUserProfile: async (req, res) => {
     try {
       const userId = req.user.uid;
-      const { name, email, phoneNumber, address, password} = req.body;
-      
-      // update user
+      const { name, email, phoneNumber, address, password } = req.body;
+
+      // Prepara los datos para actualizar
       const updateData = {};
       if (email) updateData.email = email;
       if (name) updateData.name = name;
       if (phoneNumber) updateData.phone = phoneNumber;
       if (address) updateData.address = address;
-            
-      
-      //actualizar el email en firebaseAdmin
+
+      // Actualiza el email en Firebase Admin
       if (email) {
         await auth.updateUser(userId, {
           email: email,
-          emailVerified: false
+          emailVerified: false,
         });
       }
-      //actualizar el password de usuario en firebaseAdmin
+
+      // Actualiza la contraseña del usuario en Firebase Admin
       if (password) {
         await auth.updateUser(userId, {
-          password: password
+          password: password,
         });
       }
-      
-      // actualizar el usuario en Firestore
+
+      // Actualiza el usuario en Firestore
       const updatedUser = await userModel.updateUser(userId, updateData);
-      
+
       res.status(200).json({
         success: true,
-        message: 'datos de usuario actualizados exitosamente',
-        data: updatedUser
+        message: "Datos de usuario actualizados exitosamente",
+        data: updatedUser,
       });
     } catch (error) {
-      console.error('error de actualizar datos de usuario:', error);
-      
+      console.error("Error al actualizar datos de usuario:", error);
+
       let statusCode = 500;
-      let message = 'error de actualizar datos de usuario';
-      
+      let message = "Error al actualizar datos de usuario";
+
       res.status(statusCode).json({
         success: false,
         message,
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
   },
-  
+
+  /**
+   * Obtiene un usuario por su ID
+   * GET /api/users/getUserById
+   */
   getUserById: async (req, res) => {
+    // Implementación pendiente
   },
-  
+
+  /**
+   * Elimina un usuario
+   * DELETE /api/users/deleteUser
+   */
   deleteUser: async (req, res) => {
-  }
+    // Implementación pendiente
+  },
 };
 
 export default userController;
+
