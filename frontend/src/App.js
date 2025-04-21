@@ -3,15 +3,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState, useEffect, createContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  VistaEstaciones,
-  VistaRutas,
-  VistaEstacionesFavoritas,
-  VistaPerfil,
-} from "./views";
+import { VistaEstacionInicio, VistaRutas, VistaEstacionesFavoritas, VistaPerfil } from "./views";
 import UserDetails from "./views/UserDetails";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MenuProvider } from 'react-native-popup-menu';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MenuProvider } from "react-native-popup-menu";
+import { CargadorProvider } from "./contexts/EstacionContext";
 
 // import patalla login y registro
 import LoginScreen from "./views/LoginScreen";
@@ -25,16 +21,8 @@ const AuthStack = createStackNavigator();
 function AuthStackScreen() {
   return (
     <AuthStack.Navigator>
-      <AuthStack.Screen 
-        name="Login" 
-        component={LoginScreen} 
-        options={{ headerShown: false }}
-      />
-      <AuthStack.Screen 
-        name="Register" 
-        component={RegisterScreen} 
-        options={{ title: "Registrarse" }}
-      />
+      <AuthStack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+      <AuthStack.Screen name="Register" component={RegisterScreen} options={{ title: "Registrarse" }} />
     </AuthStack.Navigator>
   );
 }
@@ -43,36 +31,12 @@ function AuthStackScreen() {
 function ProfileStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen 
-        name="ProfileMain" 
-        component={VistaPerfil} 
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen 
-        name="UserDetails" 
-        component={UserDetails}
-        options={{ title: "Detalles de Usuario" }}
-      />
-      <Stack.Screen 
-        name="MisVehiculos" 
-        component={PlaceholderScreen}
-        options={{ title: "Mis Vehículos" }}
-      />
-      <Stack.Screen 
-        name="MisPagos" 
-        component={PlaceholderScreen}
-        options={{ title: "Mis Pagos" }}
-      />
-      <Stack.Screen 
-        name="MiHistoriaDeRecarga" 
-        component={PlaceholderScreen}
-        options={{ title: "Mi Historia de Recarga" }}
-      />
-      <Stack.Screen 
-        name="TerminosYPrivacidad" 
-        component={PlaceholderScreen}
-        options={{ title: "Términos y Privacidad" }}
-      />
+      <Stack.Screen name="ProfileMain" component={VistaPerfil} options={{ headerShown: false }} />
+      <Stack.Screen name="UserDetails" component={UserDetails} options={{ title: "Detalles de Usuario" }} />
+      <Stack.Screen name="MisVehiculos" component={PlaceholderScreen} options={{ title: "Mis Vehículos" }} />
+      <Stack.Screen name="MisPagos" component={PlaceholderScreen} options={{ title: "Mis Pagos" }} />
+      <Stack.Screen name="MiHistoriaDeRecarga" component={PlaceholderScreen} options={{ title: "Mi Historia de Recarga" }} />
+      <Stack.Screen name="TerminosYPrivacidad" component={PlaceholderScreen} options={{ title: "Términos y Privacidad" }} />
     </Stack.Navigator>
   );
 }
@@ -80,7 +44,7 @@ function ProfileStack() {
 // placeholder screen for future development
 function PlaceholderScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Esta pantalla está en desarrollo</Text>
     </View>
   );
@@ -89,20 +53,14 @@ function PlaceholderScreen() {
 // main stack
 function MainAppStack() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="Estaciones"
-        component={VistaEstaciones}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen
-        name="Enrutado"
-        component={VistaRutas}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen name="Favoritas" component={VistaEstacionesFavoritas} />
-      <Tab.Screen name="Perfil" component={ProfileStack} options={{ headerShown: false }} />
-    </Tab.Navigator>
+    <CargadorProvider>
+      <Tab.Navigator>
+        <Tab.Screen name="Estaciones" component={VistaEstacionInicio} options={{ headerShown: false }} />
+        <Tab.Screen name="Enrutado" component={VistaRutas} options={{ headerShown: false }} />
+        <Tab.Screen name="Favoritas" component={VistaEstacionesFavoritas} />
+        <Tab.Screen name="Perfil" component={ProfileStack} options={{ headerShown: false }} />
+      </Tab.Navigator>
+    </CargadorProvider>
   );
 }
 
@@ -119,7 +77,7 @@ export default function App() {
       let token = null;
       try {
         // sacar token desede el almacenamiento local
-        token = await AsyncStorage.getItem('authToken');
+        token = await AsyncStorage.getItem("authToken");
       } catch (e) {
         console.error("Failed to load user token", e);
       }
@@ -132,21 +90,23 @@ export default function App() {
     bootstrapAsync();
   }, []);
 
-
   // si la app esta cargando, mostrar un indicador de carga
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
+  // <MenuProvider>
+  // </MenuProvider>
+  {
+    /* <NavigationContainer>{userToken ? <MainAppStack /> : <AuthStackScreen />}</NavigationContainer> */
+  }
   return (
-    <MenuProvider> 
-      <NavigationContainer>
-        {userToken ? <MainAppStack /> : <AuthStackScreen />}
-      </NavigationContainer>
-    </MenuProvider>
+    <NavigationContainer>
+      <MainAppStack />
+    </NavigationContainer>
   );
 }
