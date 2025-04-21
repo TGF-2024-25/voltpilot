@@ -2,6 +2,7 @@ import axios from 'axios';
 import polyline from '@mapbox/polyline';
 import haversine from 'haversine-distance';
 import autonomiaModel from '../models/autonomiaModel.js';
+import preferenciasRutaModel from '../models/preferenciasRutaModel.js';
 
 
 const rutaController = {
@@ -72,7 +73,7 @@ const rutaController = {
 
     getAutonomia: async (req, res) => {
       try {
-        const {uid} = req.query;
+        const {uid} = req.params;
 
         if(!uid) 
           return res.status(400).json({error: 'No se ha proporcionado el uid del usuario'});
@@ -104,6 +105,41 @@ const rutaController = {
         return res.status(500).json({ error: "Error en el servidor" });
       }
     }, 
+
+    getPreferencias: async (req, res) => {
+      try {
+        const { uid } = req.params;
+    
+        if (!uid)
+          return res.status(400).json({ error: "No se ha proporcionado el uid del usuario" });
+    
+        const data = await preferenciasRutaModel.findById(uid);
+    
+        if (!data)
+          return res.status(404).json({ error: "No se han encontrado las preferencias del usuario" });
+    
+        return res.status(200).json(data);
+      } catch (error) {
+        console.error("Error al obtener las preferencias en el servidor:", error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+
+    setPreferencias: async (req, res) => {
+      try {
+        const data = req.body;
+    
+        if (!data || !data.uid)
+          return res.status(400).json({ error: "No se han proporcionado las preferencias del usuario" });
+    
+        await preferenciasRutaModel.saveOrCreate(data);
+    
+        return res.status(200).json({ message: "Preferencias guardadas correctamente", data });
+      } catch (error) {
+        console.error("Error al guardar las preferencias en el servidor:", error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
 
     getEstacionesRuta: async (req, res) => {
       const { ruta, autonomia, distancia } = req.body;

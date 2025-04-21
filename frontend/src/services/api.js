@@ -73,4 +73,6 @@ export const routingAPI = {
   getAutonomia: (uid) => apiRequest(`/routing/autonomia/${uid}`, "GET", null, false),
   setAutonomia: (data_autonomia) => apiRequest(`/routing/autonomia`, "POST", data_autonomia, false),
   getEstacionesRuta: (ruta, autonomia, distancia) => apiRequest( "/routing/estaciones", "POST", { ruta, autonomia, distancia }, false),
+  getPreferencias: (uid) => apiRequest(`/routing/preferencias/${uid}`, "GET", null, false),
+  setPreferencias: (data_preferencias) => apiRequest(`/routing/preferencias`, "POST", data_preferencias, false),
 };

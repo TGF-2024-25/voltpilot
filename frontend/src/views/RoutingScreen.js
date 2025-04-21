@@ -1,13 +1,12 @@
 import React, { useState, useRef } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
-import { Entypo } from '@expo/vector-icons';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 import Favoritos from "../components/Favoritos";
 import Autonomia from "../components/Autonomia";
 import SearchBar from "../components/SearchBar";
 import UserLocation from "../components/UserLocation.js";
+import Preferencias from "../components/Preferencias.js";
 
 import styles from "../styles/routesStyle.js";
 import { routingAPI } from '../services/api.js';
@@ -19,6 +18,7 @@ export default function VistaRutas() {
   const [ruta, setRuta] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
   const autonomiaRef = useRef(null);
+  const preferenciasRef = useRef();
 
   const mapRef = useRef(null);
 
@@ -45,30 +45,30 @@ export default function VistaRutas() {
 
     try {
       let rutaCompleta = [];
-      let estacionesTotales = [];
+      let tot_estaciones = [];
 
       // Calcular la ruta por tramos: origen -> destino1, destino1 -> destino2...
-      let puntoInicio = origen;
+      let origenActual = origen;
 
       for (let i = 0; i < destinos.length; i++) {
         const destinoActual = destinos[i];
         if (!destinoActual) continue;
 
-        const data = await routingAPI.getRoute(puntoInicio, destinoActual);
+        const data = await routingAPI.getRoute(origenActual, destinoActual);
         rutaCompleta = [...rutaCompleta, ...data.route];
 
         // Solo mostrar estaciones para el primer tramo de momento
         if (i === 0) {
-          const estacionesResp = await routingAPI.getEstacionesRuta(data.route, autonomiaKm, data.distanciaKm);
-          const filtradas = filtrar_estaciones(estacionesResp.estaciones);
-          estacionesTotales = filtradas;
+          const res_estaciones = await routingAPI.getEstacionesRuta(data.route, autonomiaKm, data.distanciaKm);
+          const filtradas = filtrar_estaciones(res_estaciones.estaciones);
+          tot_estaciones = filtradas;
         }
 
-        puntoInicio = destinoActual;
+        origenActual = destinoActual;
       }
 
       setRuta(rutaCompleta);
-      setEstaciones(estacionesTotales);
+      setEstaciones(tot_estaciones);
       setModRuta(true);
 
     } catch (error) {
@@ -84,7 +84,13 @@ export default function VistaRutas() {
       name: estacion.name || "Estacion sin nombre",
     };
 
-    setDestinos((prev) => [...prev, coords]); // Añadir a la lista de destinos
+    setDestinos((prev) => {
+      if (prev.length < 1) return [coords];
+      const nuevosDestinos = [...prev];
+      nuevosDestinos.splice(0, 0, coords); // Inserta justo después del origen
+      return nuevosDestinos;
+    });
+
     setEstaciones([]); // Vaciar estaciones para evitar solapamientos visuales
     setModRuta(true);
 
@@ -125,27 +131,7 @@ export default function VistaRutas() {
           </View>
         )}
 
-        <Menu>
-          <MenuTrigger>
-            <Entypo
-              name="dots-three-vertical"
-              size={24}
-              color="darkpruple"
-              style={styles.menuIcon}
-            />
-          </MenuTrigger>
-          <MenuOptions>
-            <MenuOption onSelect={addDestino} text="Agregar nuevo destino" />
-            <MenuOption
-              onSelect={() => alert("Opciones de ruta")}
-              text="Tipo de Ruta"
-            />
-            <MenuOption
-              onSelect={() => alert("Buscar en ruta")}
-              text="Buscar En Ruta"
-            />
-          </MenuOptions>
-        </Menu>
+        <Preferencias ref={preferenciasRef} />
       </View>
 
       <View style={styles.floatingLogos}>

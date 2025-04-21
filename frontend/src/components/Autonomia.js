@@ -10,6 +10,7 @@ import { routingAPI } from '../services/api';
 import styles from "../styles/autonomiaStyle";
 
 const Autonomia = forwardRef((props, ref) => {
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [loading_data, set_loading_data] = useState(true);
   const [ini, set_ini] = useState(30);
