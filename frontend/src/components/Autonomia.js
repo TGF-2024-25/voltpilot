@@ -14,35 +14,27 @@ const Autonomia = forwardRef((props, ref) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading_data, set_loading_data] = useState(true);
   const [ini, set_ini] = useState(30);
-  const [fin, set_fin] = useState(60);
   const [min, set_min] = useState(15);
-  const [totalKm, set_totalKm] = useState(100); // Autonomía total del vehículo
+  const [totalKm, set_totalKm] = useState(100);
   const [uid, set_uid] = useState(null);
 
   const data_autonomia = {
     uid: uid,
     inicial: ini,
-    final: fin,
     minima: min,
+    total: totalKm,
   };
 
   const fetch_autonomia_data = async () => {
     try {
       if (!uid) return;
 
-      const response = await routingAPI.getAutonomia(uid);
+      const data = await routingAPI.getAutonomia(uid);
 
-      if(response.ok) {
-        const data = await response.json();
-        if(data) {
-          set_ini(data.inicial);
-          set_fin(data.final);
-          set_min(data.minima);
-        }
-      } else if (response.status === 404) { 
-        console.log('No hay datos de autonomía para el usuario:', uid, '. Se utilizarán los valores por defecto.');
-      } else {
-        console.error('Error al obtener los datos de autonomía:', response.status);
+      if(data) {
+        set_ini(data.inicial);
+        set_min(data.minima);
+        set_totalKm(data.total);
       }
     } catch (error) { 
       console.error('Error de red al obtener autonomía: ', error);
@@ -53,14 +45,9 @@ const Autonomia = forwardRef((props, ref) => {
 
   const send_autonomia_data = async () => {
     try {
-      const response = await routingAPI.setAutonomia(data_autonomia);
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Autonomía enviada correctamente:', data);
-      } else {
-        console.error('Error al enviar la autonomía:', response.status);
-      }
+      const data = await routingAPI.setAutonomia(data_autonomia);
+
+      console.log('Autonomía enviada correctamente:', data);
     } catch (error) {
       console.error('Error de red al guardar la autonomía:', error);
     }
@@ -91,8 +78,8 @@ const Autonomia = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     getAutonomia: () => ({
       inicialKm: (ini / 100) * totalKm,
-      finalKm: (fin / 100) * totalKm,
       minimaKm: (min / 100) * totalKm,
+      totalKm: totalKm,
     }),
   })); 
   
@@ -137,14 +124,14 @@ const Autonomia = forwardRef((props, ref) => {
                 </View>
 
                 <View style={styles.section}>
-                  <Text style={styles.label}>Autonomía Final: {fin}%</Text>
+                  <Text style={styles.label}>Autonomía Mínima: {min}%</Text>
                   <Slider
                     style={styles.slider}
-                    value={fin}
+                    value={min}
                     minimumValue={0}
                     maximumValue={100}
                     step={5}
-                    onValueChange={(value) => set_fin(value)}
+                    onValueChange={(value) => set_min(value)}
                     minimumTrackTintColor="#1FB28A"
                     maximumTrackTintColor="#ccc"
                     thumbTintColor="#1FB28A"
@@ -152,13 +139,13 @@ const Autonomia = forwardRef((props, ref) => {
                 </View>
 
                 <View style={styles.section}>
-                  <Text style={styles.label}>Autonomía mínima durante el viaje:</Text>
+                  <Text style={styles.label}>Autonomía total del vehículo (km):</Text>
                   <TextInput
                     style={styles.input}
-                    value={min.toString()}
+                    value={totalKm.toString()}
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9]/g, '');
-                      set_min(Number(numericValue));
+                      set_totalKm(Number(numericValue));
                     }}
                     keyboardType="numeric"
                   />
@@ -186,5 +173,7 @@ const Autonomia = forwardRef((props, ref) => {
   );
 
 });
+
+
 
 export default Autonomia;

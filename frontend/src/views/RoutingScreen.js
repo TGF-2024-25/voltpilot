@@ -1,10 +1,11 @@
 import React, { useState, useRef } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import Favoritos from "../components/Favoritos";
-import Autonomia from "../components/Autonomia";
-import SearchBar from "../components/SearchBar";
+import Favoritos from "../components/Favoritos.js";
+import Autonomia from "../components/Autonomia.js";
+import SearchBar from "../components/SearchBar.js";
 import UserLocation from "../components/UserLocation.js";
 import Preferencias from "../components/Preferencias.js";
 
@@ -42,6 +43,7 @@ export default function VistaRutas() {
     if (destinos.length === 0 || !destinos[0]) return;
 
     const autonomiaKm = autonomiaRef.current?.getAutonomia(); // Obtener autonomía en km
+    const preferencias = preferenciasRef.current?.getPreferencias(); // Obtenemos las preferencias de Ruta
 
     try {
       let rutaCompleta = [];
@@ -54,7 +56,7 @@ export default function VistaRutas() {
         const destinoActual = destinos[i];
         if (!destinoActual) continue;
 
-        const data = await routingAPI.getRoute(origenActual, destinoActual);
+        const data = await routingAPI.getRoute(origenActual, destinoActual, preferencias);
         rutaCompleta = [...rutaCompleta, ...data.route];
 
         // Solo mostrar estaciones para el primer tramo de momento
@@ -131,12 +133,21 @@ export default function VistaRutas() {
           </View>
         )}
 
-        <Preferencias ref={preferenciasRef} />
+        {/* Botón nuevos destinos */}
+        {modRuta && (
+          <TouchableOpacity style={styles.botonAgregar} onPress={addDestino}>
+            <Icon name="add-location-alt" size={26} color="#9b59b6" />
+          </TouchableOpacity>
+        )}
       </View>
+
+
+
 
       <View style={styles.floatingLogos}>
         <Favoritos />
         <Autonomia ref={autonomiaRef} />
+        <Preferencias ref={preferenciasRef} />
       </View>
 
       {origen && (

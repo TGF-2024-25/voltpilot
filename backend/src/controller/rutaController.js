@@ -9,37 +9,37 @@ const rutaController = {
 
     // Función para obtener la ruta desde la API de Google
     getRoute: async (req, res) => {
-        const { origen, destino } = req.body;  // Recibe los datos del origen y destino desde el frontend
-    
+        const { origen, destino, preferencias } = req.body;  // Recibe los datos del origen y destino desde el frontend
+            
         const url = `https://routes.googleapis.com/directions/v2:computeRoutes`;
     
         const body = {
-        origin: {
+          origin: {
             location: {
-            latLng: {
+              latLng: {
                 latitude: origen.latitude,
                 longitude: origen.longitude,
+              },
             },
-            },
-        },
-        destination: {
+          },
+          destination: {
             location: {
-            latLng: {
+              latLng: {
                 latitude: destino.latitude,
                 longitude: destino.longitude,
+              },
             },
-            },
-        },
-        travelMode: "DRIVE",
-        routingPreference: "TRAFFIC_AWARE",
-        computeAlternativeRoutes: false,
-        routeModifiers: {
-            avoidTolls: false,
-            avoidHighways: false,
-            avoidFerries: false,
-        },
-        languageCode: "es",
-        units: "METRIC",
+          },
+          travelMode: "DRIVE",
+          routingPreference: preferencias?.traffic ? "TRAFFIC_AWARE" : "TRAFFIC_UNAWARE",
+          computeAlternativeRoutes: false,
+          routeModifiers: {
+            avoidTolls: preferencias?.peajes ?? false,
+            avoidHighways: preferencias?.autopista ?? false,
+            avoidFerries: preferencias?.ferry ?? false,
+          },
+          languageCode: "es",
+          units: "METRIC",
         };
     
         try {
@@ -254,3 +254,4 @@ const rutaController = {
 };
 
 export default rutaController;
+
