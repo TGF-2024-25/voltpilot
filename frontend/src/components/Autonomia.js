@@ -90,16 +90,11 @@ const Autonomia = forwardRef((props, ref) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Feather name="battery-charging" size={40} color="#1FB28A" />
+      <TouchableOpacity style={styles.autonomiaButton} onPress={() => setModalVisible(true)}>
+        <Feather name="battery-charging" size={24} color="white" style={{ transform: [{ rotate: '270deg' }] }} />
       </TouchableOpacity>
 
-      <Modal
-        animationType="fade"
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+      <Modal animationType="fade" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Configuración de autonomía</Text>
@@ -107,7 +102,7 @@ const Autonomia = forwardRef((props, ref) => {
             {loading_data ? (
               <ActivityIndicator size="large" color="#1FB28A" />
             ) : (
-              <>              
+              <>
                 <View style={styles.section}>
                   <Text style={styles.label}>Auntonomía Inicial: {ini}%</Text>
                   <Slider
@@ -144,24 +139,18 @@ const Autonomia = forwardRef((props, ref) => {
                     style={styles.input}
                     value={totalKm.toString()}
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9]/g, "");
                       set_totalKm(Number(numericValue));
                     }}
                     keyboardType="numeric"
                   />
                 </View>
 
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={function_accept}
-                >
+                <TouchableOpacity style={styles.acceptButton} onPress={function_accept}>
                   <Text style={styles.buttonText}>Aceptar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setModalVisible(false)}
-                >
+                <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
                   <Text style={styles.buttonText}>Cancelar</Text>
                 </TouchableOpacity>
               </>
@@ -173,6 +162,7 @@ const Autonomia = forwardRef((props, ref) => {
   );
 
 });
+
 
 
 

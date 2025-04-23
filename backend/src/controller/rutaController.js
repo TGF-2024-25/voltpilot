@@ -3,7 +3,7 @@ import polyline from '@mapbox/polyline';
 import haversine from 'haversine-distance';
 import autonomiaModel from '../models/autonomiaModel.js';
 import preferenciasRutaModel from '../models/preferenciasRutaModel.js';
-
+import FavoritosRutaModel from '../models/favoritosRutaModel.js';
 
 const rutaController = {
 
@@ -138,6 +138,57 @@ const rutaController = {
       } catch (error) {
         console.error("Error al guardar las preferencias en el servidor:", error);
         return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+
+    getFavoritos: async (req, res) => {
+      try {
+        const { uid } = req.params;
+  
+        if (!uid) {
+          return res.status(400).json({ message: "No se ha proporcionado el uid del usuario" });
+        }
+  
+        const data = await FavoritosRutaModel.getAllById(uid);
+  
+        return res.status(200).json(data);
+      } catch (error) {
+        console.error('Error en getFavoritos (controller):', error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+
+    setFavorito: async (req, res) => {
+      try {
+        const data = req.body;
+  
+        if (!data || !data.uid) {
+          return res.status(400).json({ message: "No se ha proporcionado un favorito del usuario" });
+        }
+  
+        await FavoritosRutaModel.add(data);
+  
+        return res.status(200).json({  message: "Favoritos guardados correctamente", data  });
+      } catch (error) {
+        console.error('Error en setFavorito (controller):', error);
+        return res.status(500).json({ message: "Error en el servidor" });
+      }
+    },
+
+    deleteFavorito: async (req, res) => {
+      try {
+        const data = req.body;
+    
+        if (!data || !data.uid) {
+          return res.status(400).json({ message: "No se ha proporcionado el uid del usuario" });
+        }
+    
+        await FavoritosRutaModel.remove(data);
+    
+        return res.status(200).json({ message: "Favorito eliminado correctamente" });
+      } catch (error) {
+        console.error('Error en deleteFavorito (controller):', error);
+        return res.status(500).json({ message: "Error al eliminar el favorito" });
       }
     },
 

@@ -72,7 +72,10 @@ export const routingAPI = {
   getRoute: (origen, destino, preferencias) => apiRequest("/routing/route", "POST", { origen, destino, preferencias }, false),
   getAutonomia: (uid) => apiRequest(`/routing/autonomia/${uid}`, "GET", null, false),
   setAutonomia: (data_autonomia) => apiRequest(`/routing/autonomia`, "POST", data_autonomia, false),
-  getEstacionesRuta: (ruta, autonomia, distancia) => apiRequest( "/routing/estaciones", "POST", { ruta, autonomia, distancia }, false),
+  getEstacionesRuta: (ruta, autonomia, distancia) => apiRequest("/routing/estaciones", "POST", { ruta, autonomia, distancia }, false),
   getPreferencias: (uid) => apiRequest(`/routing/preferencias/${uid}`, "GET", null, false),
   setPreferencias: (data_preferencias) => apiRequest(`/routing/preferencias`, "POST", data_preferencias, false),
+  getFavoritos: (uid) => apiRequest(`/routing/favoritos/${uid}`, "GET", null, false),
+  setFavorito: (data_favorito) => apiRequest(`/routing/favoritos`, "POST", data_favorito, false),
+  deleteFavorito: (data_favorito) => apiRequest(`/routing/favoritos`, "DELETE", data_favorito, false),
 };

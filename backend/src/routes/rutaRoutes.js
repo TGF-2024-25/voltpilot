@@ -9,5 +9,8 @@ router.post("/autonomia", rutaController.setAutonomia);
 router.post("/estaciones", rutaController.getEstacionesRuta);
 router.get("/preferencias/:uid", rutaController.getPreferencias);
 router.post("/preferencias", rutaController.setPreferencias);
+router.get("/favoritos/:uid", rutaController.getFavoritos);
+router.post("/favoritos", rutaController.setFavorito);
+router.delete("/favoritos", rutaController.deleteFavorito);
 
 export default router;

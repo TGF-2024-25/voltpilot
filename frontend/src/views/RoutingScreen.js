@@ -23,6 +23,18 @@ export default function VistaRutas() {
 
   const mapRef = useRef(null);
 
+  // Función para centrar el mapa en la ubicación del usuario
+  const centrarEnUbicacion = () => {
+    if (mapRef.current && origen) {
+      mapRef.current.animateToRegion({
+        latitude: origen.latitude,
+        longitude: origen.longitude,
+        latitudeDelta: origen.latitudeDelta,
+        longitudeDelta: origen.longitudeDelta,
+        }, 1000);
+    }
+  };
+
   // Añadir un nuevo destino vacío (cuando se presiona "Agregar nuevo destino")
   const addDestino = () => {
     setDestinos([...destinos, null]);
@@ -141,13 +153,18 @@ export default function VistaRutas() {
         )}
       </View>
 
-
-
-
-      <View style={styles.floatingLogos}>
+      <View style={styles.upperLogos}>
         <Favoritos />
         <Autonomia ref={autonomiaRef} />
+      </View>
+
+      <View style={styles.lowerLogos}>
         <Preferencias ref={preferenciasRef} />
+
+        {/* Botón personalizado para centrar la ubicación */}
+        <TouchableOpacity style={styles.myLocationButton} onPress={centrarEnUbicacion}>
+          <Icon name="my-location" size={24} color="white" />
+        </TouchableOpacity>
       </View>
 
       {origen && (
@@ -156,11 +173,12 @@ export default function VistaRutas() {
           ref={mapRef}
           region={origen}
           provider={PROVIDER_DEFAULT}
+          showsUserLocation={true}
         >
-          <Marker coordinate={origen} pinColor="lightblue" />
+          {/*<Marker coordinate={origen} pinColor="lightblue" />*/}
 
           {destinos.map((destino, id) =>
-            destino ? <Marker key={id} coordinate={destino} /> : null
+            destino ? <Marker key={id} coordinate={destino} pinColor="#65558F" /> : null
           )}
 
           {estaciones.map((estacion) => (
@@ -170,7 +188,7 @@ export default function VistaRutas() {
                 latitude: estacion.latitude,
                 longitude: estacion.longitude,
               }}
-              pinColor="#9370DB"
+              pinColor="#76C2EA"
               onPress={() => seleccionarEstacion(estacion)} // Elegimos la Estación seleccionada como parada
             />
           ))}

@@ -28,16 +28,13 @@ const styles = StyleSheet.create({
   floatingButton: {
     position: "absolute",
     bottom: 20,
-    right: 20,
-    backgroundColor: "#007AFF",
+    left: 20,
+    backgroundColor: "#65558F",
     padding: 15,
     borderRadius: 30,
     elevation: 5,
   },
-  menuIcon: {
-    marginLeft: 10,
-  },
-  floatingLogos: {
+  upperLogos: {
     position: "absolute",
     marginTop: 150,
     right: 20,
@@ -45,6 +42,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     zIndex: 2,
+  },
+  lowerLogos: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 2,
+  },
+  myLocationButton: {
+    backgroundColor: "#65558F",
+    padding: 10,
+    borderRadius: 25,
+    elevation: 5,
+    alignItems: "center",
+    justifyContent: "center",
   },
   botonAgregar: {
     position: "absolute",

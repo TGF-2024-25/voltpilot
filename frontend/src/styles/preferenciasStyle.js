@@ -4,6 +4,15 @@ import { Dimensions } from "react-native";
 const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+    filterButton: {
+      backgroundColor: "#65558F",
+      padding: 10,
+      borderRadius: 25,
+      elevation: 5,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 10,
+    },
     button: {
       flexDirection: 'row',
       alignItems: 'center',

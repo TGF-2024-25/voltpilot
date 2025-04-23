@@ -3,20 +3,28 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
     alignItems: "center",
     justifyContent: "center",
   },
+  favButton: {
+    backgroundColor: "#65558F",
+    padding: 10,
+    borderRadius: 25,
+    elevation: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalContent: {
     width: "90%",
     maxHeight: "85%",
-    backgroundColor: "#E7DFE8", 
+    backgroundColor: "#E7DFE8",
     borderRadius: 15,
     padding: 25,
     alignItems: "center",
@@ -25,6 +33,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+  },
+  searchContainer: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    right: 20,
+    zIndex: 1,
+    borderRadius: 10,
+    padding: 10,
   },
   modalTitle: {
     fontSize: 20,
@@ -41,12 +58,11 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
+    marginTop: 45,
     marginBottom: 5,
-    width: "100%",
+    width: "60%",
     backgroundColor: "#fafafa",
   },
   addButton: {
@@ -54,22 +70,43 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 50,
-    marginBottom: 20, // separación con el listado
+    marginTop: 15,
+    marginBottom: 10, // separación con el listado
     width: "100%",
+  },
+  favoritoContainer: {
+    marginHorizontal: 15,
+    marginBottom: 12, // separa visualmente los items
+  },
+  favoritoBotones: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  favItemButton: {
+    flex: 14,
+    backgroundColor: '#65558F',
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+  delItemButton: {
+    flex: 2,
+    backgroundColor: '#AA4A44',
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   botonTexto: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
-  },
-  favButton: {
-    backgroundColor: "#8e7cc3", // morado más fuerte
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    width: "100%",
-    alignItems: "center",
   },
   list: {
     maxHeight: 200,

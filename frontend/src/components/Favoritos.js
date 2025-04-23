@@ -1,39 +1,92 @@
-/* eslint-disable import/no-unresolved */
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/display-name */
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList, TextInput } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { routingAPI } from '../services/api';
 import SearchBar from "../components/SearchBar.js";
 import styles from "../styles/favoritosStyle.js";
-
-//import { routingAPI } from "../../services/ApiService";
 
 const Favoritos = ({ on_selected_destino }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading_data, set_loading_data] = useState(true);
 
+  const [uid, set_uid] = useState(null);
   const [favoritos, set_favoritos] = useState([]);
   const [nuevo, set_nuevo] = useState({ description: "", location: null });
 
-  useEffect(() => {
-    // Lógica para cargar favoritos desde la BD
-    // Ej: routingAPI.get('/favoritos').then(res => set_favoritos(res.data));
-  }, []);
+  const fetch_favoritos = async() => {
+    try {
+      if(!uid) return;
 
-  const save_favorito = () => {
+      const data = await routingAPI.getFavoritos(uid);
+
+      if(data) 
+        set_favoritos(data);
+
+    } catch (err) {
+      console.error("Error de red al obtener favoritos: ", err);
+    } finally {
+      set_loading_data(false);
+    }
+  }
+
+  const send_favorito = async() => {
     if (!nuevo.location || !nuevo.description.trim()) return;
 
-    const favorito = {
-      description: nuevo.description,
-      location: nuevo.location,
+    const favorito_data = { description: nuevo.description, location: nuevo.location, uid: uid, };
+
+    try {
+      const data = await routingAPI.setFavorito(favorito_data);
+
+      console.log('Favorito enviado correctamente:', data);
+      set_nuevo({ description: "", location: null });
+
+      fetch_favoritos();
+    } catch (err) {
+      console.error("Error al enviar favorito: ", err);
+    }
+  }
+
+  const delete_favorito = async (favorito) => {
+    try {
+      const data = {
+        uid: uid,
+        description: favorito.description,
+        location: favorito.location
+      };
+  
+      await routingAPI.deleteFavorito(data); 
+
+      fetch_favoritos();
+    } catch (err) {
+      console.error("Error al eliminar favorito:", err);
+    }
+  }
+
+  useEffect(() => {
+    const getCurrentUserId = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('uid');
+        if (userId) {
+          set_uid(userId);
+        } else {
+          console.error('No se encontró el UID en AsyncStorage.');
+        }
+      } catch (e) {
+          console.error('Error al obtener el UID desde AsyncStorage:', e);
+      }
     };
+        
+    getCurrentUserId();
+  }, []);
 
-    // Aquí iría la llamada a la API para guardar
-    // Ej: routingAPI.post('/favoritos', favorito).then...
-
-    set_favoritos((prev) => [...prev, favorito]);
-    set_nuevo({ description: "", location: null });
-  };
+  useEffect(() => {       
+    if (uid) fetch_favoritos();
+  }, [uid]);
 
   const select_favorito = (favorito) => {
     if (on_selected_destino) {
@@ -41,11 +94,11 @@ const Favoritos = ({ on_selected_destino }) => {
     }
     setModalVisible(false);
   };
-
+  
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Feather name="star" size={40} color="#1FB28A" />
+      <TouchableOpacity style={styles.favButton} onPress={() => setModalVisible(true)}>
+        <Feather name="star" size={24} color="white" />
       </TouchableOpacity>
 
       <Modal animationType="slide" visible={modalVisible} transparent onRequestClose={() => setModalVisible(false)}>
@@ -53,14 +106,7 @@ const Favoritos = ({ on_selected_destino }) => {
           <View style={styles.modalContent}>
             <Text style={styles.searchTitle}>Añadir nuevo favorito</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre personalizado"
-              value={nuevo.description}
-              onChangeText={(text) => set_nuevo({ ...nuevo, description: text })}
-            />
-
-            <View style={{ width: "100%", marginVertical: 10 }}>
+            <View style={styles.searchContainer}>
               <SearchBar
                 placeholder="Buscar nuevo favorito"
                 onSelect={(location) => {
@@ -69,12 +115,18 @@ const Favoritos = ({ on_selected_destino }) => {
               />
             </View>
 
+            <TextInput
+              style={styles.input}
+              placeholder="Nombre personalizado"
+              value={nuevo.description}
+              onChangeText={(text) => set_nuevo({ ...nuevo, description: text })} 
+             />
+
             <TouchableOpacity
-              style={[ styles.addButton, (!nuevo.location || !nuevo.description.trim()) && { opacity: 0.6 } ]}
-              onPress={save_favorito}
+              style={[styles.addButton, (!nuevo.location || !nuevo.description.trim()) && { opacity: 0.6 }]}
+              onPress={send_favorito}
               disabled={!nuevo.location || !nuevo.description.trim()}
             >
-
               <Text style={styles.botonTexto}>Guardar como Favorito</Text>
             </TouchableOpacity>
 
@@ -83,10 +135,18 @@ const Favoritos = ({ on_selected_destino }) => {
               data={favoritos}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
+                <View style={styles.favoritoContainer}>
+      <View style={styles.favoritoBotones}>
 
-                <TouchableOpacity style={styles.favButton} onPress={() => select_favorito(item)}>
-                  <Text style={styles.botonTexto}>{item.description}</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity style={styles.delItemButton} onPress={() => delete_favorito(item)}>
+                    <Feather name="trash-2" size={20} color="#fff" />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.favItemButton} onPress={() => select_favorito(item)}>
+                    <Text style={styles.botonTexto}>{item.description}</Text>
+                  </TouchableOpacity>
+</View>
+                </View>
               )}
               ListEmptyComponent={<Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>}
               style={styles.list}
