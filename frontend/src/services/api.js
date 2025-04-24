@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // url de ka api backend
-const DEV_API_URL = 'http://192.168.1.243:5000/api';//cambia a la ip de tu backend 
+const DEV_API_URL = 'http://192.168.1.219:5000/api';//cambia a la ip de tu backend 
 const API_URL = DEV_API_URL;
 
 // patrone de facade de api

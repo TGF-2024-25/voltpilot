@@ -106,7 +106,7 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <MainAppStack />
+      {userToken ? <MainAppStack /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 }
