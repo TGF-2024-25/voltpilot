@@ -28,17 +28,11 @@ export const apiRequest = async (endpoint, method = 'GET', data = null, requires
         headers,
         body: data ? JSON.stringify(data) : null,
       };
-
-      console.log("Congifig is: ", config);
   
       if (method === 'GET') delete config.body;
-
-      console.log(`Going to: ${API_URL}${endpoint} `)
   
       const response = await fetch(`${API_URL}${endpoint}`, config);
       const responseData = await response.json();
-
-      console.log("Response Data is: ", responseData);
   
       if (!response.ok) {
         throw new Error(responseData.message || 'Request failed');

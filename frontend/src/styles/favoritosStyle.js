@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
+
+const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   favButton: {
     backgroundColor: "#65558F",
@@ -18,95 +19,106 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-start",
   },
   modalContent: {
-    width: "90%",
-    maxHeight: "85%",
-    backgroundColor: "#E7DFE8",
-    borderRadius: 15,
-    padding: 25,
+    backgroundColor: "#fff",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
+    height: screenHeight,
+  },
+  header: {
+    backgroundColor: "#65558F",
+    paddingVertical: 20,
     alignItems: "center",
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    marginBottom: 20,
+  },
+  title: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   searchContainer: {
     position: "absolute",
-    top: 40,
-    left: 20,
-    right: 20,
-    zIndex: 1,
+    marginTop: 70,
+    width: "100%",
     borderRadius: 10,
     padding: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-    marginTop: 30, // espacio después del botón de guardar
-    color: "#fff",
+    backgroundColor: "lightgrey",
   },
   searchTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#fff",
+    color: "black",
   },
   input: {
     height: 40,
     borderRadius: 5,
-    paddingHorizontal: 10,
-    marginTop: 45,
+    paddingHorizontal: 15,
+    marginTop: 10,
     marginBottom: 5,
-    width: "60%",
-    backgroundColor: "#fafafa",
+    borderBottomColor: "#5e2e7e",
+    borderBottomWidth: 2,
+    color: "5e2e7e",
   },
   addButton: {
     backgroundColor: "#a96c9f", // morado claro
-    padding: 15,
-    borderRadius: 5,
+    marginTop: 10,
+    marginLeft: 50,
+    paddingVertical: 15,
+    paddingHorizontal: 5,
+    borderRadius: 35,
     alignItems: "center",
-    marginTop: 15,
-    marginBottom: 10, // separación con el listado
+  },
+  listContainer: {
+    marginTop: 230,
     width: "100%",
+    borderRadius: 10,
+    padding: 10,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "black",
+  },
+  botonTexto: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   favoritoContainer: {
     marginHorizontal: 15,
-    marginBottom: 12, // separa visualmente los items
+    marginBottom: 12,
   },
   favoritoBotones: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   favItemButton: {
     flex: 14,
-    backgroundColor: '#65558F',
+    backgroundColor: "#65558F",
     padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  
   delItemButton: {
     flex: 2,
-    backgroundColor: '#AA4A44',
+    backgroundColor: "#AA4A44",
     padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  botonTexto: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    justifyContent: "center",
+    alignItems: "center",
   },
   list: {
     maxHeight: 200,
@@ -117,6 +129,19 @@ const styles = StyleSheet.create({
     color: "#aaa",
     textAlign: "center",
     marginTop: 10,
+  },
+  backButton: {
+    backgroundColor: "#d3d3d3",
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 15,
+    marginHorizontal: 20,
+  },
+  backButtonText: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

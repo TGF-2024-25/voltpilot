@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/display-name */
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { View, Text, TouchableOpacity, Modal, FlatList, TextInput } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Modal, FlatList, TextInput, ActivityIndicator } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -15,8 +15,8 @@ const Favoritos = ({ on_selected_destino }) => {
   const [loading_data, set_loading_data] = useState(true);
 
   const [uid, set_uid] = useState(null);
-  const [favoritos, set_favoritos] = useState([]);
   const [nuevo, set_nuevo] = useState({ description: "", location: null });
+  const [favoritos, set_favoritos] = useState([]);
 
   const fetch_favoritos = async() => {
     try {
@@ -104,53 +104,71 @@ const Favoritos = ({ on_selected_destino }) => {
       <Modal animationType="slide" visible={modalVisible} transparent onRequestClose={() => setModalVisible(false)}>
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.searchTitle}>Añadir nuevo favorito</Text>
-
+            <View style={styles.header}>
+              <Text style={styles.title}>Destinos de Ruta Favoritos</Text>
+            </View>
+            
             <View style={styles.searchContainer}>
+              <Text style={styles.searchTitle}>Añadir nuevo favorito</Text>
               <SearchBar
                 placeholder="Buscar nuevo favorito"
                 onSelect={(location) => {
                   set_nuevo({ ...nuevo, location });
                 }}
               />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Nombre personalizado"
+                value={nuevo.description}
+                onChangeText={(text) => set_nuevo({ ...nuevo, description: text })} 
+              />
+
+              <TouchableOpacity
+                style={[styles.addButton, (!nuevo.location || !nuevo.description.trim()) && { opacity: 0.6 }]}
+                onPress={send_favorito}
+                disabled={!nuevo.location || !nuevo.description.trim()}
+              >
+                <Text style={styles.botonTexto}>Guardar como Favorito</Text>
+              </TouchableOpacity>
             </View>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre personalizado"
-              value={nuevo.description}
-              onChangeText={(text) => set_nuevo({ ...nuevo, description: text })} 
-             />
+            <View style={styles.listContainer}>
+              <Text style={styles.modalTitle}> Tus Favoritos</Text>
+              {loading_data ? (
+                <ActivityIndicator size="large" color="#0000ff" style={{ marginVertical: 20 }} />
+              ) : (
+                <FlatList
+                  data={favoritos}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.favoritoContainer}>
+                      <View style={styles.favoritoBotones}>
+                        <TouchableOpacity style={styles.delItemButton} onPress={() => delete_favorito(item)}>
+                          <Feather name="trash-2" size={20} color="#fff" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.favItemButton} onPress={() => select_favorito(item)}>
+                          <Text style={styles.botonTexto}>{item.description}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                  ListEmptyComponent={
+                    <Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>
+                  }
+                  style={styles.list}
+                />
+              )}
+            </View>
 
             <TouchableOpacity
-              style={[styles.addButton, (!nuevo.location || !nuevo.description.trim()) && { opacity: 0.6 }]}
-              onPress={send_favorito}
-              disabled={!nuevo.location || !nuevo.description.trim()}
-            >
-              <Text style={styles.botonTexto}>Guardar como Favorito</Text>
-            </TouchableOpacity>
+                style={styles.backButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.backButtonText}>Cancelar</Text>
+              </TouchableOpacity>
 
-            <Text style={styles.modalTitle}>Favoritos</Text>
-            <FlatList
-              data={favoritos}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.favoritoContainer}>
-      <View style={styles.favoritoBotones}>
-
-                  <TouchableOpacity style={styles.delItemButton} onPress={() => delete_favorito(item)}>
-                    <Feather name="trash-2" size={20} color="#fff" />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.favItemButton} onPress={() => select_favorito(item)}>
-                    <Text style={styles.botonTexto}>{item.description}</Text>
-                  </TouchableOpacity>
-</View>
-                </View>
-              )}
-              ListEmptyComponent={<Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>}
-              style={styles.list}
-            />
           </View>
         </View>
       </Modal>

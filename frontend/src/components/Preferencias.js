@@ -10,7 +10,7 @@ import styles from "../styles/preferenciasStyle";
 
 const Preferencias = forwardRef((props, ref) => {
 
-  const [modalPosition] = useState(new Animated.Value(-500)); // Lo mantengo fuera de la pantalla
+  const [modalPosition] = useState(new Animated.Value(800)); // Lo mantengo fuera de la pantalla
 
   const [modalVisible, setModalVisible] = useState(false);
   const [loading_data, set_loading_data] = useState(true);
@@ -62,7 +62,7 @@ const Preferencias = forwardRef((props, ref) => {
     
   const slideOut = () => {
     Animated.timing(modalPosition, {
-      toValue: -500,
+      toValue: 800,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -124,7 +124,7 @@ return (
     </TouchableOpacity>
 
     {/* Modal de preferencias deslizante */}
-    <Modal transparent animationType="fade" visible={modalVisible} onRequestClose={() => {
+    <Modal transparent animationType="slide" visible={modalVisible} onRequestClose={() => {
         setModalVisible(false); slideOut();
     }}>
           
@@ -132,9 +132,6 @@ return (
         <Animated.View style={[styles.modalContent, { transform: [{ translateY: modalPosition }] }]}>
           <View style={styles.header}>
             <Text style={styles.title}>Preferencias de Ruta</Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Feather name="x" size={24} color="#fff" />
-            </TouchableOpacity>
           </View>
 
           {loading_data ? (
@@ -189,10 +186,10 @@ return (
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.button}
+                style={styles.backButton}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.buttonText}>Cancelar</Text>
+                <Text style={styles.backButtonText}>Cancelar</Text>
               </TouchableOpacity>
             </>
           )}

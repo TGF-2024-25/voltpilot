@@ -94,10 +94,12 @@ const Autonomia = forwardRef((props, ref) => {
         <Feather name="battery-charging" size={24} color="white" style={{ transform: [{ rotate: '270deg' }] }} />
       </TouchableOpacity>
 
-      <Modal animationType="fade" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+      <Modal animationType="slide" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Configuración de autonomía</Text>
+            <View style={styles.header}>
+              <Text style={styles.title}>Configuración de autonomía</Text>
+            </View>
 
             {loading_data ? (
               <ActivityIndicator size="large" color="#1FB28A" />
@@ -111,10 +113,10 @@ const Autonomia = forwardRef((props, ref) => {
                     minimumValue={0}
                     maximumValue={100}
                     step={5}
-                    onValueChange={(value) => set_ini(value)}
-                    minimumTrackTintColor="#1FB28A"
-                    maximumTrackTintColor="#ccc"
-                    thumbTintColor="#1FB28A"
+                    onSlidingComplete={(value) => set_ini(value)}
+                    minimumTrackTintColor="#65558F"
+                    maximumTrackTintColor="#d3d3d3"
+                    thumbTintColor="#65558F"
                   />
                 </View>
 
@@ -126,10 +128,10 @@ const Autonomia = forwardRef((props, ref) => {
                     minimumValue={0}
                     maximumValue={100}
                     step={5}
-                    onValueChange={(value) => set_min(value)}
-                    minimumTrackTintColor="#1FB28A"
-                    maximumTrackTintColor="#ccc"
-                    thumbTintColor="#1FB28A"
+                    onSlidingComplete={(value) => set_min(value)}
+                    minimumTrackTintColor="#65558F"
+                    maximumTrackTintColor="#d3d3d3"
+                    thumbTintColor="#65558F"
                   />
                 </View>
 
@@ -147,11 +149,11 @@ const Autonomia = forwardRef((props, ref) => {
                 </View>
 
                 <TouchableOpacity style={styles.acceptButton} onPress={function_accept}>
-                  <Text style={styles.buttonText}>Aceptar</Text>
+                  <Text style={styles.acceptButtonText}>Aceptar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-                  <Text style={styles.buttonText}>Cancelar</Text>
+                <TouchableOpacity style={styles.backButton} onPress={() => setModalVisible(false)}>
+                  <Text style={styles.backButtonText}>Cancelar</Text>
                 </TouchableOpacity>
               </>
             )}

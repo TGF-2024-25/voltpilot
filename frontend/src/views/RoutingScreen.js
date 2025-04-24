@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, TextInput, TouchableOpacity, Text } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, Modal } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -10,6 +10,7 @@ import UserLocation from "../components/UserLocation.js";
 import Preferencias from "../components/Preferencias.js";
 
 import styles from "../styles/routesStyle.js";
+import stylesEstacion from "../styles/rutaEstacionStyle.js";
 import { routingAPI } from '../services/api.js';
 
 export default function VistaRutas() {
@@ -21,17 +22,35 @@ export default function VistaRutas() {
   const autonomiaRef = useRef(null);
   const preferenciasRef = useRef();
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [infoRuta, setInfoRuta] = useState([]);
+
+  const [modalEstacionVisible, setModalEstacionVisible] = useState(false);
+  const [estConsultada, setEstConsultada] = useState(null);
+
   const mapRef = useRef(null);
+
+  // Para formatear el tipo de conexión
+  const formatConnectorType = (type) => {
+    return type
+      .replace("EV_CONNECTOR_TYPE_", "") // Eliminar el prefijo
+      .replace(/_/g, " ") // Reemplazar guiones bajos por espacios
+      .toLowerCase() // Convertir a minúsculas
+      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalizar cada palabra
+  };
 
   // Función para centrar el mapa en la ubicación del usuario
   const centrarEnUbicacion = () => {
     if (mapRef.current && origen) {
-      mapRef.current.animateToRegion({
-        latitude: origen.latitude,
-        longitude: origen.longitude,
-        latitudeDelta: origen.latitudeDelta,
-        longitudeDelta: origen.longitudeDelta,
-        }, 1000);
+      mapRef.current.animateToRegion(
+        {
+          latitude: origen.latitude,
+          longitude: origen.longitude,
+          latitudeDelta: origen.latitudeDelta,
+          longitudeDelta: origen.longitudeDelta,
+        },
+        1000,
+      );
     }
   };
 
@@ -60,6 +79,7 @@ export default function VistaRutas() {
     try {
       let rutaCompleta = [];
       let tot_estaciones = [];
+      let infoTramos = [];
 
       // Calcular la ruta por tramos: origen -> destino1, destino1 -> destino2...
       let origenActual = origen;
@@ -70,6 +90,16 @@ export default function VistaRutas() {
 
         const data = await routingAPI.getRoute(origenActual, destinoActual, preferencias);
         rutaCompleta = [...rutaCompleta, ...data.route];
+
+        // Guardamos la Información de los Tramos
+        console.log("Origen tramo: ", origenActual);
+        console.log("Destino tramo: ", destinoActual);
+        infoTramos.push({
+          origen: origenActual.name || `Parada ${i}`,
+          destino: destinoActual.name || `Parada ${i + 1}`,
+          distancia: data.distanciaKm,
+          duracion: data.duration,
+        });
 
         // Solo mostrar estaciones para el primer tramo de momento
         if (i === 0) {
@@ -83,8 +113,8 @@ export default function VistaRutas() {
 
       setRuta(rutaCompleta);
       setEstaciones(tot_estaciones);
+      setInfoRuta(infoTramos);
       setModRuta(true);
-
     } catch (error) {
       console.log("ERROR : Error obtenido en la ruta: ", error);
     }
@@ -106,9 +136,14 @@ export default function VistaRutas() {
     });
 
     setEstaciones([]); // Vaciar estaciones para evitar solapamientos visuales
-    setModRuta(true);
 
     await fetchRoute(); // Recalcular ruta con nueva parada
+  };
+
+  // Antes de seleccionar, permitimos consultar las 3 estaciones filtradas
+  const consultarEstacion = (estacion) => {
+    setEstConsultada(estacion);
+    setModalEstacionVisible(true);
   };
 
   return (
@@ -118,26 +153,20 @@ export default function VistaRutas() {
           // Primer paso: seleccionar destino principal
           <SearchBar
             placeholder="Seleccione un destino"
-            onSelect={(coords) => setDestinos([coords])}
+            onSelect={(coords) => setDestinos([{ ...coords, name: coords.name || "Destino principal" }])}
           />
         ) : (
           // Una vez se empieza a modificar la ruta, se muestran todas las paradas
           <View>
-            <TextInput
-              style={styles.textInput}
-              value="Ubicación actual"
-              editable={false}
-            />
+            <TextInput style={styles.textInput} value="Ubicación actual" editable={false} />
             {destinos.map((destino, index) => (
               <SearchBar
                 key={index}
-                placeholder={
-                  destino?.name ? destino.name : `Parada ${index + 1}`
-                }
+                placeholder={destino?.name ? destino.name : `Parada ${index + 1}`}
                 initialValue={destino} // Esto hace editable la parada
                 onSelect={(coords) => {
                   const actualizados = [...destinos];
-                  actualizados[index] = coords;
+                  actualizados[index] = { ...coords, name: coords.name || `Parada ${index + 1}` };
                   setDestinos(actualizados);
                 }}
               />
@@ -154,7 +183,15 @@ export default function VistaRutas() {
       </View>
 
       <View style={styles.upperLogos}>
-        <Favoritos />
+        <Favoritos
+          on_selected_destino={(favorito) => {
+            const location = favorito.location;
+            location.name = location.name || favorito.description || "Destino favorito";
+            setDestinos([location]);
+            setModRuta(false);
+          }}
+        />
+
         <Autonomia ref={autonomiaRef} />
       </View>
 
@@ -168,44 +205,106 @@ export default function VistaRutas() {
       </View>
 
       {origen && (
-        <MapView
-          style={styles.map}
-          ref={mapRef}
-          region={origen}
-          provider={PROVIDER_DEFAULT}
-          showsUserLocation={true}
-        >
+        <MapView style={styles.map} ref={mapRef} region={origen} provider={PROVIDER_DEFAULT} showsUserLocation={true}>
           {/*<Marker coordinate={origen} pinColor="lightblue" />*/}
 
-          {destinos.map((destino, id) =>
-            destino ? <Marker key={id} coordinate={destino} pinColor="#65558F" /> : null
-          )}
+          {destinos.map((destino, id) => (destino ? <Marker key={id} coordinate={destino} pinColor="#65558F" /> : null))}
 
           {estaciones.map((estacion) => (
             <Marker
-              key={estacion.place_id}
+              key={estacion.id}
               coordinate={{
                 latitude: estacion.latitude,
                 longitude: estacion.longitude,
               }}
               pinColor="#76C2EA"
-              onPress={() => seleccionarEstacion(estacion)} // Elegimos la Estación seleccionada como parada
+              onPress={() => consultarEstacion(estacion)} // Elegimos la Estación seleccionada como parada
             />
           ))}
 
-          {ruta.length > 0 && (
-            <Polyline
-              coordinates={ruta}
-              strokeWidth={5}
-              strokeColor="#ba66ff"
-            />
-          )}
+          {ruta.length > 0 && <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#ba66ff" />}
         </MapView>
       )}
 
+      {/* Botón que calcula la Ruta con uno o varios Destinos */}
       <TouchableOpacity style={styles.floatingButton} onPress={fetchRoute}>
         <Text style={{ color: "white", fontWeight: "bold" }}>Cómo llegar</Text>
       </TouchableOpacity>
+
+      {/* Botón con Desplegable para Información de la Ruta ¿Posible Componente aparte? */}
+      {modRuta && (
+        <>
+          <TouchableOpacity style={styles.infoRutaButton} onPress={() => setModalVisible(true)}>
+            <Text style={{ color: "white" }}>Info</Text>
+          </TouchableOpacity>
+
+          <Modal transparent animationType="slide" visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+            <View style={styles.overlay}>
+              <View style={styles.modalContent}>
+                <View style={styles.header}>
+                  <Text style={styles.title}>Información de la Ruta</Text>
+                </View>
+
+                <View style={styles.infoContainer}>
+                  {infoRuta.map((tramo, index) => (
+                    <View key={index} style={styles.tramoContainer}>
+                      <Text style={styles.origen}>{tramo.origen}</Text>
+
+                      <View style={styles.flechaContainer}>
+                        <Text style={styles.distancia}>{tramo.distancia} km</Text>
+                        <Text style={styles.flecha}>➤</Text>
+                        <Text style={styles.duracion}>{tramo.duracion}</Text>
+                      </View>
+
+                      <Text style={styles.destino}>{tramo.destino}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </>
+      )}
+
+      {/* Modal Estacion Info */}
+      {modalEstacionVisible && (
+        <Modal transparent animationType="slide" visible={modalEstacionVisible} onRequestClose={() => setModalEstacionVisible(false)}>
+          <View style={stylesEstacion.overlay}>
+            <View style={stylesEstacion.modalContent}>
+              <View style={stylesEstacion.header}>
+                <Text style={stylesEstacion.title}>{estConsultada.name || "Sin nombre"}</Text>
+              </View>
+
+              <View style={stylesEstacion.infoContainer}>
+                <Text style={stylesEstacion.infoText}>Distancia a ruta: {estConsultada.distanceToRuta?.toFixed(2)} km</Text>
+
+                {/* Mostrar KW y conectores de la estación */}
+                {estConsultada.evChargeOptions ? (
+                  <View style={stylesEstacion.evChargeInfo}>
+                    <Text style={stylesEstacion.infoText}>Total de conectores: {estConsultada.evChargeOptions.connectorCount}</Text>
+
+                    {estConsultada.evChargeOptions.connectorAggregation.map((connector, index) => (
+                      <View key={index} style={stylesEstacion.connectorInfo}>
+                        <Text style={stylesEstacion.infoText}>Tipo de conector: {formatConnectorType(connector.type)}</Text>
+                        <Text style={stylesEstacion.infoText}>Tasa de carga máxima: {connector.maxChargeRateKw} kW</Text>
+                        <Text style={stylesEstacion.infoText}>
+                          Conectores disponibles: {connector.availableCount || connector.count} / {connector.count}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <Text style={stylesEstacion.infoText}>No hay opciones de carga disponibles.</Text>
+                )}
+              </View>
+
+              <TouchableOpacity onPress={() => setModalEstacionVisible(false)} style={styles.modalCloseButton}>
+                <Text style={styles.modalCloseText}>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 }

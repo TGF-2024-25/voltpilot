@@ -1,6 +1,12 @@
 import { StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
+
+const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   autonomiaButton: {
     backgroundColor: "#65558F",
     padding: 10,
@@ -10,72 +16,85 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
   },
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-start",
   },
   modalContent: {
-    backgroundColor: '#E7DFE8',
-    borderRadius: 15,
-    padding: 25,
-    width: '90%',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    backgroundColor: "#fff",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
+    height: screenHeight,
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#fff',
-    textAlign: 'center',
+  header: {
+    backgroundColor: "#65558F",
+    paddingVertical: 20,
+    alignItems: "center",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    marginBottom: 50,
+  },
+  title: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   section: {
-    marginBottom: 20,
+    marginVertical: 20,
   },
   label: {
     fontSize: 16,
-    color: '#fff',
-    marginBottom: 8,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "black",
+    marginLeft: 15,
   },
   slider: {
-    width: '100%',
+    width: "100%",
+    height: 40,
   },
   input: {
-    backgroundColor: '#fafafa',
-    paddingHorizontal: 10,
     height: 40,
     borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    paddingHorizontal: 15,
+    marginHorizontal: 15,
+    marginTop: 10,
+    marginBottom: 5,
+    borderBottomColor: "#5e2e7e",
+    borderBottomWidth: 2,
+    color: "5e2e7e",
   },
   acceptButton: {
-    backgroundColor: '#a96c9f',
-    paddingVertical: 12,
-    borderRadius: 5,
-    marginTop: 15,
-    alignItems: 'center',
+    backgroundColor: "#65558F", // Fondo morado
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 160,
+    marginHorizontal: 20, // Margen izquierdo y derecho
   },
-  cancelButton: {
-    backgroundColor: '#CCCCCC',
-    paddingVertical: 12,
-    borderRadius: 5,
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    textAlign: 'center',
-    color: '#fff',
+  acceptButtonText: {
+    color: "white", // Texto blanco
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+  },
+  backButton: {
+    backgroundColor: "#d3d3d3",
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 15,
+    marginHorizontal: 20,
+  },
+  backButtonText: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
+
+
+
 
 export default styles;

@@ -266,7 +266,13 @@ const rutaController = {
               const response = await axios.post(
                 url,
                 { includedTypes: ["electric_vehicle_charging_station"], maxResultCount: 5, openNow: true, locationRestriction: { circle: { center: { latitude, longitude }, radius: searchRadius } } },
-                { headers: { "Content-Type": "application/json", "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY, "X-Goog-FieldMask": "places.displayName,places.location,places.businessStatus,places.id,places.formattedAddress" } }
+                { headers: { 
+                  "Content-Type": "application/json", 
+                  "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY, 
+                  "X-Goog-FieldMask": 
+                    "places.displayName,places.location,places.businessStatus,places.id,places.formattedAddress,places.evChargeOptions"
+                   } 
+                }
               );
     
               const resultados = response.data.places || [];
@@ -279,15 +285,16 @@ const rutaController = {
                 const distanceToRuta = haversine({ latitude: estacionLat, longitude: estacionLng }, { latitude, longitude });
 
                 // Evitar agregar estaciones duplicadas
-                if (!estaciones.find((e) => e.place_id === estacion.place_id)) {
+                if (!estaciones.find((e) => e.id === estacion.id)) {
                   estaciones.push({
+                    id: estacion.id,
                     name: estacion.displayName?.text || "Sin nombre",
                     distanceToRuta,
                     latitude: estacionLat,
                     longitude: estacionLng,
                     address: estacion.formattedAddress || "",
-                    place_id: estacion.id,
-                    business_status: estacion.businessStatus || null
+                    business_status: estacion.businessStatus || null,
+                    evChargeOptions: estacion.evChargeOptions || null
                   });
                 }
               });
@@ -296,7 +303,7 @@ const rutaController = {
             }
           }
 
-          break; // salimos tras buscar en puntos especificados
+          break;
         }
       }
       return res.json({ estaciones });

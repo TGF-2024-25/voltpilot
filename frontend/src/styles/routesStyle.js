@@ -75,6 +75,70 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
+
+
+  infoRutaButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 170,
+    backgroundColor: '#2196F3',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    width: '90%',
+    borderRadius: 8,
+    padding: 15,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  infoContainer: {
+    marginTop: 10,
+  },
+  tramoContainer: {
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  origen: {
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  destino: {
+    fontWeight: '600',
+    fontSize: 16,
+    marginTop: 5,
+  },
+  flechaContainer: {
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  flecha: {
+    fontSize: 20,
+    color: 'black',
+  },
+  distancia: {
+    fontSize: 14,
+    color: '#333',
+  },
+  duracion: {
+    fontSize: 14,
+    color: '#555',
+  },
 });
 
 export default styles;
