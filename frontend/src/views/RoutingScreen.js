@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, TextInput, TouchableOpacity, Text, Modal } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, Modal, ScrollView } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -8,6 +8,7 @@ import Autonomia from "../components/Autonomia.js";
 import SearchBar from "../components/SearchBar.js";
 import UserLocation from "../components/UserLocation.js";
 import Preferencias from "../components/Preferencias.js";
+import InformacionRuta from "../components/InformacionRuta.js";
 
 import styles from "../styles/routesStyle.js";
 import stylesEstacion from "../styles/rutaEstacionStyle.js";
@@ -21,12 +22,11 @@ export default function VistaRutas() {
   const [estaciones, setEstaciones] = useState([]);
   const autonomiaRef = useRef(null);
   const preferenciasRef = useRef();
-
-  const [modalVisible, setModalVisible] = useState(false);
   const [infoRuta, setInfoRuta] = useState([]);
 
   const [modalEstacionVisible, setModalEstacionVisible] = useState(false);
   const [estConsultada, setEstConsultada] = useState(null);
+  const [estSeleccionadas, setEstSeleccionadas] = useState([]);
 
   const mapRef = useRef(null);
 
@@ -69,6 +69,37 @@ export default function VistaRutas() {
     return ordenadas.slice(0, 3);
   };
 
+  // Formar el tramo según sea estación de carga o destino
+  const make_tramos = (origenActual, destinoActual, data, estSeleccionadas, index) => {
+    const esEstacion = estSeleccionadas.some(
+      (est) =>
+        Math.abs(est.latitude - destinoActual.latitude) < 0.0001 &&
+        Math.abs(est.longitude - destinoActual.longitude) < 0.0001
+    );
+  
+    const tramos = [];
+  
+    // Siempre añadimos el tramo de desplazamiento
+    tramos.push({
+      tipo: "normal",
+      origen: origenActual.name || `Parada ${index}`,
+      destino: destinoActual.name || `Parada ${index + 1}`,
+      distancia: data.distanciaKm,
+      duracion: data.duration,
+    });
+  
+    // Si además es estación, añadimos el tramo de carga
+    if (esEstacion) {
+      tramos.push({
+        tipo: "carga",
+        estacion: destinoActual.name || `Estación ${index + 1}`,
+        tiempoCarga: "20 min",
+      });
+    }
+  
+    return tramos;
+  };
+
   // Función principal que recalcula la ruta completa (con origen y todos los destinos intermedios)
   const fetchRoute = async () => {
     if (destinos.length === 0 || !destinos[0]) return;
@@ -94,12 +125,8 @@ export default function VistaRutas() {
         // Guardamos la Información de los Tramos
         console.log("Origen tramo: ", origenActual);
         console.log("Destino tramo: ", destinoActual);
-        infoTramos.push({
-          origen: origenActual.name || `Parada ${i}`,
-          destino: destinoActual.name || `Parada ${i + 1}`,
-          distancia: data.distanciaKm,
-          duracion: data.duration,
-        });
+        const tramos = make_tramos(origenActual, destinoActual, data, estSeleccionadas, i);
+        infoTramos.push(...tramos);
 
         // Solo mostrar estaciones para el primer tramo de momento
         if (i === 0) {
@@ -127,6 +154,8 @@ export default function VistaRutas() {
       longitude: estacion.longitude,
       name: estacion.name || "Estacion sin nombre",
     };
+
+    setEstSeleccionadas((prev) => [...prev, estacion]);
 
     setDestinos((prev) => {
       if (prev.length < 1) return [coords];
@@ -232,39 +261,7 @@ export default function VistaRutas() {
       </TouchableOpacity>
 
       {/* Botón con Desplegable para Información de la Ruta ¿Posible Componente aparte? */}
-      {modRuta && (
-        <>
-          <TouchableOpacity style={styles.infoRutaButton} onPress={() => setModalVisible(true)}>
-            <Text style={{ color: "white" }}>Info</Text>
-          </TouchableOpacity>
-
-          <Modal transparent animationType="slide" visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-            <View style={styles.overlay}>
-              <View style={styles.modalContent}>
-                <View style={styles.header}>
-                  <Text style={styles.title}>Información de la Ruta</Text>
-                </View>
-
-                <View style={styles.infoContainer}>
-                  {infoRuta.map((tramo, index) => (
-                    <View key={index} style={styles.tramoContainer}>
-                      <Text style={styles.origen}>{tramo.origen}</Text>
-
-                      <View style={styles.flechaContainer}>
-                        <Text style={styles.distancia}>{tramo.distancia} km</Text>
-                        <Text style={styles.flecha}>➤</Text>
-                        <Text style={styles.duracion}>{tramo.duracion}</Text>
-                      </View>
-
-                      <Text style={styles.destino}>{tramo.destino}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </>
-      )}
+      {modRuta && <InformacionRuta infoRuta={infoRuta} />}
 
       {/* Modal Estacion Info */}
       {modalEstacionVisible && (
@@ -276,7 +273,7 @@ export default function VistaRutas() {
               </View>
 
               <View style={stylesEstacion.infoContainer}>
-                <Text style={stylesEstacion.infoText}>Distancia a ruta: {estConsultada.distanceToRuta?.toFixed(2)} km</Text>
+                <Text style={stylesEstacion.infoText}>Distancia a ruta: {(estConsultada.distanceToRuta / 1000).toFixed(2)} km</Text>
 
                 {/* Mostrar KW y conectores de la estación */}
                 {estConsultada.evChargeOptions ? (
@@ -292,15 +289,22 @@ export default function VistaRutas() {
                         </Text>
                       </View>
                     ))}
+                   
                   </View>
                 ) : (
                   <Text style={stylesEstacion.infoText}>No hay opciones de carga disponibles.</Text>
                 )}
               </View>
 
-              <TouchableOpacity onPress={() => setModalEstacionVisible(false)} style={styles.modalCloseButton}>
-                <Text style={styles.modalCloseText}>Cerrar</Text>
-              </TouchableOpacity>
+              <View style={stylesEstacion.buttonsContainer}>
+                <TouchableOpacity onPress={() => setModalEstacionVisible(false)} style={stylesEstacion.backButton}>
+                  <Text style={stylesEstacion.backButtonText}>Cerrar</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => seleccionarEstacion(estConsultada)} style={stylesEstacion.selectButton}>
+                  <Text style={stylesEstacion.selectButtonText}>Seleccionar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
