@@ -28,9 +28,17 @@ const rutaEstacionStyle = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+
+  // 🔄 NUEVO CONTENEDOR para ScrollView
+  infoWrapper: {
+    flex: 1,
+  },
+
   infoContainer: {
     alignItems: "center",
     marginBottom: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   connectorInfo: {
     backgroundColor: "#f5f2f9", // fondo suave, tono lila claro
@@ -50,13 +58,17 @@ const rutaEstacionStyle = StyleSheet.create({
     marginTop: 10,
     width: "90%", // opcional, para mantener un margen
   },
+
+  // 🔄 ACTUALIZADO para que el footer esté fijo
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
-    marginHorizontal: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderTopWidth: 1,
+    borderColor: "#eee",
+    backgroundColor: "#f9f9f9",
   },
   backButton: {
     flex: 1,

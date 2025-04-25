@@ -54,9 +54,27 @@ export default function VistaRutas() {
     }
   };
 
+  // Funcion para centrar el mapa en destino seleccionado.
+  const centrarEnDestino = ({ latitude, longitude }) => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+    }
+  };
+
   // Añadir un nuevo destino vacío (cuando se presiona "Agregar nuevo destino")
   const addDestino = () => {
     setDestinos([...destinos, null]);
+  };
+
+  // Borrar Destino de la SearchBar
+  const eliminarDestino = (index) => {
+    const nuevosDestinos = destinos.filter((_, idx) => idx !== index);
+    setDestinos(nuevosDestinos);
   };
 
   // Filtrar estaciones para devolver solo las 3 más cercanas a la ruta
@@ -156,6 +174,7 @@ export default function VistaRutas() {
     };
 
     setEstSeleccionadas((prev) => [...prev, estacion]);
+    setModalEstacionVisible(false);
 
     setDestinos((prev) => {
       if (prev.length < 1) return [coords];
@@ -182,23 +201,34 @@ export default function VistaRutas() {
           // Primer paso: seleccionar destino principal
           <SearchBar
             placeholder="Seleccione un destino"
-            onSelect={(coords) => setDestinos([{ ...coords, name: coords.name || "Destino principal" }])}
+            onSelect={(coords) => {
+              centrarEnDestino(coords);
+              setDestinos([{ ...coords, name: coords.name || "Destino principal" }]);
+            }}
           />
         ) : (
           // Una vez se empieza a modificar la ruta, se muestran todas las paradas
           <View>
             <TextInput style={styles.textInput} value="Ubicación actual" editable={false} />
             {destinos.map((destino, index) => (
-              <SearchBar
-                key={index}
-                placeholder={destino?.name ? destino.name : `Parada ${index + 1}`}
-                initialValue={destino} // Esto hace editable la parada
-                onSelect={(coords) => {
-                  const actualizados = [...destinos];
-                  actualizados[index] = { ...coords, name: coords.name || `Parada ${index + 1}` };
-                  setDestinos(actualizados);
-                }}
-              />
+              <View key={index} style={styles.searchBarContainer}>
+                <SearchBar
+                  placeholder={destino?.name ? destino.name : `Parada ${index + 1}`}
+                  initialValue={destino} // Esto hace editable la parada
+                  onSelect={(coords) => {
+                    centrarEnDestino(coords);
+                    const actualizados = [...destinos];
+                    actualizados[index] = { ...coords, name: coords.name || `Parada ${index + 1}` };
+                    setDestinos(actualizados);
+                  }}
+                />
+                <TouchableOpacity 
+                  style={styles.deleteButton} 
+                  onPress={() => eliminarDestino(index)}
+                >
+                  <Text style={styles.deleteText}>x</Text>
+                </TouchableOpacity>
+              </View>
             ))}
           </View>
         )}
@@ -251,7 +281,7 @@ export default function VistaRutas() {
             />
           ))}
 
-          {ruta.length > 0 && <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#ba66ff" />}
+          {ruta.length > 0 && <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#B093FD" />}
         </MapView>
       )}
 
@@ -271,36 +301,36 @@ export default function VistaRutas() {
               <View style={stylesEstacion.header}>
                 <Text style={stylesEstacion.title}>{estConsultada.name || "Sin nombre"}</Text>
               </View>
-
-              <View style={stylesEstacion.infoContainer}>
-                <Text style={stylesEstacion.infoText}>Distancia a ruta: {(estConsultada.distanceToRuta / 1000).toFixed(2)} km</Text>
-
-                {/* Mostrar KW y conectores de la estación */}
-                {estConsultada.evChargeOptions ? (
-                  <View style={stylesEstacion.evChargeInfo}>
-                    <Text style={stylesEstacion.infoText}>Total de conectores: {estConsultada.evChargeOptions.connectorCount}</Text>
-
-                    {estConsultada.evChargeOptions.connectorAggregation.map((connector, index) => (
-                      <View key={index} style={stylesEstacion.connectorInfo}>
-                        <Text style={stylesEstacion.infoText}>Tipo de conector: {formatConnectorType(connector.type)}</Text>
-                        <Text style={stylesEstacion.infoText}>Tasa de carga máxima: {connector.maxChargeRateKw} kW</Text>
-                        <Text style={stylesEstacion.infoText}>
-                          Conectores disponibles: {connector.availableCount || connector.count} / {connector.count}
-                        </Text>
-                      </View>
-                    ))}
-                   
-                  </View>
-                ) : (
-                  <Text style={stylesEstacion.infoText}>No hay opciones de carga disponibles.</Text>
-                )}
+        
+              <View style={stylesEstacion.infoWrapper}>
+                <ScrollView contentContainerStyle={stylesEstacion.infoContainer} showsVerticalScrollIndicator={false}>
+                  <Text style={stylesEstacion.infoText}>Distancia a ruta: {(estConsultada.distanceToRuta / 1000).toFixed(2)} km</Text>
+        
+                  {estConsultada.evChargeOptions ? (
+                    <View style={stylesEstacion.evChargeInfo}>
+                      <Text style={stylesEstacion.infoText}>Total de conectores: {estConsultada.evChargeOptions.connectorCount}</Text>
+        
+                      {estConsultada.evChargeOptions.connectorAggregation.map((connector, index) => (
+                        <View key={index} style={stylesEstacion.connectorInfo}>
+                          <Text style={stylesEstacion.infoText}>Tipo de conector: {formatConnectorType(connector.type)}</Text>
+                          <Text style={stylesEstacion.infoText}>Tasa de carga máxima: {connector.maxChargeRateKw} kW</Text>
+                          <Text style={stylesEstacion.infoText}>
+                            Conectores disponibles: {connector.availableCount || connector.count} / {connector.count}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  ) : (
+                    <Text style={stylesEstacion.infoText}>No hay opciones de carga disponibles.</Text>
+                  )}
+                </ScrollView>
               </View>
-
+        
               <View style={stylesEstacion.buttonsContainer}>
                 <TouchableOpacity onPress={() => setModalEstacionVisible(false)} style={stylesEstacion.backButton}>
                   <Text style={stylesEstacion.backButtonText}>Cerrar</Text>
                 </TouchableOpacity>
-
+        
                 <TouchableOpacity onPress={() => seleccionarEstacion(estConsultada)} style={stylesEstacion.selectButton}>
                   <Text style={stylesEstacion.selectButtonText}>Seleccionar</Text>
                 </TouchableOpacity>

@@ -18,6 +18,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
   },
+  searchBarContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative", 
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    zIndex: 1,
+  },
+  deleteText: {
+    fontSize: 24,
+    color: '#333333'
+  },
   textInput: {
     backgroundColor: "white",
     borderRadius: 25,
