@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
+import { AuthContext } from "../App";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [userName, setUserName] = useState('');
+  const { checkToken } = useContext(AuthContext);
   /*
       await AsyncStorage.setItem('authToken', token);
       await AsyncStorage.setItem('user', userDetail);
@@ -97,12 +99,9 @@ export default function ProfileScreen() {
           
           <TouchableOpacity 
             style={[styles.option, styles.logoutOption]}
-            onPress={() => {
-              AsyncStorage.clear();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-              });
+            onPress={async () => {
+              await AsyncStorage.clear();
+              await checkToken(); // Verifica si el token es válido
             }}
           >
             <MaterialIcons name="logout" size={24} color="#FF3B30" />

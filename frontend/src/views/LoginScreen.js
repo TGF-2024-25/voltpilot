@@ -4,8 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import styles from "../styles/loginStyle";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authAPI } from '../services/api.js';
+import { AuthContext } from '../App';
 
 export default function LoginScreen() {
+  const { checkToken } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
@@ -47,10 +49,7 @@ export default function LoginScreen() {
       await AsyncStorage.setItem('expiresIn', expiresIn);
       await AsyncStorage.setItem('uid', userDetail.id);
 
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Estaciones' }],
-      });
+      await checkToken(); //verifica si el token es valido
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     }

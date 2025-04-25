@@ -13,6 +13,7 @@ import { CargadorProvider } from "./contexts/EstacionContext";
 import LoginScreen from "./views/LoginScreen";
 import RegisterScreen from "./views/RegisterScreen";
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
@@ -64,6 +65,8 @@ function MainAppStack() {
   );
 }
 
+export const AuthContext = createContext();
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
@@ -72,18 +75,20 @@ export default function App() {
       await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('expiresIn', expiresIn); */
   // verification if the user is logged in
+  const checkToken = async () => {
+    let token = null;
+    try {
+      token = await AsyncStorage.getItem("authToken");
+    } catch (e) {
+      console.error("Failed to load user token", e);
+    }
+    setUserToken(token);
+    return token;
+  };
+
   useEffect(() => {
     const bootstrapAsync = async () => {
-      let token = null;
-      try {
-        // sacar token desede el almacenamiento local
-        token = await AsyncStorage.getItem("authToken");
-      } catch (e) {
-        console.error("Failed to load user token", e);
-      }
-
-      // set estado de token
-      setUserToken(token);
+      await checkToken();
       setIsLoading(false);
     };
 
@@ -105,8 +110,10 @@ export default function App() {
     /* <NavigationContainer>{userToken ? <MainAppStack /> : <AuthStackScreen />}</NavigationContainer> */
   }
   return (
+    <AuthContext.Provider value={{ checkToken }}>
     <NavigationContainer>
       {userToken ? <MainAppStack /> : <AuthStackScreen />}
     </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
