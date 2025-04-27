@@ -1,13 +1,13 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useContext } from "react";
+import { View, Text, TextInput, Button, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import styles from "../styles/loginStyle";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authAPI } from '../services/api.js';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { authAPI } from "../services/api.js";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
   /*
@@ -24,14 +24,14 @@ export default function LoginScreen() {
     try {
       //verifica email y password
       if (!email || !password) {
-        Alert.alert('Error', 'Please fill all fields');
+        Alert.alert("Error", "Please fill all fields");
         return;
       }
 
       // devuelve el token de la API y datos del usuario
       const response = await authAPI.login(email, password);
       if (!response.success) {
-        throw new Error(response.message || '登录失败');
+        throw new Error(response.message || "Inicio de sesión fallido");
       }
       const userDetail = response.data.userDetail;
       const token = response.data.token;
@@ -39,20 +39,20 @@ export default function LoginScreen() {
       const expiresIn = response.data.expiresIn;
 
       console.log("userDetail", userDetail);
-      
+
       // guardar el token y los datos del usuario en dispositivo local
-      await AsyncStorage.setItem('authToken', token);
-      await AsyncStorage.setItem('user', JSON.stringify(userDetail));
-      await AsyncStorage.setItem('refreshToken', refreshToken);
-      await AsyncStorage.setItem('expiresIn', expiresIn);
-      await AsyncStorage.setItem('uid', userDetail.id);
+      await AsyncStorage.setItem("authToken", token);
+      await AsyncStorage.setItem("user", JSON.stringify(userDetail));
+      await AsyncStorage.setItem("refreshToken", refreshToken);
+      await AsyncStorage.setItem("expiresIn", expiresIn);
+      await AsyncStorage.setItem("uid", userDetail.id);
 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Estaciones' }],
+        routes: [{ name: "Estaciones" }],
       });
     } catch (error) {
-      Alert.alert('Login Failed', error.message);
+      Alert.alert("Login Failed", error.message);
     }
   };
 
@@ -67,15 +67,9 @@ export default function LoginScreen() {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
       <Button title="Login" onPress={handleLogin} />
-      <Button title="Register" onPress={() => navigation.navigate('Register')} />
+      <Button title="Register" onPress={() => navigation.navigate("Register")} />
     </View>
   );
 }

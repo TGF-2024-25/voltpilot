@@ -7,6 +7,7 @@ import VistaEstacionComentarios from "../views/EstacionComentarios";
 import VistaEstacionFotos from "../views/EstacionFotos";
 import { useCargador } from "../contexts/EstacionContext";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { estacionAPI } from "../services/api"; // Asegúrate de que la ruta sea correcta
 
 const renderScene = SceneMap({
   first: VistaEstacionConectores,
@@ -34,15 +35,9 @@ const EstacionTabView = () => {
   useEffect(() => {
     const obtenerImagenEstacion = async (name) => {
       try {
-        const response = await fetch(`http://localhost:5000/api/estaciones/getCargadorFotos`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: name }),
-        });
+        // Llamar a la API para obtener la foto
+        const data = await estacionAPI.getEstacionFotos({ name: name });
 
-        if (!response.ok) throw new Error("Error en la petición");
-
-        const data = await response.json();
         setFotoUrl(data.photoUri); // Asignar la URL de la foto a estado
       } catch (error) {
         console.error("Error al obtener imagen de la estacion:", error);

@@ -13,6 +13,7 @@ import * as Location from "expo-location";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Importar íconos
 import MarcadoresInfo from "./MarcadoresInfo";
 import EstacionFiltro from "./EstacionFiltro";
+import { estacionAPI } from "../services/api";
 
 // Ejecutar para probar Expo Go en móvil android físico (No borrar)
 // adb -s b3060cfe reverse tcp:5000 tcp:5000
@@ -36,12 +37,14 @@ const obtenerIdPorNombre = (name) => {
 
 // Componente principal
 export default function VistaEstacionInicio() {
+  // console.log("VistaEstacionInicio montada"); // Mensaje de depuración
   // Variables de estado
   const [cargadores, setCargadores] = useState([]); // Estado para almacenar los cargadores obtenidos de la ultima búsqueda
   const [cargadoresFiltrados, setCargadoresFiltrados] = useState([]); // Estado para almacenar los cargadores filtrados
   const { setSelectedCargador } = useCargador(); // Hook para establecer el cargador seleccionado en el contexto
   const [infoModalVisible, setInfoModalVisible] = useState(false); // Estado que determina la visibilidad del modal de información
   const [filterModalVisible, setFilterModalVisible] = useState(false); // Estado que determina la visibilidad del modal de filtros
+  const [isBottomSheetActive, setIsBottomSheetActive] = useState(false); // Estado que determina si el BottomSheetModal está activo
 
   // Estado para almacenar la región a mostrar del mapa
   const [region, setRegion] = useState({
@@ -71,21 +74,21 @@ export default function VistaEstacionInicio() {
         return;
       }
 
-      // Obtener la ubicación actual del usuario
-      const { coords } = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = coords;
+      // // Obtener la ubicación actual del usuario
+      // const { coords } = await Location.getCurrentPositionAsync({});
+      // const { latitude, longitude } = coords;
 
-      // Actualizar la región del mapa con la ubicación actual
-      const nuevaRegion = {
-        latitude,
-        longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      };
-      setRegion(nuevaRegion);
+      // // Actualizar la región del mapa con la ubicación actual
+      // const nuevaRegion = {
+      //   latitude,
+      //   longitude,
+      //   latitudeDelta: 0.005,
+      //   longitudeDelta: 0.005,
+      // };
+      // setRegion(nuevaRegion);
 
-      // Buscar cargadores en la ubicación actual
-      await handleRegionChange(nuevaRegion);
+      // // Buscar cargadores en la ubicación actual
+      // await handleRegionChange(nuevaRegion);
     };
 
     solicitarPermisosYBuscar();
@@ -94,20 +97,16 @@ export default function VistaEstacionInicio() {
   // Llamada a endpoint de servidor Back para obtener info de los cargadores de la zona
   const obtenerCargadores = async (lat, lng, rad) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/estaciones/getCargadores`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ latitude: lat, longitude: lng, radius: rad }),
-      });
+      // Llamada a la API para obtener cargadores
+      const data = await estacionAPI.getEstaciones({ latitude: lat, longitude: lng, radius: rad });
 
-      if (!response.ok) throw new Error("Error en la petición");
-
-      const data = await response.json();
-      setCargadores(data); // Actualiza el estado
+      // Actualiza el estado
+      setCargadores(data);
       console.log("Cargadores actualizados!");
-      return data; // Devuelve los datos
+
+      return data;
     } catch (error) {
-      console.error("Error al obtener cargadores:", error);
+      console.error("Error función obtenerCargadores: ", error);
       return [];
     }
   };
@@ -149,6 +148,7 @@ export default function VistaEstacionInicio() {
     setSelectedCargador(cargador);
     // Expande la pestaña al tocar un marcador
     bottomSheetModalRef.current?.present();
+    setIsBottomSheetActive(true); // Cambia el estado al abrir el modal
   };
 
   // Se llama cada vez que se hace una búsqueda
@@ -231,7 +231,14 @@ export default function VistaEstacionInicio() {
       <GestureHandlerRootView>
         {/* La vista del mapa */}
         <View>
-          <MapView ref={mapRef} style={styles.map} provider={PROVIDER_DEFAULT} initialRegion={region} showsUserLocation={true}>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            provider={PROVIDER_DEFAULT}
+            initialRegion={region}
+            showsUserLocation={true}
+            showsMyLocationButton={false}
+          >
             {cargadoresFiltrados.map((cargador) => (
               <Marker
                 key={cargador.id}
@@ -255,13 +262,34 @@ export default function VistaEstacionInicio() {
         {/* Botón de filtro */}
         <TouchableOpacity
           style={styles.filterButton}
-          onPress={() => setFilterModalVisible(true)} // Mostrar el modal de filtros
+          onPress={() => {
+            if (!isBottomSheetActive) {
+              setFilterModalVisible(true); // Abre el modal de filtros
+            } else {
+              bottomSheetModalRef.current?.dismiss(); // Cierra el BottomSheetModal
+              setTimeout(() => {
+                setFilterModalVisible(true);
+              }, 300);
+            }
+          }}
         >
           <Icon name="filter-list" size={24} color="white" />
         </TouchableOpacity>
 
         {/* Botón de información */}
-        <TouchableOpacity style={styles.infoButton} onPress={() => setInfoModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.infoButton}
+          onPress={() => {
+            if (!isBottomSheetActive) {
+              setInfoModalVisible(true); // Abre el modal de filtros
+            } else {
+              bottomSheetModalRef.current?.dismiss(); // Cierra el BottomSheetModal
+              setTimeout(() => {
+                setInfoModalVisible(true);
+              }, 300);
+            }
+          }}
+        >
           <Icon name="info" size={24} color="white" />
         </TouchableOpacity>
 
@@ -295,9 +323,12 @@ export default function VistaEstacionInicio() {
         <BottomSheetModalProvider>
           <BottomSheetModal
             ref={bottomSheetModalRef}
-            snapPoints={["40%", "95%"]}
+            snapPoints={["50%", "95%"]}
             backgroundComponent={(props) => <BottomSheetBackground {...props} />}
             style={styles.bottomSheetModal}
+            onDismiss={() => {
+              setIsBottomSheetActive(false); // Cambia el estado al cerrar el modal
+            }}
           >
             <BottomSheetView style={styles.bottomTabContainer}>
               <View style={{ backgroundColor: "white" }}>
