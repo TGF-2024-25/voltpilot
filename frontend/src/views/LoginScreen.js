@@ -33,7 +33,7 @@ export default function LoginScreen() {
       // devuelve el token de la API y datos del usuario
       const response = await authAPI.login(email, password);
       if (!response.success) {
-        throw new Error(response.message || '登录失败');
+        throw new Error(response.message || 'error en el login');
       }
       const userDetail = response.data.userDetail;
       const token = response.data.token;

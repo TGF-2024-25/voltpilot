@@ -86,8 +86,8 @@ const userController = {
    */
   updateUserProfile: async (req, res) => {
     try {
-      const userId = req.user.uid;
-      const { name, email, phoneNumber, address, password } = req.body;
+      const userId = req.body.uid;
+      const { name, email, phoneNumber, address} = req.body;
 
       // Prepara los datos para actualizar
       const updateData = {};
@@ -103,27 +103,27 @@ const userController = {
           emailVerified: false,
         });
       }
-
+      
       // Actualiza la contraseña del usuario en Firebase Admin
       if (password) {
         await auth.updateUser(userId, {
           password: password,
         });
       }
-
+  
       // Actualiza el usuario en Firestore
-      const updatedUser = await userModel.updateUser(userId, updateData);
+      const userDetail = await userModel.updateUser(userId, updateData);
 
       res.status(200).json({
         success: true,
         message: "Datos de usuario actualizados exitosamente",
-        data: updatedUser,
+        data: {userDetail: userDetail}
       });
     } catch (error) {
       console.error("Error al actualizar datos de usuario:", error);
 
       let statusCode = 500;
-      let message = "Error al actualizar datos de usuario";
+      let message = "  ";
 
       res.status(statusCode).json({
         success: false,

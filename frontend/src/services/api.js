@@ -13,9 +13,7 @@ export const apiRequest = async (endpoint, method = 'GET', data = null, requires
   
       // si la ruta requiere autenticacion, se añade el token al header
       if (requiresAuth) {
-        let token = await AsyncStorage.getItem('idToken');
-        
-        
+        let token = await AsyncStorage.getItem('authToken');
         if (!token) {
           throw new Error('Authentication required');
         }
@@ -55,13 +53,11 @@ export const apiRequest = async (endpoint, method = 'GET', data = null, requires
 export const authAPI = {
   login: (email, password) => apiRequest('/auth/login', 'POST', { email, password }),
   register: (userData) => apiRequest('/users/register', 'POST', userData),
-  logout: () => apiRequest('/auth/logout', 'POST', {}, true),
-  forgotPassword: (email) => apiRequest('/auth/forgot-password', 'POST', { email }),
   changePassword: (currentPassword, newPassword) => 
-  apiRequest('/auth/change-password', 'POST', { currentPassword, newPassword }, true),
+  apiRequest('/auth/changePassword', 'POST', { currentPassword, newPassword }, true),
 };
 
-// user API
+// user API 
 export const userAPI = {
   getProfile: () => apiRequest('/users/profile', 'GET', null, true),
   updateProfile: (userData) => apiRequest('/users/profile', 'PUT', userData, true),
@@ -74,3 +70,4 @@ export const routingAPI = {
   setAutonomia: (data_autonomia) => apiRequest(`/routing/autonomia`, "POST", data_autonomia, false),
   getEstacionesRuta: (ruta, autonomia, distancia) => apiRequest( "/routing/estaciones", "POST", { ruta, autonomia, distancia }, false),
 };
+
