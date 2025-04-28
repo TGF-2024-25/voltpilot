@@ -7,6 +7,14 @@ import styles from "../styles/infoRutaStyle";
 const InformacionRuta = ({ infoRuta }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const get_timeFormat = (totalTiempo) => {
+    const horas = Math.floor(totalTiempo / 3600); // Dividir entre 3600 para obtener las horas
+    const minutos = Math.floor((totalTiempo % 3600) / 60); // El residuo de horas dividido entre 60 para los minutos
+    const segundos = Math.floor(totalTiempo % 60); // El residuo de los minutos es el número de segundos
+  
+    return `${horas}h ${minutos}m ${segundos}s`;
+  };
+
   const get_total = () => {
     let totalDistancia = 0;
     let totalTiempo = 0;
@@ -50,19 +58,16 @@ const InformacionRuta = ({ infoRuta }) => {
                 {infoRuta.map((tramo, index) => (
                   <View
                     key={index}
-                    style={[
-                      styles.tramoContainer,
-                      tramo.tipo === "carga" ? styles.cargaContainer : styles.tramoNormalContainer,
-                    ]}
+                    style={[styles.tramoContainer, tramo.tipo === "carga" ? styles.cargaContainer : styles.tramoNormalContainer]}
                   >
                     {tramo.tipo === "carga" ? (
                       <View style={styles.tramoCarga}>
-                        <Feather name="battery" size={24} color="#65558F" style={{ transform: [{ rotate: '270deg' }]}} />
+                        <Feather name="battery" size={24} color="#65558F" style={{ transform: [{ rotate: "270deg" }] }} />
                         <View style={styles.cargaTextoContainer}>
                           <Text style={styles.infoText}>{tramo.estacion}</Text>
                           <Text style={styles.infoText}>{tramo.tiempoCarga} de espera</Text>
                         </View>
-                        <Feather name="battery-charging" size={24} color="#65558F"  style={{ transform: [{ rotate: '270deg' }]}} />
+                        <Feather name="battery-charging" size={24} color="#65558F" style={{ transform: [{ rotate: "270deg" }] }} />
                       </View>
                     ) : (
                       <>
@@ -75,7 +80,7 @@ const InformacionRuta = ({ infoRuta }) => {
                           <View style={styles.flechaCentro}>
                             <Text style={styles.distanciaTexto}>{tramo.distancia} km</Text>
                             <Feather name="arrow-right" size={24} color="#65558F" />
-                            <Text style={styles.infoText}>{tramo.duracion}</Text>
+                            <Text style={styles.infoText}>{get_timeFormat(parseInt(tramo.duracion.split('s')[0], 10))}</Text>
                           </View>
 
                           <View style={styles.paradaItem}>
@@ -93,7 +98,7 @@ const InformacionRuta = ({ infoRuta }) => {
             <View style={styles.totalRutaContainer}>
               <Text style={styles.totalRutaText}>Total de la Ruta</Text>
               <Text style={styles.totalRutaText}>{totalDistancia} km</Text>
-              <Text style={styles.totalRutaText}>{totalTiempo} min</Text>
+              <Text style={styles.totalRutaText}>{get_timeFormat(totalTiempo)}</Text>
             </View>
 
             <View style={styles.footer}>
@@ -109,5 +114,6 @@ const InformacionRuta = ({ infoRuta }) => {
     </>
   );
 };
+
 
 export default InformacionRuta;

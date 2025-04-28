@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, TextInput, TouchableOpacity, Text, Modal, ScrollView } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +22,7 @@ export default function VistaRutas() {
   const [estaciones, setEstaciones] = useState([]);
   const autonomiaRef = useRef(null);
   const preferenciasRef = useRef();
+  const yaParadoRef = useRef(false);
   const [infoRuta, setInfoRuta] = useState([]);
 
   const [modalEstacionVisible, setModalEstacionVisible] = useState(false);
@@ -119,7 +120,7 @@ export default function VistaRutas() {
   };
 
   // Función principal que recalcula la ruta completa (con origen y todos los destinos intermedios)
-  const fetchRoute = async () => {
+  const fetchRoute = async (yaParado = false) => {
     if (destinos.length === 0 || !destinos[0]) return;
 
     const autonomiaKm = autonomiaRef.current?.getAutonomia(); // Obtener autonomía en km
@@ -132,6 +133,7 @@ export default function VistaRutas() {
 
       // Calcular la ruta por tramos: origen -> destino1, destino1 -> destino2...
       let origenActual = origen;
+      let paradaRealizada = yaParado;
 
       for (let i = 0; i < destinos.length; i++) {
         const destinoActual = destinos[i];
@@ -141,19 +143,18 @@ export default function VistaRutas() {
         rutaCompleta = [...rutaCompleta, ...data.route];
 
         // Guardamos la Información de los Tramos
-        console.log("Origen tramo: ", origenActual);
-        console.log("Destino tramo: ", destinoActual);
         const tramos = make_tramos(origenActual, destinoActual, data, estSeleccionadas, i);
         infoTramos.push(...tramos);
 
         // Solo mostrar estaciones para el primer tramo de momento
-        if (i === 0) {
+        if (i === 0 && !paradaRealizada) {
           const res_estaciones = await routingAPI.getEstacionesRuta(data.route, autonomiaKm, data.distanciaKm);
           const filtradas = filtrar_estaciones(res_estaciones.estaciones);
           tot_estaciones = filtradas;
         }
 
         origenActual = destinoActual;
+        paradaRealizada = true;
       }
 
       setRuta(rutaCompleta);
@@ -170,23 +171,29 @@ export default function VistaRutas() {
     const coords = {
       latitude: estacion.latitude,
       longitude: estacion.longitude,
-      name: estacion.name || "Estacion sin nombre",
+      name: estacion.name || "Estación sin nombre",
     };
-
+  
     setEstSeleccionadas((prev) => [...prev, estacion]);
     setModalEstacionVisible(false);
-
+  
     setDestinos((prev) => {
       if (prev.length < 1) return [coords];
       const nuevosDestinos = [...prev];
       nuevosDestinos.splice(0, 0, coords); // Inserta justo después del origen
       return nuevosDestinos;
     });
-
-    setEstaciones([]); // Vaciar estaciones para evitar solapamientos visuales
-
-    await fetchRoute(); // Recalcular ruta con nueva parada
+  
+    setEstaciones([]); // Limpia las estaciones para evitar solapamientos visuales
   };
+
+  useEffect(() => {
+    if (destinos.length > 0 && destinos[0]?.latitude && destinos[0]?.longitude) {
+      console.log('destinos ha cambiado, recalculando ruta...');
+      fetchRoute(yaParadoRef.current);
+      yaParadoRef.current = true; // Después de seleccionar estación, ya hemos parado
+    }
+  }, [destinos]);
 
   // Antes de seleccionar, permitimos consultar las 3 estaciones filtradas
   const consultarEstacion = (estacion) => {
@@ -246,7 +253,8 @@ export default function VistaRutas() {
           on_selected_destino={(favorito) => {
             const location = favorito.location;
             location.name = location.name || favorito.description || "Destino favorito";
-            setDestinos([location]);
+            centrarEnDestino(location);
+            setDestinos((prevDestinos) => [...prevDestinos, location]);
             setModRuta(false);
           }}
         />
