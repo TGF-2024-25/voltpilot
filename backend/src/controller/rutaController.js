@@ -47,7 +47,7 @@ const rutaController = {
             headers: {
             "Content-Type": "application/json",
             "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY,
-            "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+            "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.steps",
             },
         });
     
@@ -59,8 +59,17 @@ const rutaController = {
           
           const distanciaKm = routeData.distanceMeters / 1000;
           const duration = routeData.duration;
+
+          // Extraemos los steps
+          const steps = routeData.legs?.[0]?.steps?.map((step) => ({
+            instruction: step.navigationInstruction?.instructions,
+            distanceMeters: step.distanceMeters,
+            duration: step.duration,
+            startLocation: step.startLocation?.latLng,
+            endLocation: step.endLocation?.latLng,
+          })) ?? [];
           
-          res.json({ route: polylinePoints, distanciaKm, duration });
+          res.json({ route: polylinePoints, distanciaKm, duration, steps });
 
         } else {
             res.status(404).json({ message: "No se encontró una ruta válida" });

@@ -107,10 +107,10 @@ const infoRutaStyle = StyleSheet.create({
   },
   totalRutaContainer: {
     padding: 15,
-    backgroundColor: "#f0f0f0",  // Fondo suave para diferenciarlo
-    marginBottom: 10,             // Espacio entre los totales y el footer
+    backgroundColor: "#f0f0f0", 
+    marginBottom: 10,           
     borderTopWidth: 1,
-    borderTopColor: "#ddd",      // Línea fina arriba para separar visualmente
+    borderTopColor: "#ddd",   
     alignItems: "center",
     justifyContent: "center",
   },

@@ -10,6 +10,8 @@ import SearchBar from "../components/SearchBar.js";
 import UserLocation from "../components/UserLocation.js";
 import Preferencias from "../components/Preferencias.js";
 import InformacionRuta from "../components/InformacionRuta.js";
+import InstruccionesRuta from "../components/InstruccionesRuta.js";
+
 
 import styles from "../styles/routesStyle.js";
 import stylesEstacion from "../styles/rutaEstacionStyle.js";
@@ -25,6 +27,7 @@ export default function VistaRutas() {
   const preferenciasRef = useRef();
   const yaParadoRef = useRef(false);
   const [infoRuta, setInfoRuta] = useState([]);
+  const [instruccionesRuta, setInstruccionesRuta] = useState([]);
 
   const [modalEstacionVisible, setModalEstacionVisible] = useState(false);
   const [estConsultada, setEstConsultada] = useState(null);
@@ -121,6 +124,18 @@ export default function VistaRutas() {
     return tramos;
   };
 
+  // Formar las instrucciones según el tramo también es necesario
+  const make_instrucciones = (steps) => {
+    // Mapeamos los steps para obtener las instrucciones necesarias
+    return steps.map((step) => ({
+      instruction: step.instruction,  // Instrucción de la ruta
+      distanceMeters: step.distanceMeters,
+      duration: step.duration,
+      startLocation: step.startLocation,
+      endLocation: step.endLocation,
+    }));
+  };
+
   // Función principal que recalcula la ruta completa (con origen y todos los destinos intermedios)
   const fetchRoute = async (yaParado = false) => {
     if (destinos.length === 0 || !destinos[0]) return;
@@ -132,6 +147,7 @@ export default function VistaRutas() {
       let rutaCompleta = [];
       let tot_estaciones = [];
       let infoTramos = [];
+      let instruccionesCompleta = [];
 
       // Calcular la ruta por tramos: origen -> destino1, destino1 -> destino2...
       let origenActual = origen;
@@ -148,6 +164,10 @@ export default function VistaRutas() {
         const tramos = make_tramos(origenActual, destinoActual, data, estSeleccionadas, i);
         infoTramos.push(...tramos);
 
+        // Procesamos las instrucciones de la ruta
+        const instruccionesTramo =  make_instrucciones(data.steps);
+        instruccionesCompleta = [...instruccionesCompleta, ...instruccionesTramo];
+
         // Solo mostrar estaciones para el primer tramo de momento
         if (i === 0 && !paradaRealizada) {
           const res_estaciones = await routingAPI.getEstacionesRuta(data.route, autonomiaKm, data.distanciaKm);
@@ -160,6 +180,7 @@ export default function VistaRutas() {
       }
 
       setRuta(rutaCompleta);
+      setInstruccionesRuta(instruccionesCompleta);
       setEstaciones(tot_estaciones);
       setInfoRuta(infoTramos);
       setModRuta(true);
@@ -291,6 +312,7 @@ export default function VistaRutas() {
         </TouchableOpacity>
       </View>
 
+      {/* Vista de los componentes del mapa y marcadores de elementos */}
       {origen && (
         <MapView style={styles.map} ref={mapRef} region={origen} provider={PROVIDER_DEFAULT} showsUserLocation={true}>
           {/*<Marker coordinate={origen} pinColor="lightblue" />*/}
@@ -313,12 +335,10 @@ export default function VistaRutas() {
         </MapView>
       )}
 
-      {/* Botón que calcula la Ruta con uno o varios Destinos */}
-      <TouchableOpacity style={styles.floatingButton} onPress={fetchRoute}>
-        <Text style={{ color: "white", fontWeight: "bold" }}>Cómo llegar</Text>
-      </TouchableOpacity>
+      {/* Botón para componente que muestra las instrucciones conducción de la ruta */}
+      {modRuta && <InstruccionesRuta instruccionesRuta={instruccionesRuta} /> }
 
-      {/* Botón con Desplegable para Información de la Ruta ¿Posible Componente aparte? */}
+      {/* Botón con Desplegable para Información de la Ruta*/}
       {modRuta && <InformacionRuta infoRuta={infoRuta} />}
 
       {/* Modal Estacion Info */}

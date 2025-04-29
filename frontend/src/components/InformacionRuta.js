@@ -10,11 +10,14 @@ const InformacionRuta = ({ infoRuta }) => {
 
   // Función para cambiar el formato de route.duracion
   const get_timeFormat = (tot_segs) => {
-    const horas = Math.floor(tot_segs / 3600);
-    const minutos = Math.floor((tot_segs % 3600) / 60);
-    const segundos = Math.floor(tot_segs % 60);
+    let horas = Math.floor(tot_segs / 3600);
+    let minutos = Math.floor((tot_segs % 3600) / 60);
+    let segundos = Math.floor(tot_segs % 60);
 
-    return `${horas}h ${minutos}m ${segundos}s`;
+    if (segundos >= 1)
+      minutos += 1;
+
+    return `${horas}h ${minutos}m`;
   };
 
   // Función que calcula la información Total de la Ruta.
@@ -101,7 +104,7 @@ const InformacionRuta = ({ infoRuta }) => {
 
             <View style={styles.totalRutaContainer}>
               <Text style={styles.totalRutaText}>Total de la Ruta</Text>
-              <Text style={styles.totalRutaText}>{totalDistancia} km</Text>
+              <Text style={styles.totalRutaText}>{totalDistancia.toFixed(1)} km</Text>
               <Text style={styles.totalRutaText}>{get_timeFormat(totalTiempo)}</Text>
             </View>
 

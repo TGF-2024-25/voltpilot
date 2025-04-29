@@ -1,20 +1,16 @@
-import { StyleSheet } from "react-native";
-import { Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  autonomiaButton: {
+  instruccionesButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
     backgroundColor: "#65558F",
-    padding: 10,
-    borderRadius: 25,
+    padding: 15,
+    borderRadius: 30,
     elevation: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
   },
   overlay: {
     flex: 1,
@@ -34,57 +30,52 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    marginBottom: 50,
+    marginBottom: 10,
   },
   title: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
-  section: {
-    marginVertical: 20,
+  instruccionesContainerWrapper: {
+    maxHeight: screenHeight * 0.75,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "black",
-    marginLeft: 15,
+  instruccionesContainer: {
+    paddingBottom: 20,
   },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  input: {
-    height: 40,
-    borderRadius: 5,
+  instruccionContainer: {
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    marginHorizontal: 15,
-    marginTop: 10,
-    marginBottom: 5,
-    borderBottomColor: "#5e2e7e",
-    borderBottomWidth: 2,
-    color: "5e2e7e",
-  },
-  acceptButton: {
-    backgroundColor: "#65558F", // Fondo morado
-    paddingVertical: 15,
     borderRadius: 10,
-    alignItems: "center",
-    marginTop: 160,
-    marginHorizontal: 20, // Margen izquierdo y derecho
+    marginHorizontal: 10,
+    marginBottom: 5,
   },
-  acceptButtonText: {
-    color: "white", // Texto blanco
+  instruccionItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  instruccionText: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#ccc",
+    marginTop: 10,
+  },
+  footer: {
+    marginTop: 0,
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: "#f9f9f9",
   },
   backButton: {
     backgroundColor: "#d3d3d3",
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 15,
     marginHorizontal: 20,
   },
   backButtonText: {
@@ -95,3 +86,4 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
+
