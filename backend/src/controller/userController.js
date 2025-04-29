@@ -86,8 +86,9 @@ const userController = {
    */
   updateUserProfile: async (req, res) => {
     try {
-      const userId = req.user.uid;
-      const { name, email, phoneNumber, address, password } = req.body;
+      const userId = req.body.uid;
+      const password = req.body.passwordupdate;
+      const { name, email, phoneNumber, address} = req.body;
 
       // Prepara los datos para actualizar
       const updateData = {};
@@ -104,26 +105,25 @@ const userController = {
         });
       }
 
-      // Actualiza la contraseña del usuario en Firebase Admin
-      if (password) {
+      if (password!== "") {
+        // Actualiza la contraseña en Firebase Admin
         await auth.updateUser(userId, {
           password: password,
         });
       }
-
       // Actualiza el usuario en Firestore
-      const updatedUser = await userModel.updateUser(userId, updateData);
+      const userDetail = await userModel.updateUser(userId, updateData);
 
       res.status(200).json({
         success: true,
         message: "Datos de usuario actualizados exitosamente",
-        data: updatedUser,
+        data: {userDetail: userDetail}
       });
     } catch (error) {
       console.error("Error al actualizar datos de usuario:", error);
 
       let statusCode = 500;
-      let message = "Error al actualizar datos de usuario";
+      let message = "  ";
 
       res.status(statusCode).json({
         success: false,
@@ -134,6 +134,36 @@ const userController = {
     }
   },
 
+  updateUserVehicle: async (req, res) => {
+    try {
+      const userId = req.body.uid;
+      const { marca, modelo, autonomia, tipo} = req.body;
+
+      // Prepara los datos para actualizar
+      const updateData = {
+        marca: marca,
+        modelo: modelo,
+        autonomia: autonomia,
+        tipo: tipo,
+      };
+
+      // Actualiza el usuario en Firestore
+      const userDetail = await userModel.updateVehicle(userId, updateData);
+
+      res.status(200).json({
+        success: true,
+        message: "Datos de vehículo actualizados exitosamente",
+        data: {userDetail: userDetail}
+      });
+    } catch (error) {
+      console.error("Error al actualizar datos de vehículo:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error al actualizar datos de vehículo",
+        error: error.message,
+      });
+    }
+  },
   /**
    * Obtiene un usuario por su ID
    * GET /api/users/getUserById

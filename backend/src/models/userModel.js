@@ -51,7 +51,7 @@ class UserModel {
 
   async updateUser(id, data) {
     try {
-      const userRef = db.collection("users").doc(id);
+      const userRef = db.collection("users").doc(id).doc("vehicle");
 
       const updateData = {};
 
@@ -68,6 +68,28 @@ class UserModel {
     } catch (error) {
       console.error("error actualizar usuario:", error);
       throw new Error(`error actualizar usuario: ${error.message}`);
+    }
+  }
+
+  async updateVehicle(id, data) {
+    try {
+      const userRef = db.collection("users").doc(id);
+
+      const vehicle = {};
+
+      if (data.marca) vehicle['vehicle.marca'] = data.marca;
+      if (data.modelo) vehicle['vehicle.modelo'] = data.modelo;
+      if (data.autonomia) vehicle['vehicle.autonomia'] = data.autonomia;
+      if (data.tipo) vehicle['vehicle.tipo'] = data.tipo;
+
+      await userRef.update(vehicle);
+
+      // conseguir usuario actualizado para actualizar el vista
+      const updatedUser = await this.findById(id);
+      return updatedUser;
+    } catch (error) {
+      console.error("error actualizar vehiculo:", error);
+      throw new Error(`error actualizar vehiculo: ${error.message}`);
     }
   }
 

@@ -15,20 +15,16 @@ import { userAPI } from '../services/api';
 
 export default function MiPerfil() {
   const navigation = useNavigation();
-  const [userData, setUserData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-  });
-  const [password, setPassword] = useState({
-    password: '',
-    confirmPassword: '',
+  const [vehicleData, setVehicleData] = useState({
+    marca: '',
+    modelo: '',
+    autonomia: '',
+    tipo: '',
   });
   const [originalData, setOriginalData] = useState({});
   const [loading, setLoading] = useState(true);
   
-  // carga datos de usuario
+  // carga datos de vehiculo de usuario
   useEffect(() => {
     const getUserInfo = async () => {
       try {
@@ -36,12 +32,18 @@ export default function MiPerfil() {
         const userJson = await AsyncStorage.getItem('user');
         if (userJson) {
           const parsedData = JSON.parse(userJson);
-          setUserData(parsedData);
-          setOriginalData(parsedData);
+          const vehicleJson = parsedData.vehicle || {
+            marca: '',
+            modelo: '',
+            autonomia: '',
+            tipo: ''
+          };
+          setVehicleData(vehicleJson);
+          setOriginalData(vehicleJson);
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
-        Alert.alert('Error', 'No se pudo cargar la información del usuario');
+        console.error('Error loading user vehicle data:', error);
+        Alert.alert('Error', 'No se pudo cargar la información de coche del usuario');
       } finally {
         setLoading(false);
       }
@@ -50,36 +52,39 @@ export default function MiPerfil() {
     getUserInfo();
   }, []);
 
-  // entrada de datos de usuario
+  // entrada de datos de coche de usuario
   const handleChange = (field, value) => {
-    setUserData(prev => ({ ...prev, [field]: value }));
-  };
-  const handleChangepass = (field, value) => {
-    setPassword(prev => ({ ...prev, [field]: value }));
+    setVehicleData(prev => ({ ...prev, [field]: value }));
   };
 
   // guarda los datos de usuario a firestore
   const handleSave = async () => {
     try {
       setLoading(true);
-      userData.password
       const uid = await AsyncStorage.getItem('uid');
-      if (password.password !== password.confirmPassword) {
-        password.password = '';
-        password.confirmPassword = '';
-        Alert.alert('Error', 'Las contraseñas no coinciden');
-      }
-      const passwordupdate = password.password;
-      const userDataToUpdate = { ...userData,passwordupdate,uid };
-      const response = await userAPI.updateProfile(userDataToUpdate);
       
-      await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
-      setOriginalData(response.data.userDetail);
-      setUserData(response.data.userDetail);
-      Alert.alert('Éxito', 'Perfil actualizado correctamente');
+      // 确保所有字段都有值，即使是空字符串
+      const completeVehicleData = {
+        marca: vehicleData.marca || '',
+        modelo: vehicleData.modelo || '',
+        autonomia: vehicleData.autonomia || '',
+        tipo: vehicleData.tipo || '',
+        uid
+      };
+      
+      const response = await userAPI.updateVehicle(completeVehicleData);
+      
+      if (response.data && response.data.userDetail) {
+        // 确保返回的数据中有 vehicle，如果没有则使用当前值
+        const updatedVehicle = response.data.userDetail.vehicle || vehicleData;
+        await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
+        setOriginalData(updatedVehicle);
+        setVehicleData(updatedVehicle);
+        Alert.alert('Éxito', 'Vehículo actualizado correctamente');
+      }
     } catch (error) {
-      console.error('Error saving user data:', error);
-      Alert.alert('Error', 'No se pudo actualizar el perfil');
+      console.error('Error saving vehicle data:', error);
+      Alert.alert('Error', 'No se pudo actualizar el vehículo');
     } finally {
       setLoading(false);
     }
@@ -87,7 +92,7 @@ export default function MiPerfil() {
 
   // cancelar los cambios
   const handleCancel = () => {
-    setUserData(originalData);
+    setVehicleData(originalData);
   };
 
   if (loading) {
@@ -103,67 +108,46 @@ export default function MiPerfil() {
       <View style={styles.card}>
 
         <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Nombre</Text>
+          <Text style={styles.label}>Marca</Text>
           <TextInput
             style={styles.input}
-            value={userData.name}
-            onChangeText={(text) => handleChange('name', text)}
-            placeholder="Ingresa tu nombre"
+            value={vehicleData?.marca|| ''}
+            onChangeText={(text) => handleChange('marca', text)}
+            placeholder="Ingresa marca"
           />
         </View>
 
         <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Correo</Text>
+          <Text style={styles.label}>Modelo</Text>
           <TextInput
             style={styles.input}
-            value={userData.email}
-            onChangeText={(text) => handleChange('email', text)}
-            placeholder="Ingresa tu correo"
-            keyboardType="email-address"
-            autoCapitalize="none"
+            value={vehicleData?.modelo|| ''}
+            onChangeText={(text) => handleChange('modelo', text)}
+            placeholder="Ingresa modelo"
           />
         </View>
 
         <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Teléfono</Text>
+          <Text style={styles.label}>Autonomia</Text>
           <TextInput
             style={styles.input}
-            value={userData.phone}
-            onChangeText={(text) => handleChange('phone', text)}
-            placeholder="Ingresa tu teléfono"
+            value={vehicleData?.autonomia|| ''}
+            onChangeText={(text) => handleChange('autonomia', text)}
+            placeholder="Ingresa Autonomia"
             keyboardType="phone-pad"
           />
         </View>
 
         <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Dirección</Text>
+          <Text style={styles.label}>Tipo de conector</Text>
           <TextInput
             style={styles.input}
-            value={userData.address}
-            onChangeText={(text) => handleChange('address', text)}
-            placeholder="Ingresa tu dirección"
+            value={vehicleData?.tipo|| ''}
+            onChangeText={(text) => handleChange('tipo', text)}
+            placeholder="Ingresa tipo de conector"
           />
         </View>
 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Nueva contraseña</Text>
-          <TextInput
-            style={styles.input}
-            value={password.password}
-            onChangeText={(text) => handleChangepass('password', text)}
-            placeholder="Ingresa tu nueva contraseña"
-          />
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Confirma nueva contraseña</Text>
-          <TextInput
-            style={styles.input}
-            value={password.confirmPassword}
-            onChangeText={(text) => handleChangepass('confirmPassword', text)}
-            placeholder="Confirma tu nueva contraseña"
-          />
-        </View>
       </View>
 
       <View style={styles.buttonContainer}>

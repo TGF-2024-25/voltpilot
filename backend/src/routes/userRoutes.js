@@ -16,6 +16,7 @@ router.post("/register", userController.createUser); // Registro de un nuevo usu
  */
 router.get("/profile", authMiddleware, userController.getUserProfile); // Obtiene el perfil del usuario autenticado
 router.put("/profile", authMiddleware, userController.updateUserProfile); // Actualiza el perfil del usuario autenticado
+router.put("/vehicle", authMiddleware, userController.updateUserVehicle); // Actualiza el vehículo del usuario autenticado
 router.get("/:id", authMiddleware, userController.getUserById); // Obtiene un usuario por su ID
 router.delete("/:id", authMiddleware, userController.deleteUser); // Elimina un usuario por su ID
 

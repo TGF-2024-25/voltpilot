@@ -1,0 +1,50 @@
+//model
+//login
+{
+    "success": true,
+    "message": "Inicio de sesión exitoso",
+    "data": {
+      "userDetail": "userDetails", 
+      "token": "token de sesion", 
+      "refreshToken": "authData.refreshToken",
+      "expiresIn": "authData.expiresIn"
+    }
+}
+
+//register
+{
+    "success": true,
+    "message": "Registro exitoso"
+}
+
+//updateUser
+{
+    "success": true,
+    "message": "Usuario actualizado exitosamente",
+    "data": {
+      "userDetail": "...userDetails"
+    }
+}
+
+//userDetail
+{
+    "uid": "userId",
+    "name": "userName", 
+    "email": "userEmail",
+    "phone": "userPhone",
+    "address": "userAddress",
+    "vehicle": {
+        "marca": "vehicleBrand",
+        "modelo": "vehicleModel",
+        "autonomia": "vehicleAutonomy",
+        "tipo": "vehicleChargeType",
+    }
+}
+
+//asyncStorage
+{
+    "authToken": token,
+    "user": userDetails,
+    "uid": userId
+}
+

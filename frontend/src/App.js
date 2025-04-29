@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { VistaEstacionInicio, VistaRutas, VistaEstacionesFavoritas, VistaPerfil } from "./views";
 import UserDetails from "./views/UserDetails";
+import UserVehicle from "./views/UserVehicle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuProvider } from "react-native-popup-menu";
 import { CargadorProvider } from "./contexts/EstacionContext";
@@ -12,6 +13,7 @@ import { CargadorProvider } from "./contexts/EstacionContext";
 // import patalla login y registro
 import LoginScreen from "./views/LoginScreen";
 import RegisterScreen from "./views/RegisterScreen";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -33,7 +35,7 @@ function ProfileStack() {
     <Stack.Navigator>
       <Stack.Screen name="ProfileMain" component={VistaPerfil} options={{ headerShown: false }} />
       <Stack.Screen name="UserDetails" component={UserDetails} options={{ title: "Detalles de Usuario" }} />
-      <Stack.Screen name="MisVehiculos" component={PlaceholderScreen} options={{ title: "Mis Vehículos" }} />
+      <Stack.Screen name="MisVehiculos" component={UserVehicle} options={{ title: "Mis Vehículos" }} />
       <Stack.Screen name="MisPagos" component={PlaceholderScreen} options={{ title: "Mis Pagos" }} />
       <Stack.Screen name="MiHistoriaDeRecarga" component={PlaceholderScreen} options={{ title: "Mi Historia de Recarga" }} />
       <Stack.Screen name="TerminosYPrivacidad" component={PlaceholderScreen} options={{ title: "Términos y Privacidad" }} />
@@ -90,6 +92,8 @@ function MainTabs() {
   );
 }
 
+export const AuthContext = createContext();
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
@@ -98,18 +102,20 @@ export default function App() {
       await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('expiresIn', expiresIn); */
   // verification if the user is logged in
+  const checkToken = async () => {
+    let token = null;
+    try {
+      token = await AsyncStorage.getItem("authToken");
+    } catch (e) {
+      console.error("Failed to load user token", e);
+    }
+    setUserToken(token);
+    return token;
+  };
+
   useEffect(() => {
     const bootstrapAsync = async () => {
-      let token = null;
-      try {
-        // sacar token desede el almacenamiento local
-        token = await AsyncStorage.getItem("authToken");
-      } catch (e) {
-        console.error("Failed to load user token", e);
-      }
-
-      // set estado de token
-      setUserToken(token);
+      await checkToken();
       setIsLoading(false);
     };
 
@@ -130,5 +136,11 @@ export default function App() {
   {
     /* <NavigationContainer>{userToken ? <MainAppStack /> : <AuthStackScreen />}</NavigationContainer> */
   }
-  return <NavigationContainer>{userToken ? <MainAppStack /> : <AuthStackScreen />}</NavigationContainer>;
+  return (
+    <AuthContext.Provider value={{ checkToken }}>
+    <NavigationContainer>
+      {userToken ? <MainAppStack /> : <AuthStackScreen />}
+    </NavigationContainer>
+    </AuthContext.Provider>
+  );
 }

@@ -1,5 +1,4 @@
 /* eslint-disable import/no-unresolved */
-import { apiRequest } from "../../../frontend/src/services/api.js";
 import { auth } from "../config/firebaseAdmin.js";
 import userModel from "../models/userModel.js";
 import fetch from "node-fetch";
