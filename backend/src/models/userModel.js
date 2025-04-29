@@ -51,7 +51,7 @@ class UserModel {
 
   async updateUser(id, data) {
     try {
-      const userRef = db.collection("users").doc(id);
+      const userRef = db.collection("users").doc(id).doc("vehicle");
 
       const updateData = {};
 
@@ -77,10 +77,10 @@ class UserModel {
 
       const vehicle = {};
 
-      if (data.marca) vehicle.marca = data.marca;
-      if (data.modelo) vehicle.modelo = data.modelo;
-      if (data.autonomia) vehicle.autonomia = data.autonomia;
-      if (data.tipo) vehicle.tipo = data.tipo;
+      if (data.marca) vehicle['vehicle.marca'] = data.marca;
+      if (data.modelo) vehicle['vehicle.modelo'] = data.modelo;
+      if (data.autonomia) vehicle['vehicle.autonomia'] = data.autonomia;
+      if (data.tipo) vehicle['vehicle.tipo'] = data.tipo;
 
       await userRef.update(vehicle);
 

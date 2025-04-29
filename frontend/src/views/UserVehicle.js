@@ -62,16 +62,29 @@ export default function MiPerfil() {
     try {
       setLoading(true);
       const uid = await AsyncStorage.getItem('uid');
-      const vehicleDataToUpdate = { ...vehicleData,uid };
-      const response = await userAPI.updateVehicle(vehicleDataToUpdate);
       
-      await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
-      setOriginalData(response.data.userDetail.vehicle);
-      setVehicleData(response.data.userDetail.vehicle);
-      Alert.alert('Éxito', 'Vehiculo actualizado correctamente');
+      // 确保所有字段都有值，即使是空字符串
+      const completeVehicleData = {
+        marca: vehicleData.marca || '',
+        modelo: vehicleData.modelo || '',
+        autonomia: vehicleData.autonomia || '',
+        tipo: vehicleData.tipo || '',
+        uid
+      };
+      
+      const response = await userAPI.updateVehicle(completeVehicleData);
+      
+      if (response.data && response.data.userDetail) {
+        // 确保返回的数据中有 vehicle，如果没有则使用当前值
+        const updatedVehicle = response.data.userDetail.vehicle || vehicleData;
+        await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
+        setOriginalData(updatedVehicle);
+        setVehicleData(updatedVehicle);
+        Alert.alert('Éxito', 'Vehículo actualizado correctamente');
+      }
     } catch (error) {
       console.error('Error saving vehicle data:', error);
-      Alert.alert('Error', 'No se pudo actualizar el vehicle');
+      Alert.alert('Error', 'No se pudo actualizar el vehículo');
     } finally {
       setLoading(false);
     }
@@ -92,13 +105,13 @@ export default function MiPerfil() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.carcd}>
+      <View style={styles.card}>
 
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>Marca</Text>
           <TextInput
             style={styles.input}
-            value={vehicleData.marca}
+            value={vehicleData?.marca|| ''}
             onChangeText={(text) => handleChange('marca', text)}
             placeholder="Ingresa marca"
           />
@@ -108,7 +121,7 @@ export default function MiPerfil() {
           <Text style={styles.label}>Modelo</Text>
           <TextInput
             style={styles.input}
-            value={vehicleData.modelo}
+            value={vehicleData?.modelo|| ''}
             onChangeText={(text) => handleChange('modelo', text)}
             placeholder="Ingresa modelo"
           />
@@ -118,7 +131,7 @@ export default function MiPerfil() {
           <Text style={styles.label}>Autonomia</Text>
           <TextInput
             style={styles.input}
-            value={vehicleData.autonomia}
+            value={vehicleData?.autonomia|| ''}
             onChangeText={(text) => handleChange('autonomia', text)}
             placeholder="Ingresa Autonomia"
             keyboardType="phone-pad"
@@ -129,7 +142,7 @@ export default function MiPerfil() {
           <Text style={styles.label}>Tipo de conector</Text>
           <TextInput
             style={styles.input}
-            value={vehicleData.tipo}
+            value={vehicleData?.tipo|| ''}
             onChangeText={(text) => handleChange('tipo', text)}
             placeholder="Ingresa tipo de conector"
           />
