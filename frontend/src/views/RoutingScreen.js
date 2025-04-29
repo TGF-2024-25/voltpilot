@@ -230,7 +230,12 @@ export default function VistaRutas() {
               initialValue={origen} // Esto hace editable el origen
               onSelect={(coords) => {
                 centrarEnDestino(coords);
-                setOrigen({ ...coords, name: coords.name || "Origen personalizado" });
+                setOrigen({
+                  ...coords,
+                  name: coords.name || "Origen personalizado",
+                  latitudeDelta: coords.latitudeDelta ?? 0.1,
+                  longitudeDelta: coords.longitudeDelta ?? 0.1,
+                });
               }}
             />
 
@@ -261,24 +266,9 @@ export default function VistaRutas() {
           </TouchableOpacity>
         )}
       </View>
-      
-      {/*}
-      <View style={styles.upperLogos}>
-        <Favoritos
-          on_selected_destino={(favorito) => {
-            const location = favorito.location;
-            location.name = location.name || favorito.description || "Destino favorito";
-            centrarEnDestino(location);
-            setDestinos((prevDestinos) => [...prevDestinos, location]);
-            setModRuta(false);
-          }}
-        />
-
-        <Autonomia ref={autonomiaRef} />
-      </View>
-      */}
 
       <View style={styles.lowerLogos}>
+        {/* Botón para componente Favoritos */}
         <Favoritos
           on_selected_destino={(favorito) => {
             const location = favorito.location;
@@ -289,11 +279,13 @@ export default function VistaRutas() {
           }}
         />
 
+        {/* Botón para componente Autonomía */}
         <Autonomia ref={autonomiaRef} />
         
+        {/* Botón para componente Preferencias */}
         <Preferencias ref={preferenciasRef} />
 
-        {/* Botón personalizado para centrar la ubicación */}
+        {/* Botón para centrar la ubicación */}
         <TouchableOpacity style={styles.myLocationButton} onPress={centrarEnUbicacion}>
           <Icon name="my-location" size={24} color="white" />
         </TouchableOpacity>

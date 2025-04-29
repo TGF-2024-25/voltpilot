@@ -12,6 +12,13 @@ export default function UserLocation() {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         alert("Permission Denied");
+        setOrigen({
+          latitude: 40.4168,   // Por ejemplo: Madrid
+          longitude: -3.7038,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+          name: "Madrid (origen predeterminado)",
+        });
         return;
       }
       let location = await Location.getCurrentPositionAsync({});
