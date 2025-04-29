@@ -87,6 +87,7 @@ const userController = {
   updateUserProfile: async (req, res) => {
     try {
       const userId = req.body.uid;
+      const password = req.body.passwordupdate;
       const { name, email, phoneNumber, address} = req.body;
 
       // Prepara los datos para actualizar
@@ -103,14 +104,13 @@ const userController = {
           emailVerified: false,
         });
       }
-      
-      // Actualiza la contraseña del usuario en Firebase Admin
-      if (password) {
+
+      if (password!== "") {
+        // Actualiza la contraseña en Firebase Admin
         await auth.updateUser(userId, {
           password: password,
         });
       }
-  
       // Actualiza el usuario en Firestore
       const userDetail = await userModel.updateUser(userId, updateData);
 

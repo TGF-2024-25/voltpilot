@@ -1,3 +1,4 @@
+//model
 //login
 {
     "success": true,
@@ -40,3 +41,11 @@
         "tipo": "vehicleChargeType",
     }
 }
+
+//asyncStorage
+{
+    "authToken": token,
+    "user": userDetails,
+    "uid": userId
+}
+
