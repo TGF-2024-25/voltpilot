@@ -80,4 +80,8 @@ export const estacionAPI = {
   getEstacionComentarios: (placeId) => apiRequest("/estaciones/getComentarios", "POST", placeId, false),
   createEstacionComentario: (commentData) => apiRequest("/estaciones/createComentario", "POST", commentData, true),
   deleteEstacionComentario: (commentData) => apiRequest("/estaciones/deleteComentario", "POST", commentData, true),
+  getEstacionesFavoritas: (data) => apiRequest("/estaciones/getEstacionesFavoritas", "POST", data, true),
+  addEstacionFavorita: (data) => apiRequest("/estaciones/addEstacionFavorita", "POST", data, true),
+  deleteEstacionFavorita: (data) => apiRequest("/estaciones/deleteEstacionFavorita", "POST", data, true),
+  getInfoCargador: (placeId) => apiRequest("/estaciones/getInfoCargador", "POST", placeId, false),
 };

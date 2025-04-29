@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/MaterialIcons"; // Importar íconos
 import MarcadoresInfo from "./MarcadoresInfo";
 import EstacionFiltro from "./EstacionFiltro";
 import { estacionAPI } from "../services/api";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 
 // Ejecutar para probar Expo Go en móvil android físico (No borrar)
 // adb -s b3060cfe reverse tcp:5000 tcp:5000
@@ -41,10 +42,31 @@ export default function VistaEstacionInicio() {
   // Variables de estado
   const [cargadores, setCargadores] = useState([]); // Estado para almacenar los cargadores obtenidos de la ultima búsqueda
   const [cargadoresFiltrados, setCargadoresFiltrados] = useState([]); // Estado para almacenar los cargadores filtrados
-  const { setSelectedCargador } = useCargador(); // Hook para establecer el cargador seleccionado en el contexto
+  const { selectedCargador, setSelectedCargador } = useCargador(); // Hook para establecer el cargador seleccionado en el contexto
   const [infoModalVisible, setInfoModalVisible] = useState(false); // Estado que determina la visibilidad del modal de información
   const [filterModalVisible, setFilterModalVisible] = useState(false); // Estado que determina la visibilidad del modal de filtros
   const [isBottomSheetActive, setIsBottomSheetActive] = useState(false); // Estado que determina si el BottomSheetModal está activo
+  const route = useRoute(); // Obtén el objeto route
+  const { estacionFavorita = null } = route.params || {};
+  const [estacionFavoritaSeleccionada, setEstacionFavoritaSeleccionada] = useState(estacionFavorita); // Estado para almacenar la estación favorita
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (estacionFavorita) {
+        setEstacionFavoritaSeleccionada(estacionFavorita); // Actualiza el estado con la estación favorita
+        mapRef.current?.animateToRegion(
+          {
+            latitude: estacionFavorita.location.latitude,
+            longitude: estacionFavorita.location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          },
+          1000,
+        );
+        handleMarkerPress(estacionFavorita);
+      }
+    }, [estacionFavorita]),
+  );
 
   // Estado para almacenar la región a mostrar del mapa
   const [region, setRegion] = useState({
@@ -167,6 +189,8 @@ export default function VistaEstacionInicio() {
     const { coords } = await Location.getCurrentPositionAsync({});
     const { latitude, longitude } = coords;
 
+    await setEstacionFavoritaSeleccionada(null); // Limpiar la estación favorita seleccionada
+
     // Buscar cargadores en la ubicación del usuario
     handleRegionChange({ latitude, longitude });
 
@@ -239,18 +263,33 @@ export default function VistaEstacionInicio() {
             showsUserLocation={true}
             showsMyLocationButton={false}
           >
-            {cargadoresFiltrados.map((cargador) => (
+            {/* Renderizar solo el marcador de la estación favorita si está presente */}
+            {estacionFavoritaSeleccionada ? (
               <Marker
-                key={cargador.id}
                 coordinate={{
-                  latitude: cargador.location.latitude,
-                  longitude: cargador.location.longitude,
+                  latitude: estacionFavorita.location.latitude,
+                  longitude: estacionFavorita.location.longitude,
                 }}
-                title={cargador.displayName.text}
-                icon={getIconCargador(cargador)}
-                onPress={() => handleMarkerPress(cargador)}
+                title={estacionFavorita.displayName.text}
+                description={estacionFavorita.formattedAddress}
+                icon={require("../assets/Marcador_5.png")} // Cambia el icono si es necesario
+                onPress={() => handleMarkerPress(estacionFavorita)}
               />
-            ))}
+            ) : (
+              /* Renderizar los marcadores filtrados si no hay estación favorita */
+              cargadoresFiltrados.map((cargador) => (
+                <Marker
+                  key={cargador.id}
+                  coordinate={{
+                    latitude: cargador.location.latitude,
+                    longitude: cargador.location.longitude,
+                  }}
+                  title={cargador.displayName.text}
+                  icon={getIconCargador(cargador)}
+                  onPress={() => handleMarkerPress(cargador)}
+                />
+              ))
+            )}
           </MapView>
         </View>
 
@@ -307,6 +346,7 @@ export default function VistaEstacionInicio() {
                   latitudeDelta: 0.015,
                   longitudeDelta: 0.0121,
                 };
+                setEstacionFavoritaSeleccionada(null);
                 setRegion(newRegion); // Actualizar la región del mapa
                 handleRegionChange(newRegion);
 

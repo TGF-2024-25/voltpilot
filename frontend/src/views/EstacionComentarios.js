@@ -22,8 +22,18 @@ export default function VistaEstacionComentarios() {
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
+    // Función para obtener comentarios de la base de datos
+    const getBdComentarios = async () => {
+      try {
+        const data = await estacionAPI.getEstacionComentarios({ placeId: selectedCargador.id });
+        setBdComentarios(data); // Guardar los comentarios de la base de datos
+        console.log("Comentarios de la base de datos:", data);
+      } catch (error) {
+        console.error("Error al obtener comentarios de la base de datos:", error);
+      }
+    };
     getBdComentarios(); // Obtener comentarios de la base de datos al cargar el componente
-  }, []);
+  }, [selectedCargador]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,8 +50,36 @@ export default function VistaEstacionComentarios() {
   }, []);
 
   useEffect(() => {
-    normalizarComentarios(); // Normalizar comentarios al obtenerlos
-  }, [googleComentarios, bdComentarios]);
+    // Normalizar los comentarios para que tengan un formato uniforme
+    const normalizarComentarios = () => {
+      const comentariosGoogleNormalizados = googleComentarios.map((comentario) => ({
+        authorName: comentario.authorAttribution?.displayName || "Usuario de Google",
+        photoUri: comentario.authorAttribution?.photoUri || null,
+        text: comentario.originalText?.text || comentario.text?.text || "El usuario no ha dejado comentarios",
+        rating: comentario.rating || 0,
+        source: "Google",
+        timestamp: comentario.relativePublishTimeDescription || "Reciente",
+      }));
+
+      const comentariosBdNormalizados = bdComentarios.map((comentario) => ({
+        userId: comentario.userData.id,
+        commentId: comentario.commentId,
+        authorName: comentario.userData.name || "Usuario",
+        photoUri: null,
+        text: comentario.comentarioData.text || "El usuario no ha dejado comentarios",
+        rating: comentario.comentarioData.rating || 0,
+        source: "Voltipilot",
+        timestamp: new Date(comentario.comentarioData.timestamp).toLocaleDateString("es-ES"), // Convertir timestamp a formato legible
+      }));
+
+      setAllComentarios([...comentariosGoogleNormalizados, ...comentariosBdNormalizados]);
+      console.log("Comentarios normalizados:", [...comentariosGoogleNormalizados, ...comentariosBdNormalizados]);
+    };
+
+    if (googleComentarios.length > 0 || bdComentarios.length > 0) {
+      normalizarComentarios();
+    }
+  }, [bdComentarios]);
 
   // Función para obtener comentarios de la base de datos
   const getBdComentarios = async () => {
@@ -51,31 +89,6 @@ export default function VistaEstacionComentarios() {
     } catch (error) {
       console.error("Error al obtener comentarios de la base de datos:", error);
     }
-  };
-
-  // Normalizar los comentarios para que tengan un formato uniforme
-  const normalizarComentarios = () => {
-    const comentariosGoogleNormalizados = googleComentarios.map((comentario) => ({
-      authorName: comentario.authorAttribution?.displayName || "Usuario de Google",
-      photoUri: comentario.authorAttribution?.photoUri || null,
-      text: comentario.originalText?.text || comentario.text?.text || "El usuario no ha dejado comentarios",
-      rating: comentario.rating || 0,
-      source: "Google",
-      timestamp: comentario.relativePublishTimeDescription || "Reciente",
-    }));
-
-    const comentariosBdNormalizados = bdComentarios.map((comentario) => ({
-      userId: comentario.userData.id,
-      commentId: comentario.commentId,
-      authorName: comentario.userData.name || "Usuario",
-      photoUri: null,
-      text: comentario.comentarioData.text || "El usuario no ha dejado comentarios",
-      rating: comentario.comentarioData.rating || 0,
-      source: "Voltipilot",
-      timestamp: new Date(comentario.comentarioData.timestamp).toLocaleDateString("es-ES"), // Convertir timestamp a formato legible
-    }));
-
-    setAllComentarios([...comentariosGoogleNormalizados, ...comentariosBdNormalizados]);
   };
 
   // Función para manejar el envío del comentario

@@ -1,5 +1,6 @@
 import React from "react";
-import { SafeAreaView, View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, Image } from "react-native";
+import { CancelButton } from "../components/Botones"; // Importa el botón personalizado
 
 export default function MarcadoresInfo({ onClose }) {
   return (
@@ -30,9 +31,7 @@ export default function MarcadoresInfo({ onClose }) {
         </View>
 
         {/* Botón para cerrar el modal */}
-        <TouchableOpacity style={styles.backButton} onPress={onClose}>
-          <Text style={styles.backButtonText}>Cerrar</Text>
-        </TouchableOpacity>
+        <CancelButton onPress={onClose} text="Cerrar" style={styles.cancelButton} />
       </View>
     </SafeAreaView>
   );
@@ -76,17 +75,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
-  backButton: {
-    marginTop: 20,
-    backgroundColor: "#65558F",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignSelf: "center",
-  },
-  backButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
+  cancelButton: {
+    marginTop: 320, // Agrega un margen superior para empujar el botón hacia abajo
   },
 });

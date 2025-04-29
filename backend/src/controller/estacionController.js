@@ -1,4 +1,5 @@
 import estacionModel from "../models/estacionModel.js";
+import favoritosModel from "../models/favoritosModel.js";
 
 const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
@@ -137,6 +138,107 @@ const estacionController = {
     } catch (error) {
       console.error("Error al eliminar comentario:", error);
       return res.status(500).json({ error: "Error al eliminar comentario" });
+    }
+  },
+
+  getEstacionesFavoritas: async (req, res) => {
+    const userId = req.user.uid;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId es requerido" });
+    }
+
+    try {
+      const estacionesFavoritas = await favoritosModel.getEstacionesFavoritas(userId);
+      return res.status(200).json(estacionesFavoritas);
+    } catch (error) {
+      console.error("Error al obtener estaciones favoritas:", error);
+      return res.status(500).json({ error: "Error al obtener estaciones favoritas" });
+    }
+  },
+
+  /**
+   * Agrega una estación a la lista de favoritas de un usuario.
+   */
+  addEstacionFavorita: async (req, res) => {
+    const { placeId } = req.body;
+    const userId = req.user.uid;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId es requerido" });
+    }
+
+    if (!placeId) {
+      return res.status(400).json({ error: "placeId es requerido" });
+    }
+
+    try {
+      await favoritosModel.addEstacionFavorita(userId, placeId);
+      return res.status(200).json({ message: "Estación agregada a favoritos exitosamente" });
+    } catch (error) {
+      console.error("Error al agregar estación favorita:", error);
+      return res.status(500).json({ error: "Error al agregar estación favorita" });
+    }
+  },
+
+  /**
+   * Elimina una estación de la lista de favoritas de un usuario.
+   */
+  deleteEstacionFavorita: async (req, res) => {
+    const { placeId } = req.body;
+    const userId = req.user.uid;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId es requerido" });
+    }
+
+    if (!placeId) {
+      return res.status(400).json({ error: "placeId es requerido" });
+    }
+
+    try {
+      await favoritosModel.deleteEstacionFavorita(userId, placeId);
+      return res.status(200).json({ message: "Estación eliminada de favoritos exitosamente" });
+    } catch (error) {
+      console.error("Error al eliminar estación favorita:", error);
+      return res.status(500).json({ error: "Error al eliminar estación favorita" });
+    }
+  },
+
+  /**
+   * Recupera información detallada de un cargador específico.
+   */
+  getInfoCargador: async (req, res) => {
+    const { placeId } = req.body; // Se espera que el placeId venga como parámetro de consulta
+
+    if (!placeId) {
+      return res.status(400).json({ error: "placeId es requerido" });
+    }
+
+    try {
+      // Construimos la URL para obtener la información del cargador
+      const url = `https://places.googleapis.com/v1/places/${placeId}?fields=id,displayName,displayName,location,evChargeOptions,internationalPhoneNumber,formattedAddress,currentOpeningHours,businessStatus,shortFormattedAddress,rating,websiteUri,googleMapsUri,userRatingCount,,photos,reviews,regularOpeningHours,nationalPhoneNumber&key=${apiKey}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {},
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error al obtener información del cargador: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Verifica si la respuesta contiene los datos esperados
+      if (!data) {
+        return res.status(404).json({ error: "No se encontró información para el placeId proporcionado" });
+      }
+
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error("Error al obtener información del cargador:", error);
+      return res.status(500).json({ error: "Error al obtener información del cargador" });
     }
   },
 };

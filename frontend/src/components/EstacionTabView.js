@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View, Image } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import VistaEstacionConectores from "../views/EstacionConectores";
 import VistaEstacionInfo from "../views/EstacionInfo";
@@ -23,6 +23,9 @@ const renderTabBar = (props) => (
 const EstacionTabView = () => {
   const [index, setIndex] = useState(0);
   const [fotoUrl, setFotoUrl] = useState(null);
+  const [esFavorito, setEsFavorito] = useState(null); // Estado para saber si es favorito
+  const [Comentarios, setComentarios] = useState([]); // Estado para almacenar los comentarios de la base de datos
+
   const [routes] = useState([
     { key: "first", title: "Conectores" },
     { key: "second", title: "Información" },
@@ -30,6 +33,19 @@ const EstacionTabView = () => {
     { key: "fourth", title: "Fotos" },
   ]);
   const { selectedCargador } = useCargador();
+
+  useEffect(() => {
+    // Función para obtener comentarios de la base de datos
+    const getComentarios = async () => {
+      try {
+        const data = await estacionAPI.getEstacionComentarios({ placeId: selectedCargador.id });
+        setComentarios(data); // Guardar los comentarios de la base de datos
+      } catch (error) {
+        console.error("Error al obtener comentarios de la base de datos:", error);
+      }
+    };
+    getComentarios(); // Obtener comentarios de la base de datos al cargar el componente
+  }, [selectedCargador]);
 
   // Se llama cada vez que se selecciona una estacion
   useEffect(() => {
@@ -51,6 +67,38 @@ const EstacionTabView = () => {
 
     obtenerImagenEstacion(selectedCargador.photos[0].name);
   }, [selectedCargador]);
+
+  useEffect(() => {
+    const comprobarSiEsFavorito = async () => {
+      try {
+        const favoriteIds = await estacionAPI.getEstacionesFavoritas(); // Obtén los IDs favoritos
+        const favorito = favoriteIds.includes(selectedCargador.id); // Comprueba si es favorito
+
+        if (favorito !== esFavorito) {
+          setEsFavorito(favorito);
+        }
+      } catch (error) {
+        console.error("Error al comprobar si la estación es favorita:", error);
+      }
+    };
+
+    comprobarSiEsFavorito();
+  }, [selectedCargador]);
+
+  const onPressFavorite = async () => {
+    try {
+      if (esFavorito) {
+        // Llamada al servidor para eliminar de favoritos
+        await estacionAPI.deleteEstacionFavorita({ placeId: selectedCargador.id });
+      } else {
+        // Llamada al servidor para agregar a favoritos
+        await estacionAPI.addEstacionFavorita({ placeId: selectedCargador.id });
+      }
+      setEsFavorito(!esFavorito); // Cambia el estado
+    } catch (error) {
+      console.error("Error al actualizar favoritos:", error);
+    }
+  };
 
   return (
     <View>
@@ -96,14 +144,32 @@ const EstacionTabView = () => {
           </Text>
         </View>
 
-        {/* Contenedor para la valoración, estrella y número de valoraciones */}
-        {selectedCargador.rating && (
+        <View style={styles.ratingAndFavoriteRow}>
+          {/* Contenedor para la valoración de Google */}
           <View style={styles.ratingRow}>
-            <Text style={styles.infoText}>{selectedCargador.rating}</Text>
-            <Icon name="star" size={16} color="#65558F" style={styles.ratingIcon} />
-            <Text style={styles.userRatingCount}>({selectedCargador.userRatingCount})</Text>
+            <Text style={styles.infoText}>{selectedCargador.rating ? selectedCargador.rating : 0}</Text>
+            <Icon name="star" size={16} color={"#65558F"} style={styles.ratingIcon} />
+            <Text style={styles.userRatingCount}>({selectedCargador.userRatingCount ? selectedCargador.userRatingCount : 0})</Text>
+            <Text style={styles.sourceText}>Google</Text>
           </View>
-        )}
+
+          {/* Contenedor para la valoración de Voltipilot */}
+          <View style={[styles.ratingRow, { marginLeft: 20 }]}>
+            <Text style={styles.infoText}>
+              {Comentarios.length > 0
+                ? (Comentarios.reduce((sum, comentario) => sum + comentario.comentarioData.rating, 0) / Comentarios.length).toFixed(1)
+                : 0}
+            </Text>
+            <Icon name="star" size={16} color={"#65558F"} style={styles.ratingIcon} />
+            <Text style={styles.userRatingCount}>({Comentarios.length})</Text>
+            <Text style={styles.sourceText}>Voltipilot</Text>
+          </View>
+
+          {/* Contenedor para el ícono de corazón */}
+          <TouchableOpacity onPress={onPressFavorite} style={styles.favoriteContainer}>
+            <Icon name={esFavorito ? "heart" : "heart-o"} size={20} color="#65558F" style={styles.favoriteIcon} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* TabView */}
@@ -140,13 +206,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // Espacia el título y el estado
     alignItems: "center", // Alinea verticalmente los elementos
   },
-  ratingRow: {
-    flexDirection: "row", // Alinea la estrella, valoración y número de valoraciones horizontalmente
+  ratingAndFavoriteRow: {
+    flexDirection: "row", // Alinea los elementos horizontalmente
     alignItems: "center", // Centra verticalmente los elementos
+    justifyContent: "space-between", // Espacia los elementos horizontalmente
     marginTop: 10, // Espaciado superior para separar del displayName
   },
+  ratingRow: {
+    flexDirection: "row", // Alinea los elementos horizontalmente
+    alignItems: "center", // Centra verticalmente los elementos
+  },
   ratingIcon: {
-    marginLeft: 5, // Espaciado entre la valoración y la estrella
+    marginLeft: 5, // Espaciado entre el texto del rating y la estrella
   },
   userRatingCount: {
     fontSize: 14,
@@ -158,9 +229,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333", // Color del texto
   },
-  statusText: {
-    fontSize: 16,
-    fontWeight: "bold",
+  sourceText: {
+    fontSize: 12, // Tamaño de fuente pequeño
+    color: "#888", // Gris apagado
+    marginLeft: 5, // Espaciado entre el texto principal y la fuente
   },
   tabBar: {
     backgroundColor: "#65558F",
@@ -173,6 +245,9 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontWeight: "bold",
     fontSize: 9,
+  },
+  favoriteContainer: {
+    marginLeft: "auto", // Empuja el ícono de corazón al final del contenedor
   },
 });
 

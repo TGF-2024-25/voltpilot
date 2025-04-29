@@ -54,13 +54,39 @@ function PlaceholderScreen() {
 function MainAppStack() {
   return (
     <CargadorProvider>
-      <Tab.Navigator>
-        <Tab.Screen name="Estaciones" component={VistaEstacionInicio} options={{ headerShown: false }} />
-        <Tab.Screen name="Enrutado" component={VistaRutas} options={{ headerShown: false }} />
-        <Tab.Screen name="Favoritas" component={VistaEstacionesFavoritas} />
-        <Tab.Screen name="Perfil" component={ProfileStack} options={{ headerShown: false }} />
-      </Tab.Navigator>
+      <Stack.Navigator>
+        {/* Tab Navigator como pantalla principal */}
+        <Stack.Screen
+          name="MainTabs"
+          component={MainTabs}
+          options={{ headerShown: false }} // Oculta el encabezado del stack para las pestañas
+        />
+        {/* Pantalla adicional para navegar desde Favoritas */}
+        <Stack.Screen
+          name="Estaciones"
+          component={VistaEstacionInicio} // Cambia esto al componente correcto si es otro
+          options={{ title: "Detalles de la Estación" }}
+        />
+        {/* Pantalla Favoritas */}
+        <Stack.Screen
+          name="Favoritas"
+          component={VistaEstacionesFavoritas} // Pantalla de favoritos
+          options={{ title: "Estaciones Favoritas" }}
+        />
+      </Stack.Navigator>
     </CargadorProvider>
+  );
+}
+
+// Tab Navigator separado
+function MainTabs() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Estaciones" component={VistaEstacionInicio} options={{ headerShown: false }} />
+      <Tab.Screen name="Enrutado" component={VistaRutas} options={{ headerShown: false }} />
+      <Tab.Screen name="Favoritas" component={VistaEstacionesFavoritas} />
+      <Tab.Screen name="Perfil" component={ProfileStack} options={{ headerShown: false }} />
+    </Tab.Navigator>
   );
 }
 

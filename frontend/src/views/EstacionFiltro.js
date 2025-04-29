@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Slider from "@react-native-community/slider"; // Biblioteca para sliders
+import { ApplyButton, CancelButton } from "../components/Botones";
 
 export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters }) {
   const [selectedConnectors, setSelectedConnectors] = useState(initialFilters.selectedConnectors || []);
@@ -46,18 +47,10 @@ export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters
           {connectors.map((connector) => (
             <TouchableOpacity
               key={connector.id}
-              style={[
-                styles.connectorButton,
-                selectedConnectors.includes(connector.id) && styles.connectorButtonSelected,
-              ]}
+              style={[styles.connectorButton, selectedConnectors.includes(connector.id) && styles.connectorButtonSelected]}
               onPress={() => toggleConnector(connector.id)}
             >
-              <Text
-                style={[
-                  styles.connectorButtonText,
-                  selectedConnectors.includes(connector.id) && styles.connectorButtonTextSelected,
-                ]}
-              >
+              <Text style={[styles.connectorButtonText, selectedConnectors.includes(connector.id) && styles.connectorButtonTextSelected]}>
                 {connector.name}
               </Text>
             </TouchableOpacity>
@@ -99,27 +92,23 @@ export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters
         <Text style={styles.sliderValue}>{searchRadius} km</Text>
       </View>
 
-      {/* Botón para aplicar los filtros */}
-      <TouchableOpacity style={styles.applyButton} onPress={handleApplyFilters}>
-        <Text style={styles.applyButtonText}>Aplicar filtros</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        {/* Botón para aplicar los filtros */}
+        <ApplyButton onPress={handleApplyFilters} text="Aplicar filtros" />
 
-      {/* Botón para borrar los filtros */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => {
-          setSelectedConnectors([]); // Restablece los conectores seleccionados
-          setMinKwh(1); // Restablece el kWh mínimo
-          setSearchRadius(1); // Restablece el radio de búsqueda
-        }}
-      >
-        <Text style={styles.backButtonText}>Borrar filtros</Text>
-      </TouchableOpacity>
+        {/* Botón para borrar los filtros */}
+        <CancelButton
+          onPress={() => {
+            setSelectedConnectors([]); // Restablece los conectores seleccionados
+            setMinKwh(1); // Restablece el kWh mínimo
+            setSearchRadius(1); // Restablece el radio de búsqueda
+          }}
+          text="Borrar filtros"
+        />
 
-      {/* Botón para volver */}
-      <TouchableOpacity style={styles.backButton} onPress={onClose}>
-        <Text style={styles.backButtonText}>Volver</Text>
-      </TouchableOpacity>
+        {/* Botón para volver */}
+        <CancelButton onPress={onClose} text="Cerrar" />
+      </View>
     </View>
   );
 }
@@ -209,5 +198,10 @@ const styles = StyleSheet.create({
     color: "#333", // Texto gris oscuro
     fontSize: 16,
     fontWeight: "bold",
+  },
+  buttonContainer: {
+    marginTop: 20, // Separación superior
+    paddingHorizontal: 20, // Espaciado a los lados
+    gap: 10, // Espaciado entre los botones
   },
 });
