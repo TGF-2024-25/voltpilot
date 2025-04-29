@@ -11,7 +11,9 @@ export default function SearchBar({ placeholder, onSelect }) {
         onPress={(data, details = null) => {
           if (details) {
             const { lat, lng } = details.geometry.location;
-            onSelect({ latitude: lat, longitude: lng });
+            const name = details.name;
+        
+            onSelect({ latitude: lat, longitude: lng, name });
           }
         }}
         query={{ key: GOOGLE_MAPS_API_KEY, language: "es" }}

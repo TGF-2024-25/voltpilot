@@ -1,82 +1,174 @@
-/* eslint-disable import/no-unresolved */
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/display-name */
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Modal, FlatList, TextInput, ActivityIndicator } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { GOOGLE_MAPS_API_KEY } from "@env";
-import { routingAPI } from "../services/api.js";
-// import axios from 'axios' // Lo querré borrar seguramente
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Favoritos = () => {
+import { routingAPI } from '../services/api';
+import SearchBar from "../components/SearchBar.js";
+import styles from "../styles/favoritosStyle.js";
+
+const Favoritos = ({ on_selected_destino }) => {
+
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading_data, set_loading_data] = useState(true);
+
+  const [uid, set_uid] = useState(null);
+  const [nuevo, set_nuevo] = useState({ description: "", location: null });
   const [favoritos, set_favoritos] = useState([]);
 
+  const fetch_favoritos = async() => {
+    try {
+      if(!uid) return;
+
+      const data = await routingAPI.getFavoritos(uid);
+
+      if(data) 
+        set_favoritos(data);
+
+    } catch (err) {
+      console.error("Error de red al obtener favoritos: ", err);
+    } finally {
+      set_loading_data(false);
+    }
+  }
+
+  const send_favorito = async() => {
+    if (!nuevo.location || !nuevo.description.trim()) return;
+
+    const favorito_data = { description: nuevo.description, location: nuevo.location, uid: uid, };
+
+    try {
+      const data = await routingAPI.setFavorito(favorito_data);
+
+      console.log('Favorito enviado correctamente:', data);
+      set_nuevo({ description: "", location: null });
+
+      fetch_favoritos();
+    } catch (err) {
+      console.error("Error al enviar favorito: ", err);
+    }
+  }
+
+  const delete_favorito = async (favorito) => {
+    try {
+      const data = {
+        uid: uid,
+        description: favorito.description,
+        location: favorito.location
+      };
+  
+      await routingAPI.deleteFavorito(data); 
+
+      fetch_favoritos();
+    } catch (err) {
+      console.error("Error al eliminar favorito:", err);
+    }
+  }
+
   useEffect(() => {
-    // Aquí iría la lógica para obtener los favoritos de la base de datos
-    // ejemplo: axios.get('/api/favoritos').then(response => setFavoritos(response.data));
-    //favoritos = await routingAPI.getRoute(origen, destinos[0]);
+    const getCurrentUserId = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('uid');
+        if (userId) {
+          set_uid(userId);
+        } else {
+          console.error('No se encontró el UID en AsyncStorage.');
+        }
+      } catch (e) {
+          console.error('Error al obtener el UID desde AsyncStorage:', e);
+      }
+    };
+        
+    getCurrentUserId();
   }, []);
 
-  const select_function = (data, details) => {
-    const favorito = {
-      description: data.description,
-      location: details.geometry.location,
-    };
+  useEffect(() => {       
+    if (uid) fetch_favoritos();
+  }, [uid]);
 
-    // Guardar favorito en BD
-    axios
-      .post("URL PARA MANEJAR", favorito)
-      .then((response) => {
-        set_favoritos((lst) => [...lst, favorito]); // Añadir a la lista de favoritos locales
-        setModalVisible(false);
-      })
-      .catch((error) => console.error("ERROR >>> Error al guardar el favorito: ", error));
+  const select_favorito = (favorito) => {
+    if (on_selected_destino) {
+      on_selected_destino(favorito); // Lo pasas como destino seleccionado
+    }
+    setModalVisible(false);
   };
-
-  const add_destino = (favorito) => {
-    // Logica para guardar el seleccionado favorito como destino
-    console.log("Favorito seleccionado: ", favorito);
-  };
-
+  
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Feather name="star" size={40} color="#1FB28A" />
+      <TouchableOpacity style={styles.favButton} onPress={() => setModalVisible(true)}>
+        <Feather name="star" size={24} color="white" />
       </TouchableOpacity>
 
       <Modal animationType="slide" visible={modalVisible} transparent onRequestClose={() => setModalVisible(false)}>
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Favoritos</Text>
+            <View style={styles.header}>
+              <Text style={styles.title}>Destinos de Ruta Favoritos</Text>
+            </View>
+            
+            <View style={styles.searchContainer}>
+              <Text style={styles.searchTitle}>Añadir nuevo favorito</Text>
+              <SearchBar
+                placeholder="Buscar nuevo favorito"
+                onSelect={(location) => {
+                  set_nuevo({ ...nuevo, location });
+                }}
+              />
 
-            <FlatList
-              data={favoritos}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.favButton} onPress={() => add_destino(item)}>
-                  <Text style={styles.botonTexto}>{item.description}</Text>
-                </TouchableOpacity>
+              <TextInput
+                style={styles.input}
+                placeholder="Nombre personalizado"
+                value={nuevo.description}
+                onChangeText={(text) => set_nuevo({ ...nuevo, description: text })} 
+              />
+
+              <TouchableOpacity
+                style={[styles.addButton, (!nuevo.location || !nuevo.description.trim()) && { opacity: 0.6 }]}
+                onPress={send_favorito}
+                disabled={!nuevo.location || !nuevo.description.trim()}
+              >
+                <Text style={styles.botonTexto}>Guardar como Favorito</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.listContainer}>
+              <Text style={styles.modalTitle}> Tus Favoritos</Text>
+              {loading_data ? (
+                <ActivityIndicator size="large" color="#0000ff" style={{ marginVertical: 20 }} />
+              ) : (
+                <FlatList
+                  data={favoritos}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.favoritoContainer}>
+                      <View style={styles.favoritoBotones}>
+                        <TouchableOpacity style={styles.delItemButton} onPress={() => delete_favorito(item)}>
+                          <Feather name="trash-2" size={20} color="#fff" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.favItemButton} onPress={() => select_favorito(item)}>
+                          <Text style={styles.botonTexto}>{item.description}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                  ListEmptyComponent={
+                    <Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>
+                  }
+                  style={styles.list}
+                />
               )}
-              ListEmptyComponent={<Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>}
-              style={styles.list}
-            />
+            </View>
 
-            {/* Botón para añadir un nuevo favorito */}
-            <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(false)}>
-              <Text style={styles.botonTexto}>Añadir Nuevo Favorito</Text>
-            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.backButtonText}>Cancelar</Text>
+              </TouchableOpacity>
 
-            <GooglePlacesAutocomplete
-              fetchDetails={true}
-              placeholder="Selecciona Destinos"
-              onPress={(data, details = null) => {
-                if (details) {
-                  select_function(data, details);
-                }
-              }}
-              query={{ key: GOOGLE_MAPS_API_KEY, language: "es" }}
-              styles={{ textInput: styles.textInput }}
-            />
           </View>
         </View>
       </Modal>
@@ -85,69 +177,3 @@ const Favoritos = () => {
 };
 
 export default Favoritos;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    elevation: 6,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  favButton: {
-    backgroundColor: "#1FB28A",
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    width: "80%",
-    alignItems: "center",
-  },
-  addButton: {
-    backgroundColor: "#007AFF",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  botonTexto: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  list: {
-    maxHeight: 200,
-    marginBottom: 15,
-  },
-  textInput: {
-    height: 40,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    width: "100%",
-  },
-  emptyMessage: {
-    fontSize: 16,
-    color: "#aaa",
-    textAlign: "center",
-  },
-});

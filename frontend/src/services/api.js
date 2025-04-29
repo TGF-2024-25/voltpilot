@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 // url de ka api backend
-const DEV_API_URL = "http://localhost:5000/api"; //cambia a la ip de tu backend
+const DEV_API_URL = "http://192.168.1.242:5000/api"; //cambia a la ip de tu backend
 const API_URL = DEV_API_URL;
 
 // patrone de facade de api
@@ -68,11 +68,17 @@ export const userAPI = {
 
 // routing API
 export const routingAPI = {
-  getRoute: (origen, destino) => apiRequest("/routing/route", "POST", { origen, destino }, false),
+  getRoute: (origen, destino, preferencias) => apiRequest("/routing/route", "POST", { origen, destino, preferencias }, false),
   getAutonomia: (uid) => apiRequest(`/routing/autonomia/${uid}`, "GET", null, false),
   setAutonomia: (data_autonomia) => apiRequest(`/routing/autonomia`, "POST", data_autonomia, false),
   getEstacionesRuta: (ruta, autonomia, distancia) => apiRequest("/routing/estaciones", "POST", { ruta, autonomia, distancia }, false),
+  getPreferencias: (uid) => apiRequest(`/routing/preferencias/${uid}`, "GET", null, false),
+  setPreferencias: (data_preferencias) => apiRequest(`/routing/preferencias`, "POST", data_preferencias, false),
+  getFavoritos: (uid) => apiRequest(`/routing/favoritos/${uid}`, "GET", null, false),
+  setFavorito: (data_favorito) => apiRequest(`/routing/favoritos`, "POST", data_favorito, false),
+  deleteFavorito: (data_favorito) => apiRequest(`/routing/favoritos`, "DELETE", data_favorito, false),
 };
+
 
 export const estacionAPI = {
   getEstaciones: (locationData) => apiRequest("/estaciones/getCargadores", "POST", locationData, false),

@@ -7,13 +7,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  autonomiaButton: {
+  favButton: {
     backgroundColor: "#65558F",
     padding: 10,
     borderRadius: 25,
     elevation: 5,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 10,
     marginBottom: 10,
   },
   overlay: {
@@ -34,50 +35,100 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    marginBottom: 50,
+    marginBottom: 20,
   },
   title: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
-  section: {
-    marginVertical: 20,
+  searchContainer: {
+    position: "absolute",
+    marginTop: 70,
+    width: "100%",
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: "lightgrey",
   },
-  label: {
+  searchTitle: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
     color: "black",
-    marginLeft: 15,
-  },
-  slider: {
-    width: "100%",
-    height: 40,
   },
   input: {
     height: 40,
     borderRadius: 5,
     paddingHorizontal: 15,
-    marginHorizontal: 15,
     marginTop: 10,
     marginBottom: 5,
     borderBottomColor: "#5e2e7e",
     borderBottomWidth: 2,
     color: "5e2e7e",
   },
-  acceptButton: {
-    backgroundColor: "#65558F", // Fondo morado
+  addButton: {
+    backgroundColor: "#a96c9f", // morado claro
+    marginTop: 10,
+    marginLeft: 50,
     paddingVertical: 15,
-    borderRadius: 10,
+    paddingHorizontal: 5,
+    borderRadius: 35,
     alignItems: "center",
-    marginTop: 160,
-    marginHorizontal: 20, // Margen izquierdo y derecho
   },
-  acceptButtonText: {
-    color: "white", // Texto blanco
+  listContainer: {
+    marginTop: 230,
+    width: "100%",
+    borderRadius: 10,
+    padding: 10,
+  },
+  modalTitle: {
     fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 20,
+    color: "black",
+  },
+  botonTexto: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  favoritoContainer: {
+    marginHorizontal: 15,
+    marginBottom: 12,
+  },
+  favoritoBotones: {
+    flexDirection: "row",
+    borderRadius: 10,
+    overflow: "hidden",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  favItemButton: {
+    flex: 14,
+    backgroundColor: "#65558F",
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  delItemButton: {
+    flex: 2,
+    backgroundColor: "#AA4A44",
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  list: {
+    maxHeight: 200,
+    width: "100%",
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: "#aaa",
+    textAlign: "center",
+    marginTop: 10,
   },
   backButton: {
     backgroundColor: "#d3d3d3",

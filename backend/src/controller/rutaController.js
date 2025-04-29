@@ -2,43 +2,44 @@ import axios from 'axios';
 import polyline from '@mapbox/polyline';
 import haversine from 'haversine-distance';
 import autonomiaModel from '../models/autonomiaModel.js';
-
+import preferenciasRutaModel from '../models/preferenciasRutaModel.js';
+import FavoritosRutaModel from '../models/favoritosRutaModel.js';
 
 const rutaController = {
 
     // Función para obtener la ruta desde la API de Google
     getRoute: async (req, res) => {
-        const { origen, destino } = req.body;  // Recibe los datos del origen y destino desde el frontend
-    
+        const { origen, destino, preferencias } = req.body;  // Recibe los datos del origen y destino desde el frontend
+            
         const url = `https://routes.googleapis.com/directions/v2:computeRoutes`;
     
         const body = {
-        origin: {
+          origin: {
             location: {
-            latLng: {
+              latLng: {
                 latitude: origen.latitude,
                 longitude: origen.longitude,
+              },
             },
-            },
-        },
-        destination: {
+          },
+          destination: {
             location: {
-            latLng: {
+              latLng: {
                 latitude: destino.latitude,
                 longitude: destino.longitude,
+              },
             },
-            },
-        },
-        travelMode: "DRIVE",
-        routingPreference: "TRAFFIC_AWARE",
-        computeAlternativeRoutes: false,
-        routeModifiers: {
-            avoidTolls: false,
-            avoidHighways: false,
-            avoidFerries: false,
-        },
-        languageCode: "es",
-        units: "METRIC",
+          },
+          travelMode: "DRIVE",
+          routingPreference: preferencias?.traffic ? "TRAFFIC_AWARE" : "TRAFFIC_UNAWARE",
+          computeAlternativeRoutes: false,
+          routeModifiers: {
+            avoidTolls: preferencias?.peajes ?? false,
+            avoidHighways: preferencias?.autopista ?? false,
+            avoidFerries: preferencias?.ferry ?? false,
+          },
+          languageCode: "es",
+          units: "METRIC",
         };
     
         try {
@@ -46,7 +47,7 @@ const rutaController = {
             headers: {
             "Content-Type": "application/json",
             "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY,
-            "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+            "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.steps",
             },
         });
     
@@ -58,8 +59,17 @@ const rutaController = {
           
           const distanciaKm = routeData.distanceMeters / 1000;
           const duration = routeData.duration;
+
+          // Extraemos los steps
+          const steps = routeData.legs?.[0]?.steps?.map((step) => ({
+            instruction: step.navigationInstruction?.instructions,
+            distanceMeters: step.distanceMeters,
+            duration: step.duration,
+            startLocation: step.startLocation?.latLng,
+            endLocation: step.endLocation?.latLng,
+          })) ?? [];
           
-          res.json({ route: polylinePoints, distanciaKm, duration });
+          res.json({ route: polylinePoints, distanciaKm, duration, steps });
 
         } else {
             res.status(404).json({ message: "No se encontró una ruta válida" });
@@ -72,7 +82,7 @@ const rutaController = {
 
     getAutonomia: async (req, res) => {
       try {
-        const {uid} = req.query;
+        const {uid} = req.params;
 
         if(!uid) 
           return res.status(400).json({error: 'No se ha proporcionado el uid del usuario'});
@@ -104,6 +114,92 @@ const rutaController = {
         return res.status(500).json({ error: "Error en el servidor" });
       }
     }, 
+
+    getPreferencias: async (req, res) => {
+      try {
+        const { uid } = req.params;
+    
+        if (!uid)
+          return res.status(400).json({ error: "No se ha proporcionado el uid del usuario" });
+    
+        const data = await preferenciasRutaModel.findById(uid);
+    
+        if (!data)
+          return res.status(404).json({ error: "No se han encontrado las preferencias del usuario" });
+    
+        return res.status(200).json(data);
+      } catch (error) {
+        console.error("Error al obtener las preferencias en el servidor:", error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+
+    setPreferencias: async (req, res) => {
+      try {
+        const data = req.body;
+    
+        if (!data || !data.uid)
+          return res.status(400).json({ error: "No se han proporcionado las preferencias del usuario" });
+    
+        await preferenciasRutaModel.saveOrCreate(data);
+    
+        return res.status(200).json({ message: "Preferencias guardadas correctamente", data });
+      } catch (error) {
+        console.error("Error al guardar las preferencias en el servidor:", error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+
+    getFavoritos: async (req, res) => {
+      try {
+        const { uid } = req.params;
+  
+        if (!uid) {
+          return res.status(400).json({ message: "No se ha proporcionado el uid del usuario" });
+        }
+  
+        const data = await FavoritosRutaModel.getAllById(uid);
+  
+        return res.status(200).json(data);
+      } catch (error) {
+        console.error('Error en getFavoritos (controller):', error);
+        return res.status(500).json({ error: "Error en el servidor" });
+      }
+    },
+
+    setFavorito: async (req, res) => {
+      try {
+        const data = req.body;
+  
+        if (!data || !data.uid) {
+          return res.status(400).json({ message: "No se ha proporcionado un favorito del usuario" });
+        }
+  
+        await FavoritosRutaModel.add(data);
+  
+        return res.status(200).json({  message: "Favoritos guardados correctamente", data  });
+      } catch (error) {
+        console.error('Error en setFavorito (controller):', error);
+        return res.status(500).json({ message: "Error en el servidor" });
+      }
+    },
+
+    deleteFavorito: async (req, res) => {
+      try {
+        const data = req.body;
+    
+        if (!data || !data.uid) {
+          return res.status(400).json({ message: "No se ha proporcionado el uid del usuario" });
+        }
+    
+        await FavoritosRutaModel.remove(data);
+    
+        return res.status(200).json({ message: "Favorito eliminado correctamente" });
+      } catch (error) {
+        console.error('Error en deleteFavorito (controller):', error);
+        return res.status(500).json({ message: "Error al eliminar el favorito" });
+      }
+    },
 
     getEstacionesRuta: async (req, res) => {
       const { ruta, autonomia, distancia } = req.body;
@@ -179,7 +275,13 @@ const rutaController = {
               const response = await axios.post(
                 url,
                 { includedTypes: ["electric_vehicle_charging_station"], maxResultCount: 5, openNow: true, locationRestriction: { circle: { center: { latitude, longitude }, radius: searchRadius } } },
-                { headers: { "Content-Type": "application/json", "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY, "X-Goog-FieldMask": "places.displayName,places.location,places.businessStatus,places.id,places.formattedAddress" } }
+                { headers: { 
+                  "Content-Type": "application/json", 
+                  "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY, 
+                  "X-Goog-FieldMask": 
+                    "places.displayName,places.location,places.businessStatus,places.id,places.formattedAddress,places.evChargeOptions"
+                   } 
+                }
               );
     
               const resultados = response.data.places || [];
@@ -192,15 +294,16 @@ const rutaController = {
                 const distanceToRuta = haversine({ latitude: estacionLat, longitude: estacionLng }, { latitude, longitude });
 
                 // Evitar agregar estaciones duplicadas
-                if (!estaciones.find((e) => e.place_id === estacion.place_id)) {
+                if (!estaciones.find((e) => e.id === estacion.id)) {
                   estaciones.push({
+                    id: estacion.id,
                     name: estacion.displayName?.text || "Sin nombre",
                     distanceToRuta,
                     latitude: estacionLat,
                     longitude: estacionLng,
                     address: estacion.formattedAddress || "",
-                    place_id: estacion.id,
-                    business_status: estacion.businessStatus || null
+                    business_status: estacion.businessStatus || null,
+                    evChargeOptions: estacion.evChargeOptions || null
                   });
                 }
               });
@@ -209,7 +312,7 @@ const rutaController = {
             }
           }
 
-          break; // salimos tras buscar en puntos especificados
+          break;
         }
       }
       return res.json({ estaciones });
@@ -218,3 +321,4 @@ const rutaController = {
 };
 
 export default rutaController;
+

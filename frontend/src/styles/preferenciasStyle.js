@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  autonomiaButton: {
+  filterButton: {
     backgroundColor: "#65558F",
     padding: 10,
     borderRadius: 25,
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
   },
-  overlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "flex-start",
@@ -34,47 +34,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    marginBottom: 50,
+    marginBottom: 20,
   },
   title: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
-  section: {
-    marginVertical: 20,
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderTopColor: "#ddd",
+    borderTopWidth: 1,
+    borderBottomColor: "#ddd",
+    borderBottomWidth: 1,
   },
   label: {
+    marginLeft: 12,
     fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "black",
-    marginLeft: 15,
+    color: "#5e2e7e",
   },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  input: {
-    height: 40,
-    borderRadius: 5,
-    paddingHorizontal: 15,
-    marginHorizontal: 15,
-    marginTop: 10,
-    marginBottom: 5,
-    borderBottomColor: "#5e2e7e",
-    borderBottomWidth: 2,
-    color: "5e2e7e",
-  },
-  acceptButton: {
+  button: {
     backgroundColor: "#65558F", // Fondo morado
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 160,
+    marginTop: 250,
     marginHorizontal: 20, // Margen izquierdo y derecho
   },
-  acceptButtonText: {
+  buttonText: {
     color: "white", // Texto blanco
     fontSize: 16,
     fontWeight: "bold",
@@ -93,5 +83,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+  
 
-export default styles;
+
+
+
+
+
+  export default styles;
