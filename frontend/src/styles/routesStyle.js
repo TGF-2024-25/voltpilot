@@ -11,12 +11,10 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: 40,
-    left: 20,
-    right: 20,
+    top: 50,
+    left: 10,
+    right: 10,
     zIndex: 1,
-    borderRadius: 10,
-    padding: 10,
   },
   searchBarContainer: {
     flexDirection: "row",
@@ -77,8 +75,8 @@ const styles = StyleSheet.create({
   },
   botonAgregar: {
     position: "absolute",
-    top: 15,
-    right: 15,
+    top: 6,
+    right: 10,
     backgroundColor: "white",
     width: 30,
     height: 30,

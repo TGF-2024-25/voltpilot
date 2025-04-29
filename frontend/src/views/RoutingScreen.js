@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, Text, Modal, ScrollView } from "react-native";
+import { View, TouchableOpacity, Text, Modal, ScrollView } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -47,8 +48,8 @@ export default function VistaRutas() {
         {
           latitude: origen.latitude,
           longitude: origen.longitude,
-          latitudeDelta: origen.latitudeDelta,
-          longitudeDelta: origen.longitudeDelta,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         },
         1000,
       );
@@ -76,6 +77,9 @@ export default function VistaRutas() {
   const eliminarDestino = (index) => {
     const nuevosDestinos = destinos.filter((_, idx) => idx !== index);
     setDestinos(nuevosDestinos);
+
+    // Si no hay destinos, quitamos polilinea y modo ruta
+    if (nuevosDestinos.length === 0) setModRuta(false);
   };
 
   // Filtrar estaciones para devolver solo las 3 más cercanas a la ruta
@@ -91,13 +95,11 @@ export default function VistaRutas() {
   // Formar el tramo según sea estación de carga o destino
   const make_tramos = (origenActual, destinoActual, data, estSeleccionadas, index) => {
     const esEstacion = estSeleccionadas.some(
-      (est) =>
-        Math.abs(est.latitude - destinoActual.latitude) < 0.0001 &&
-        Math.abs(est.longitude - destinoActual.longitude) < 0.0001
+      (est) => Math.abs(est.latitude - destinoActual.latitude) < 0.0001 && Math.abs(est.longitude - destinoActual.longitude) < 0.0001,
     );
-  
+
     const tramos = [];
-  
+
     // Siempre añadimos el tramo de desplazamiento
     tramos.push({
       tipo: "normal",
@@ -106,7 +108,7 @@ export default function VistaRutas() {
       distancia: data.distanciaKm,
       duracion: data.duration,
     });
-  
+
     // Si además es estación, añadimos el tramo de carga
     if (esEstacion) {
       tramos.push({
@@ -115,7 +117,7 @@ export default function VistaRutas() {
         tiempoCarga: "20 min",
       });
     }
-  
+
     return tramos;
   };
 
@@ -173,27 +175,34 @@ export default function VistaRutas() {
       longitude: estacion.longitude,
       name: estacion.name || "Estación sin nombre",
     };
-  
+
     setEstSeleccionadas((prev) => [...prev, estacion]);
     setModalEstacionVisible(false);
-  
+
     setDestinos((prev) => {
       if (prev.length < 1) return [coords];
       const nuevosDestinos = [...prev];
       nuevosDestinos.splice(0, 0, coords); // Inserta justo después del origen
       return nuevosDestinos;
     });
-  
-    setEstaciones([]); // Limpia las estaciones para evitar solapamientos visuales
+
+    yaParadoRef.current = true;
+    setEstaciones([]); // Limpia las estaciones para evitar seguir viendolas tras selección
   };
 
+  // Cada vez que el array de destinos cambia, se recalcula la ruta
   useEffect(() => {
     if (destinos.length > 0 && destinos[0]?.latitude && destinos[0]?.longitude) {
-      console.log('destinos ha cambiado, recalculando ruta...');
       fetchRoute(yaParadoRef.current);
-      yaParadoRef.current = true; // Después de seleccionar estación, ya hemos parado
     }
   }, [destinos]);
+
+  // Si cambia el origen, se recalcula la ruta también
+  useEffect(() => {
+    if (modRuta && destinos.length > 0 && destinos[0]?.latitude  && destinos[0]?.longitude) {
+      fetchRoute(yaParadoRef.current);
+    }
+  }, [origen]);
 
   // Antes de seleccionar, permitimos consultar las 3 estaciones filtradas
   const consultarEstacion = (estacion) => {
@@ -216,7 +225,15 @@ export default function VistaRutas() {
         ) : (
           // Una vez se empieza a modificar la ruta, se muestran todas las paradas
           <View>
-            <TextInput style={styles.textInput} value="Ubicación actual" editable={false} />
+            <SearchBar
+              placeholder={origen?.name || "Ubicación actual"}
+              initialValue={origen} // Esto hace editable el origen
+              onSelect={(coords) => {
+                centrarEnDestino(coords);
+                setOrigen({ ...coords, name: coords.name || "Origen personalizado" });
+              }}
+            />
+
             {destinos.map((destino, index) => (
               <View key={index} style={styles.searchBarContainer}>
                 <SearchBar
@@ -229,10 +246,7 @@ export default function VistaRutas() {
                     setDestinos(actualizados);
                   }}
                 />
-                <TouchableOpacity 
-                  style={styles.deleteButton} 
-                  onPress={() => eliminarDestino(index)}
-                >
+                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarDestino(index)}>
                   <Text style={styles.deleteText}>x</Text>
                 </TouchableOpacity>
               </View>
@@ -247,7 +261,8 @@ export default function VistaRutas() {
           </TouchableOpacity>
         )}
       </View>
-
+      
+      {/*}
       <View style={styles.upperLogos}>
         <Favoritos
           on_selected_destino={(favorito) => {
@@ -261,8 +276,21 @@ export default function VistaRutas() {
 
         <Autonomia ref={autonomiaRef} />
       </View>
+      */}
 
       <View style={styles.lowerLogos}>
+        <Favoritos
+          on_selected_destino={(favorito) => {
+            const location = favorito.location;
+            location.name = location.name || favorito.description || "Destino favorito";
+            centrarEnDestino(location);
+            setDestinos((prevDestinos) => [...prevDestinos, location]);
+            setModRuta(false);
+          }}
+        />
+
+        <Autonomia ref={autonomiaRef} />
+        
         <Preferencias ref={preferenciasRef} />
 
         {/* Botón personalizado para centrar la ubicación */}
@@ -289,7 +317,7 @@ export default function VistaRutas() {
             />
           ))}
 
-          {ruta.length > 0 && <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#B093FD" />}
+          {ruta.length > 0 && modRuta && (<Polyline coordinates={ruta} strokeWidth={5} strokeColor="#B093FD" /> )}
         </MapView>
       )}
 
@@ -309,15 +337,15 @@ export default function VistaRutas() {
               <View style={stylesEstacion.header}>
                 <Text style={stylesEstacion.title}>{estConsultada.name || "Sin nombre"}</Text>
               </View>
-        
+
               <View style={stylesEstacion.infoWrapper}>
                 <ScrollView contentContainerStyle={stylesEstacion.infoContainer} showsVerticalScrollIndicator={false}>
                   <Text style={stylesEstacion.infoText}>Distancia a ruta: {(estConsultada.distanceToRuta / 1000).toFixed(2)} km</Text>
-        
+
                   {estConsultada.evChargeOptions ? (
                     <View style={stylesEstacion.evChargeInfo}>
                       <Text style={stylesEstacion.infoText}>Total de conectores: {estConsultada.evChargeOptions.connectorCount}</Text>
-        
+
                       {estConsultada.evChargeOptions.connectorAggregation.map((connector, index) => (
                         <View key={index} style={stylesEstacion.connectorInfo}>
                           <Text style={stylesEstacion.infoText}>Tipo de conector: {formatConnectorType(connector.type)}</Text>
@@ -333,12 +361,12 @@ export default function VistaRutas() {
                   )}
                 </ScrollView>
               </View>
-        
+
               <View style={stylesEstacion.buttonsContainer}>
                 <TouchableOpacity onPress={() => setModalEstacionVisible(false)} style={stylesEstacion.backButton}>
                   <Text style={stylesEstacion.backButtonText}>Cerrar</Text>
                 </TouchableOpacity>
-        
+
                 <TouchableOpacity onPress={() => seleccionarEstacion(estConsultada)} style={stylesEstacion.selectButton}>
                   <Text style={stylesEstacion.selectButtonText}>Seleccionar</Text>
                 </TouchableOpacity>

@@ -4,33 +4,36 @@ import Feather from "react-native-vector-icons/Feather";
 
 import styles from "../styles/infoRutaStyle";
 
+// Componente Información Ruta
 const InformacionRuta = ({ infoRuta }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const get_timeFormat = (totalTiempo) => {
-    const horas = Math.floor(totalTiempo / 3600); // Dividir entre 3600 para obtener las horas
-    const minutos = Math.floor((totalTiempo % 3600) / 60); // El residuo de horas dividido entre 60 para los minutos
-    const segundos = Math.floor(totalTiempo % 60); // El residuo de los minutos es el número de segundos
-  
+  // Función para cambiar el formato de route.duracion
+  const get_timeFormat = (tot_segs) => {
+    const horas = Math.floor(tot_segs / 3600);
+    const minutos = Math.floor((tot_segs % 3600) / 60);
+    const segundos = Math.floor(tot_segs % 60);
+
     return `${horas}h ${minutos}m ${segundos}s`;
   };
 
+  // Función que calcula la información Total de la Ruta.
   const get_total = () => {
     let totalDistancia = 0;
     let totalTiempo = 0;
     let tiempoEsperaTotal = 0;
 
     // Recorremos los tramos para calcular las distancias y tiempos
-    infoRuta.forEach(tramo => {
-      if (tramo.tipo === 'normal') {
+    infoRuta.forEach((tramo) => {
+      if (tramo.tipo === "normal") {
+        // Sumamos la distancia + duración (segundos) del tramo i
         totalDistancia += tramo.distancia;
-        // Sumamos la duración en minutos
-        const duracion = parseInt(tramo.duracion.split(' ')[0], 10); // Solo la parte numérica
+        const duracion = parseInt(tramo.duracion.split(" ")[0], 10);
         totalTiempo += duracion;
-      } else if (tramo.tipo === 'carga') {
-        // Sumamos el tiempo de espera de carga
-        const tiempoCarga = parseInt(tramo.tiempoCarga.split(' ')[0], 10);
-        tiempoEsperaTotal += tiempoCarga;
+      } else if (tramo.tipo === "carga") {
+        // Sumamos el tiempo de espera de carga de parada i (viene en minutos --> convertir a segundos)
+        const tiempoCarga = parseInt(tramo.tiempoCarga.split(" ")[0], 10);
+        tiempoEsperaTotal += tiempoCarga * 60;
       }
     });
 
@@ -40,6 +43,7 @@ const InformacionRuta = ({ infoRuta }) => {
 
   const { totalDistancia, totalTiempo } = get_total();
 
+  // Vista del Componente InformacionRuta
   return (
     <>
       <TouchableOpacity style={styles.infoRutaButton} onPress={() => setModalVisible(true)}>
@@ -80,7 +84,7 @@ const InformacionRuta = ({ infoRuta }) => {
                           <View style={styles.flechaCentro}>
                             <Text style={styles.distanciaTexto}>{tramo.distancia} km</Text>
                             <Feather name="arrow-right" size={24} color="#65558F" />
-                            <Text style={styles.infoText}>{get_timeFormat(parseInt(tramo.duracion.split('s')[0], 10))}</Text>
+                            <Text style={styles.infoText}>{get_timeFormat(parseInt(tramo.duracion.split("s")[0], 10))}</Text>
                           </View>
 
                           <View style={styles.paradaItem}>
