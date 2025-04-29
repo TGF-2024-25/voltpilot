@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 // url de ka api backend
-const DEV_API_URL = "http://192.168.1.242:5000/api"; //cambia a la ip de tu backend
+const DEV_API_URL = "http://localhost:5000/api"; //cambia a la ip de tu backend
 const API_URL = DEV_API_URL;
 
 // patrone de facade de api
@@ -78,7 +78,6 @@ export const routingAPI = {
   setFavorito: (data_favorito) => apiRequest(`/routing/favoritos`, "POST", data_favorito, false),
   deleteFavorito: (data_favorito) => apiRequest(`/routing/favoritos`, "DELETE", data_favorito, false),
 };
-
 
 export const estacionAPI = {
   getEstaciones: (locationData) => apiRequest("/estaciones/getCargadores", "POST", locationData, false),
