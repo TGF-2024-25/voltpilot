@@ -71,6 +71,28 @@ class UserModel {
     }
   }
 
+  async updateVehicle(id, data) {
+    try {
+      const userRef = db.collection("users").doc(id);
+
+      const vehicle = {};
+
+      if (data.marca) vehicle.marca = data.marca;
+      if (data.modelo) vehicle.modelo = data.modelo;
+      if (data.autonomia) vehicle.autonomia = data.autonomia;
+      if (data.tipo) vehicle.tipo = data.tipo;
+
+      await userRef.update(vehicle);
+
+      // conseguir usuario actualizado para actualizar el vista
+      const updatedUser = await this.findById(id);
+      return updatedUser;
+    } catch (error) {
+      console.error("error actualizar vehiculo:", error);
+      throw new Error(`error actualizar vehiculo: ${error.message}`);
+    }
+  }
+
   async findById(id) {
     try {
       const doc = await db.collection("users").doc(id).get();

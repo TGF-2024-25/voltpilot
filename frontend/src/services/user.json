@@ -34,7 +34,6 @@
     "phone": "userPhone",
     "address": "userAddress",
     "vehicle": {
-        "id": "vehicleId",
         "marca": "vehicleBrand",
         "modelo": "vehicleModel",
         "autonomia": "vehicleAutonomy",

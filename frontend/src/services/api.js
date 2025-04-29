@@ -61,6 +61,7 @@ export const authAPI = {
 export const userAPI = {
   getProfile: () => apiRequest('/users/profile', 'GET', null, true),
   updateProfile: (userData) => apiRequest('/users/profile', 'PUT', userData, true),
+  updateVehicle: (vehicleData) => apiRequest('/users/vehicle', 'PUT', vehicleData, true),
 };
 
 // routing API

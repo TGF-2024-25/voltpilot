@@ -134,6 +134,36 @@ const userController = {
     }
   },
 
+  updateUserVehicle: async (req, res) => {
+    try {
+      const userId = req.body.uid;
+      const { marca, modelo, autonomia, tipo} = req.body;
+
+      // Prepara los datos para actualizar
+      const updateData = {
+        marca: marca,
+        modelo: modelo,
+        autonomia: autonomia,
+        tipo: tipo,
+      };
+
+      // Actualiza el usuario en Firestore
+      const userDetail = await userModel.updateVehicle(userId, updateData);
+
+      res.status(200).json({
+        success: true,
+        message: "Datos de vehículo actualizados exitosamente",
+        data: {userDetail: userDetail}
+      });
+    } catch (error) {
+      console.error("Error al actualizar datos de vehículo:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error al actualizar datos de vehículo",
+        error: error.message,
+      });
+    }
+  },
   /**
    * Obtiene un usuario por su ID
    * GET /api/users/getUserById

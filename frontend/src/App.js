@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { VistaEstacionInicio, VistaRutas, VistaEstacionesFavoritas, VistaPerfil } from "./views";
 import UserDetails from "./views/UserDetails";
+import UserVehicle from "./views/UserVehicle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuProvider } from "react-native-popup-menu";
 import { CargadorProvider } from "./contexts/EstacionContext";
@@ -34,7 +35,7 @@ function ProfileStack() {
     <Stack.Navigator>
       <Stack.Screen name="ProfileMain" component={VistaPerfil} options={{ headerShown: false }} />
       <Stack.Screen name="UserDetails" component={UserDetails} options={{ title: "Detalles de Usuario" }} />
-      <Stack.Screen name="MisVehiculos" component={PlaceholderScreen} options={{ title: "Mis Vehículos" }} />
+      <Stack.Screen name="MisVehiculos" component={UserVehicle} options={{ title: "Mis Vehículos" }} />
       <Stack.Screen name="MisPagos" component={PlaceholderScreen} options={{ title: "Mis Pagos" }} />
       <Stack.Screen name="MiHistoriaDeRecarga" component={PlaceholderScreen} options={{ title: "Mi Historia de Recarga" }} />
       <Stack.Screen name="TerminosYPrivacidad" component={PlaceholderScreen} options={{ title: "Términos y Privacidad" }} />
