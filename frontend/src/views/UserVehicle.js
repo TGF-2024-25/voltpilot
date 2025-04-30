@@ -63,7 +63,7 @@ export default function MiPerfil() {
       setLoading(true);
       const uid = await AsyncStorage.getItem('uid');
       
-      // 确保所有字段都有值，即使是空字符串
+      // 
       const completeVehicleData = {
         marca: vehicleData.marca || '',
         modelo: vehicleData.modelo || '',
@@ -75,7 +75,6 @@ export default function MiPerfil() {
       const response = await userAPI.updateVehicle(completeVehicleData);
       
       if (response.data && response.data.userDetail) {
-        // 确保返回的数据中有 vehicle，如果没有则使用当前值
         const updatedVehicle = response.data.userDetail.vehicle || vehicleData;
         await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
         setOriginalData(updatedVehicle);
