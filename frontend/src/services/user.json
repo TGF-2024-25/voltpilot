@@ -42,9 +42,12 @@
 }
 
 //asyncStorage
+//login
 {
     "authToken": token,
     "user": userDetails,
     "uid": userId
 }
+
+
 

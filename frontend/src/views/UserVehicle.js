@@ -79,6 +79,8 @@ export default function MiPerfil() {
         await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
         setOriginalData(updatedVehicle);
         setVehicleData(updatedVehicle);
+        await AsyncStorage.setItem("autonomia", updatedVehicle.autonomia);
+        await AsyncStorage.setItem("tipo", updatedVehicle.tipo);
         Alert.alert('Éxito', 'Vehículo actualizado correctamente');
       }
     } catch (error) {

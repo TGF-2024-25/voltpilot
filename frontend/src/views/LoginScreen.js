@@ -36,6 +36,12 @@ export default function LoginScreen() {
         throw new Error(response.message || 'error en el login');
       }
       const userDetail = response.data.userDetail;
+      const vehicleJson = userDetail.vehicle || {
+        marca: '',
+        modelo: '',
+        autonomia: '',
+        tipo: ''
+      };
       const token = response.data.token;
       const refreshToken = response.data.refreshToken;
       const expiresIn = response.data.expiresIn;
@@ -48,6 +54,9 @@ export default function LoginScreen() {
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("expiresIn", expiresIn);
       await AsyncStorage.setItem("uid", userDetail.id);
+      await AsyncStorage.setItem("id", userDetail.email);
+      await AsyncStorage.setItem("autonomia", vehicleJson.autonomia);
+      await AsyncStorage.setItem("tipo", vehicleJson.tipo);
 
       await checkToken(); //verifica si el token es valido
     } catch (error) {
