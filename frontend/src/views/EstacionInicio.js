@@ -1,26 +1,23 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { View, TouchableOpacity, Modal } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModal, BottomSheetView, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import Constants from "expo-constants";
 import "react-native-get-random-values";
 import { GOOGLE_MAPS_API_KEY } from "@env"; // Importar la clave de API de Google Maps
 import { useCargador } from "../contexts/EstacionContext";
-import EstacionTabView from "../components/EstacionTabView";
+import EstacionTabView from "./EstacionTabView";
 import * as Location from "expo-location";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Importar íconos
 import MarcadoresInfo from "./MarcadoresInfo";
 import EstacionFiltro from "./EstacionFiltro";
 import { estacionAPI } from "../services/api";
-import { useRoute, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import styles from "../styles/estacionInicioStyle";
 
-// Ejecutar para probar Expo Go en móvil android físico (No borrar)
+// Ejecutar para probar Expo Go en móvil android por cable, y servidor back en local
 // adb -s b3060cfe reverse tcp:5000 tcp:5000
-
-// Constantes
-const statusBarHeight = Constants.statusBarHeight;
 
 // Definición de los tipos de conectores
 const tipoConectores = [
@@ -30,45 +27,17 @@ const tipoConectores = [
   { id: "4", name: "EV_CONNECTOR_TYPE_CCS_COMBO_2" },
 ];
 
-// Función para obtener el id del conector por su nombre
-const obtenerIdPorNombre = (name) => {
-  const conector = tipoConectores.find((conector) => conector.name === name);
-  return conector ? conector.id : null; // Devuelve el id si se encuentra, o null si no
-};
-
 // Componente principal
 export default function VistaEstacionInicio() {
-  // console.log("VistaEstacionInicio montada"); // Mensaje de depuración
   // Variables de estado
-  const [cargadores, setCargadores] = useState([]); // Estado para almacenar los cargadores obtenidos de la ultima búsqueda
-  const [cargadoresFiltrados, setCargadoresFiltrados] = useState([]); // Estado para almacenar los cargadores filtrados
-  const { selectedCargador, setSelectedCargador } = useCargador(); // Hook para establecer el cargador seleccionado en el contexto
+  const [cargadores, setCargadores] = useState([]); // Estado para almacenar los cargadores obtenidos de la API
+  const [cargadoresFiltrados, setCargadoresFiltrados] = useState([]); // Estado para almacenar los cargadores filtrados (mostrados en el mapa)
+  const { estacionFavorita, setEstacionFavorita, setSelectedCargador } = useCargador(); // Hook personlizado para manejar el cargador seleccionado
   const [infoModalVisible, setInfoModalVisible] = useState(false); // Estado que determina la visibilidad del modal de información
   const [filterModalVisible, setFilterModalVisible] = useState(false); // Estado que determina la visibilidad del modal de filtros
   const [isBottomSheetActive, setIsBottomSheetActive] = useState(false); // Estado que determina si el BottomSheetModal está activo
-  const route = useRoute(); // Obtén el objeto route
-  const { estacionFavorita = null } = route.params || {};
-  const [estacionFavoritaSeleccionada, setEstacionFavoritaSeleccionada] = useState(estacionFavorita); // Estado para almacenar la estación favorita
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (estacionFavorita) {
-        setEstacionFavoritaSeleccionada(estacionFavorita); // Actualiza el estado con la estación favorita
-        mapRef.current?.animateToRegion(
-          {
-            latitude: estacionFavorita.location.latitude,
-            longitude: estacionFavorita.location.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          },
-          1000,
-        );
-        handleMarkerPress(estacionFavorita);
-      }
-    }, [estacionFavorita]),
-  );
-
-  // Estado para almacenar la región a mostrar del mapa
+  // Estado para almacenar la región a mostrar en el mapa
   const [region, setRegion] = useState({
     latitude: 40.416775,
     longitude: -3.70379,
@@ -87,36 +56,43 @@ export default function VistaEstacionInicio() {
   const mapRef = useRef(null);
   const bottomSheetModalRef = useRef(null);
 
-  // Se llama al entrar por primera vez para solicitar permisos de ubicación
+  useFocusEffect(
+    React.useCallback(() => {
+      if (estacionFavorita) {
+        mapRef.current?.animateToRegion(
+          {
+            latitude: estacionFavorita.location.latitude,
+            longitude: estacionFavorita.location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          },
+          1500,
+        );
+        handleMarkerPress(estacionFavorita);
+      }
+    }, [estacionFavorita]),
+  );
+
+  // Solicita permisos para obtener ubicación del usuario al iniciar la aplicación
   useEffect(() => {
-    const solicitarPermisosYBuscar = async () => {
+    const solicitarPermisos = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.error("Permiso de ubicación denegado");
         return;
       }
-
-      // // Obtener la ubicación actual del usuario
-      // const { coords } = await Location.getCurrentPositionAsync({});
-      // const { latitude, longitude } = coords;
-
-      // // Actualizar la región del mapa con la ubicación actual
-      // const nuevaRegion = {
-      //   latitude,
-      //   longitude,
-      //   latitudeDelta: 0.005,
-      //   longitudeDelta: 0.005,
-      // };
-      // setRegion(nuevaRegion);
-
-      // // Buscar cargadores en la ubicación actual
-      // await handleRegionChange(nuevaRegion);
     };
-
-    solicitarPermisosYBuscar();
+    solicitarPermisos();
   }, []);
 
-  // Llamada a endpoint de servidor Back para obtener info de los cargadores de la zona
+  // Actualiza los cargadores mostrados en el mapa cada vez que cambian los filtros
+  useEffect(() => {
+    handleRegionChange(region);
+  }, [filtros]);
+
+  /********************************************* Funciones *******************************************************/
+
+  // Llamada API para obtener info de los cargadores de la zona
   const obtenerCargadores = async (lat, lng, rad) => {
     try {
       // Llamada a la API para obtener cargadores
@@ -125,7 +101,6 @@ export default function VistaEstacionInicio() {
       // Actualiza el estado
       setCargadores(data);
       console.log("Cargadores actualizados!");
-
       return data;
     } catch (error) {
       console.error("Error función obtenerCargadores: ", error);
@@ -133,12 +108,18 @@ export default function VistaEstacionInicio() {
     }
   };
 
-  // Se llama cada vez que se cambia la región del mapa
+  // Filtro de cargadores según los criterios seleccionados
   const filtrarCargadores = (cargadores) => {
+    // Función para obtener el id del conector por su nombre
+    const obtenerIdPorNombre = (name) => {
+      const conector = tipoConectores.find((conector) => conector.name === name);
+      return conector ? conector.id : null;
+    };
+
     const cargadoresFiltrados = cargadores.filter((cargador) => {
-      // Verificar si evChargeOptions y connectorAggregation existen
+      // Verificar las propiedades evChargeOptions y connectorAggregation
       if (!cargador.evChargeOptions || !cargador.evChargeOptions.connectorAggregation) {
-        return false; // Si no existen, el cargador no cumple los filtros
+        return false;
       }
 
       // Filtrar por conectores que cumplan ambos criterios: tipo y kWh mínimo
@@ -161,27 +142,33 @@ export default function VistaEstacionInicio() {
       return tieneConectorValido;
     });
 
-    setCargadoresFiltrados(cargadoresFiltrados); // Actualiza el estado con los cargadores filtrados
+    // Actualiza el estado con los cargadores filtrados
+    setCargadoresFiltrados(cargadoresFiltrados);
   };
 
   // Evento cuando se pulsa un marcador
   const handleMarkerPress = (cargador) => {
-    // Estación carga seleccionada para mostrar en el modal
+    // Estación seleccionada para mostrar en el modal
     setSelectedCargador(cargador);
     // Expande la pestaña al tocar un marcador
     bottomSheetModalRef.current?.present();
-    setIsBottomSheetActive(true); // Cambia el estado al abrir el modal
+    // Cambia el estado al abrir el modal
+    setIsBottomSheetActive(true);
   };
 
-  // Se llama cada vez que se hace una búsqueda
+  // Actualiza los cargadores a mostrar en el mapa al cambiar la región
   const handleRegionChange = async (newRegion) => {
     console.log(newRegion);
     console.log("Filtros aplicados:", filtros);
 
+    // Limpiar la estación favorita seleccionada
+    setEstacionFavorita(null);
+
     // Obtén los cargadores y luego aplica los filtros
     await obtenerCargadores(newRegion.latitude, newRegion.longitude, filtros.searchRadius);
     filtrarCargadores(cargadores);
-    // console.log("Cargadores obtenidos:", cargadores);
+
+    mapRef.current?.animateToRegion(newRegion, 2000);
   };
 
   // Función que se invoca al pulsar el botón de ubicación
@@ -189,7 +176,8 @@ export default function VistaEstacionInicio() {
     const { coords } = await Location.getCurrentPositionAsync({});
     const { latitude, longitude } = coords;
 
-    setEstacionFavoritaSeleccionada(null); // Limpiar la estación favorita seleccionada
+    // Limpiar la estación favorita seleccionada
+    setEstacionFavorita(null);
 
     // Buscar cargadores en la ubicación del usuario
     handleRegionChange({ latitude, longitude });
@@ -201,11 +189,11 @@ export default function VistaEstacionInicio() {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       },
-      1000,
+      2000,
     );
   };
 
-  // Función para obtener el icono del cargador según su disponibilidad
+  // Obtiene el icono del cargador según su disponibilidad
   const getIconCargador = (cargador) => {
     if (!cargador.evChargeOptions) {
       return require("../assets/Marcador_4.png");
@@ -245,11 +233,6 @@ export default function VistaEstacionInicio() {
     return require("../assets/Marcador_3.png");
   };
 
-  useEffect(() => {
-    // Aplica los filtros automáticamente cuando cambien
-    handleRegionChange(region);
-  }, [filtros]); // Se ejecuta cada vez que los filtros cambien
-
   return (
     <View style={styles.container}>
       <GestureHandlerRootView>
@@ -264,7 +247,7 @@ export default function VistaEstacionInicio() {
             showsMyLocationButton={false}
           >
             {/* Renderizar solo el marcador de la estación favorita si está presente */}
-            {estacionFavoritaSeleccionada ? (
+            {estacionFavorita ? (
               <Marker
                 coordinate={{
                   latitude: estacionFavorita.location.latitude,
@@ -332,7 +315,7 @@ export default function VistaEstacionInicio() {
           <Icon name="info" size={24} color="white" />
         </TouchableOpacity>
 
-        {/* Contenedor de la barra de búsqueda */}
+        {/* Barra de búsqueda */}
         <View style={styles.searchBarContainer}>
           <GooglePlacesAutocomplete
             fetchDetails={true}
@@ -346,12 +329,10 @@ export default function VistaEstacionInicio() {
                   latitudeDelta: 0.015,
                   longitudeDelta: 0.0121,
                 };
-                setEstacionFavoritaSeleccionada(null);
-                setRegion(newRegion); // Actualizar la región del mapa
-                handleRegionChange(newRegion);
 
-                // Actualizar la vista con la nueva región
-                mapRef.current?.animateToRegion(newRegion, 2000);
+                // Actualizar la región del mapa y obtener cargadores
+                setRegion(newRegion);
+                handleRegionChange(newRegion);
               }
             }}
             query={{ key: GOOGLE_MAPS_API_KEY, language: "es" }}
@@ -363,11 +344,11 @@ export default function VistaEstacionInicio() {
         <BottomSheetModalProvider>
           <BottomSheetModal
             ref={bottomSheetModalRef}
-            snapPoints={["50%", "95%"]}
+            snapPoints={["50%", "95%"]} // Ajusta los puntos que puede alcanzar el modal
             backgroundComponent={(props) => <BottomSheetBackground {...props} />}
             style={styles.bottomSheetModal}
             onDismiss={() => {
-              setIsBottomSheetActive(false); // Cambia el estado al cerrar el modal
+              setIsBottomSheetActive(false); // Actualiza el estado al cerrar el modal
             }}
           >
             <BottomSheetView style={styles.bottomTabContainer}>
@@ -378,22 +359,15 @@ export default function VistaEstacionInicio() {
           </BottomSheetModal>
         </BottomSheetModalProvider>
 
-        {/* Modal de información */}
-        <Modal
-          visible={infoModalVisible}
-          transparent={false} // El modal ocupará toda la pantalla
-          animationType="slide" // Animación para que aparezca desde la derecha
-          onRequestClose={() => setInfoModalVisible(false)} // Cerrar el modal al pulsar fuera
-        >
-          <MarcadoresInfo
-            onClose={() => setInfoModalVisible(false)} // Pasar una función para cerrar el modal
-          />
+        {/* Modal de información de marcadores */}
+        <Modal visible={infoModalVisible} transparent={false} animationType="slide" onRequestClose={() => setInfoModalVisible(false)}>
+          <MarcadoresInfo onClose={() => setInfoModalVisible(false)} />
         </Modal>
 
         {/* Modal de filtros */}
         <Modal visible={filterModalVisible} transparent={false} animationType="slide" onRequestClose={() => setFilterModalVisible(false)}>
           <EstacionFiltro
-            onClose={() => setFilterModalVisible(false)} // Cerrar el modal
+            onClose={() => setFilterModalVisible(false)}
             onApplyFilters={(filters) => {
               setFiltros(filters); // Actualiza los filtros en el estado del componente padre
             }}
@@ -419,127 +393,3 @@ const BottomSheetBackground = ({ style }) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  // Estilos del contenedor principal y mapa
-  container: { flex: 1, backgroundColor: "#fff" },
-  map: { width: "100%", height: "100%" },
-  // Estilos de la barra de busqueda
-  searchBarTextInput: {
-    textInput: {
-      backgroundColor: "white",
-      borderRadius: 25,
-      paddingHorizontal: 15,
-      fontSize: 16,
-    },
-    listView: {
-      backgroundColor: "#FFF",
-      borderRadius: 10,
-      marginTop: 10,
-    },
-  },
-  searchBarContainer: {
-    position: "absolute",
-    marginTop: statusBarHeight + 15,
-    left: 10,
-    right: 10,
-  },
-  // Estilos de bottomTab
-  bottomTabContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  bottomSheetModal: {
-    zIndex: 10, // Asegura que el modal esté por encima de otros elementos
-    position: "absolute", // Superpone el modal
-  },
-  myLocationButton: {
-    position: "absolute",
-    bottom: 70, // Ajustar para que no se superponga al modal
-    right: 20, // Mantenerlo en la esquina derecha
-    backgroundColor: "#65558F",
-    padding: 10,
-    borderRadius: 25,
-    elevation: 5,
-  },
-  filterButton: {
-    position: "absolute",
-    marginTop: statusBarHeight + 160,
-    right: 20, // Mantenerlo en la esquina derecha
-    backgroundColor: "#65558F",
-    padding: 10,
-    borderRadius: 25,
-    elevation: 5,
-  },
-  infoButton: {
-    position: "absolute",
-    marginTop: statusBarHeight + 100,
-    right: 20, // Mantenerlo en la esquina derecha
-    backgroundColor: "#65558F",
-    padding: 10,
-    borderRadius: 25,
-    elevation: 5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "90%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  legendIcon: {
-    width: 30,
-    height: 30,
-    marginRight: 10,
-  },
-  legendText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: "#65558F",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  fullScreenModal: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  modalHeader: {
-    backgroundColor: "#65558F",
-    padding: 15,
-    alignItems: "center",
-  },
-  modalHeaderText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  modalBody: {
-    flex: 1,
-    padding: 20,
-  },
-});

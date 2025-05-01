@@ -13,7 +13,7 @@ const VistaEstacionesFavoritas = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState(null); // Para almacenar el placeId seleccionado
   const navigation = useNavigation(); // Navegación para ir a la vista de estaciones
-  const { setSelectedCargador } = useCargador(); // Asegúrate de que el contexto esté configurado correctamente
+  const { setEstacionFavorita, setSelectedCargador } = useCargador(); // Asegúrate de que el contexto esté configurado correctamente
 
   // Obtener los IDs de las estaciones favoritas
   useFocusEffect(
@@ -69,7 +69,8 @@ const VistaEstacionesFavoritas = () => {
     <TouchableOpacity
       onPress={() => {
         setSelectedCargador(item); // Guarda el cargador seleccionado en el contexto
-        navigation.navigate("Estaciones", { estacionFavorita: item }); // Navega con el parámetro "fromFavoritos"
+        setEstacionFavorita(item); // Guarda la estación favorita en el contexto
+        navigation.navigate("Estaciones"); // Navega a la vista de estaciones.
       }} // Navega al TabView con los datos de la estación
       style={styles.card}
     >

@@ -12,8 +12,11 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
+import { AuthContext } from '../App';
+
 
 export default function MiPerfil() {
+  const { checkToken } = useContext(AuthContext);
   const navigation = useNavigation();
   const [userData, setUserData] = useState({
     name: '',
@@ -82,6 +85,7 @@ export default function MiPerfil() {
       Alert.alert('Error', 'No se pudo actualizar el perfil');
     } finally {
       setLoading(false);
+      await checkToken();
     }
   };
 

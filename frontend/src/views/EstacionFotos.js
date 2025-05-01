@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Image, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useCargador } from "../contexts/EstacionContext";
 import Icon from "react-native-vector-icons/FontAwesome"; // Importar íconos
 import { FlatList } from "react-native-gesture-handler";
 import { estacionAPI } from "../services/api";
+import styles from "../styles/estacionFotosStyle"; // Importar estilos
 
 export default function VistaEstacionFotos() {
   const { selectedCargador } = useCargador();
@@ -20,7 +21,8 @@ export default function VistaEstacionFotos() {
       // Llamar a la API para obtener la foto
       const data = await estacionAPI.getEstacionFotos({ name: name });
 
-      return data.photoUri; // Devolver la URL de la foto
+      // Devolver la URL de la foto
+      return data.photoUri;
     } catch (error) {
       console.error("Error al obtener imagen de la estación:", error);
       return null;
@@ -92,60 +94,3 @@ export default function VistaEstacionFotos() {
     </View>
   );
 }
-
-// Estilos
-const styles = StyleSheet.create({
-  listContainer: {
-    padding: 5, // Espaciado general
-  },
-  thumbnailContainer: {
-    width: "50%", // Cada miniatura ocupa el 50% del ancho (2 columnas)
-    aspectRatio: 1, // Mantener proporción cuadrada
-    padding: 5, // Espaciado entre miniaturas
-  },
-  thumbnail: {
-    width: "100%", // Ocupa todo el ancho del contenedor
-    height: "100%", // Ocupa toda la altura del contenedor
-    borderRadius: 8, // Bordes redondeados
-  },
-  noPhotosContainer: {
-    flex: 1,
-    marginTop: 50, // Espaciado superior
-    justifyContent: "flex-start", // Posiciona el contenido hacia la parte superior
-    alignItems: "center", // Centrar horizontalmente
-    padding: 20,
-  },
-  noPhotosText: {
-    fontSize: 16,
-    color: "#888",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.8)", // Fondo semitransparente
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  fullImage: {
-    width: "90%",
-    height: "70%",
-    resizeMode: "contain", // Ajustar la imagen dentro del modal
-  },
-  closeButton: {
-    position: "absolute",
-    top: 40, // Posición en la parte superior
-    right: 20, // Posición en la parte derecha
-  },
-  closeButtonIconContainer: {
-    backgroundColor: "#65558F", // Color de fondo del botón
-    width: 40, // Ancho fijo
-    height: 40, // Altura fija (igual al ancho para que sea un círculo perfecto)
-    borderRadius: 20, // Radio igual a la mitad del ancho/alto para hacerlo redondo
-    justifyContent: "center", // Centrar el ícono horizontalmente
-    alignItems: "center", // Centrar el ícono verticalmente
-  },
-});

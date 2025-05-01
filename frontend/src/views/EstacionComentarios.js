@@ -1,11 +1,12 @@
-import React, { use, useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, Modal, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useCargador } from "../contexts/EstacionContext";
 import { FlatList } from "react-native-gesture-handler";
 import { ApplyButton, CancelButton } from "../components/Botones";
 import { estacionAPI } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import styles from "../styles/estacionComentariosStyle";
 
 export default function VistaEstacionComentarios() {
   const { selectedCargador } = useCargador();
@@ -22,12 +23,12 @@ export default function VistaEstacionComentarios() {
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    // Función para obtener comentarios de la base de datos
+    // Obtener comentarios de la base de datos
     const getBdComentarios = async () => {
       try {
         const data = await estacionAPI.getEstacionComentarios({ placeId: selectedCargador.id });
         setBdComentarios(data); // Guardar los comentarios de la base de datos
-        console.log("Comentarios de la base de datos:", data);
+        // console.log("Comentarios de la base de datos:", data);
       } catch (error) {
         console.error("Error al obtener comentarios de la base de datos:", error);
       }
@@ -73,7 +74,7 @@ export default function VistaEstacionComentarios() {
       }));
 
       setAllComentarios([...comentariosGoogleNormalizados, ...comentariosBdNormalizados]);
-      console.log("Comentarios normalizados:", [...comentariosGoogleNormalizados, ...comentariosBdNormalizados]);
+      console.log("Comentarios normalizados");
     };
 
     if (googleComentarios.length > 0 || bdComentarios.length > 0) {
@@ -81,7 +82,7 @@ export default function VistaEstacionComentarios() {
     }
   }, [bdComentarios]);
 
-  // Función para obtener comentarios de la base de datos
+  // Función duplicado para obtener comentarios de la base de datos
   const getBdComentarios = async () => {
     try {
       const data = await estacionAPI.getEstacionComentarios({ placeId: selectedCargador.id });
@@ -91,7 +92,7 @@ export default function VistaEstacionComentarios() {
     }
   };
 
-  // Función para manejar el envío del comentario
+  // Menaja el envío del comentario
   const handleSendComment = async () => {
     if (!newComment || rating === 0) {
       Alert.alert("Error", "Por favor, escribe un comentario y selecciona una calificación.");
@@ -105,7 +106,7 @@ export default function VistaEstacionComentarios() {
         comentario: { text: newComment, rating: rating },
       });
 
-      console.log("Comentario enviado:", { newComment, rating });
+      // console.log("Comentario enviado:", { newComment, rating });
 
       // Obtener los comentarios actualizados desde la base de datos
       await getBdComentarios();
@@ -120,6 +121,7 @@ export default function VistaEstacionComentarios() {
     }
   };
 
+  // Función para abrir el modal de eliminación de comentario
   const openDeleteModal = async (commentId) => {
     setSelectedCommentId(commentId);
     setDeleteModalVisible(true);
@@ -253,164 +255,3 @@ export default function VistaEstacionComentarios() {
     </View>
   );
 }
-
-// Estilos
-const styles = StyleSheet.create({
-  commentContainer: {
-    flexDirection: "row", // Alinear la foto y el contenido horizontalmente
-    padding: 16,
-    alignItems: "flex-start",
-  },
-  authorPhoto: {
-    width: 50, // Tamaño de la foto
-    height: 50,
-    borderRadius: 25, // Hacer la foto circular
-    marginRight: 10, // Espaciado entre la foto y el contenido
-  },
-  commentContent: {
-    flex: 1, // Permitir que el contenido ocupe el espacio restante
-  },
-  headerRow: {
-    flexDirection: "row", // Alinear el nombre y el tiempo horizontalmente
-    justifyContent: "space-between", // Espaciar el nombre y el tiempo
-    alignItems: "center",
-  },
-  authorName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  publishTime: {
-    fontSize: 12,
-    color: "#888",
-    marginLeft: 10, // Espaciado entre el nombre y el tiempo
-    textAlign: "right", // Alinear el tiempo a la derecha
-  },
-  ratingContainer: {
-    flexDirection: "row", // Alinear la estrella y el texto horizontalmente
-    alignItems: "center",
-    marginVertical: 4,
-  },
-  ratingText: {
-    fontSize: 14,
-    color: "#555",
-    marginLeft: 4, // Espaciado entre la estrella y el texto
-  },
-  commentText: {
-    fontSize: 14,
-    color: "#333",
-    marginVertical: 4,
-  },
-  noCommentText: {
-    color: "#888", // Color gris para el texto "El usuario no ha dejado comentarios"
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "#ddd",
-    marginVertical: 8,
-  },
-  noCommentsContainer: {
-    justifyContent: "flex-start", // Posiciona el contenido hacia la parte superior
-    alignItems: "center", // Centrar horizontalmente
-    padding: 20,
-    marginTop: 50, // Ajusta la distancia desde la parte superior
-  },
-  noCommentsText: {
-    fontSize: 16,
-    color: "#888",
-  },
-  commentSource: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 4,
-  },
-  floatingButton: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#65558F",
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    elevation: 5,
-  },
-  floatingButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    // Elimina el fondo gris semitransparente
-    // backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    elevation: 10,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#CCC",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    textAlignVertical: "top", // Asegura que el texto comience desde la parte superior
-    height: 200, // Altura fija para el cuadro de texto
-    width: 280, // Ancho completo del modal
-    overflow: "hidden", // Evita que el contenido desborde
-  },
-  ratingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  ratingLabel: {
-    fontSize: 16,
-    marginRight: 10,
-  },
-  starIcon: {
-    marginHorizontal: 5,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  placeholderPhoto: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#CCC", // Fondo gris para el ícono
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-  },
-  deleteIcon: {
-    marginLeft: 10,
-    marginTop: -5, // Mueve el ícono un poco hacia arriba
-    color: "#65558F", // Color de la temática de la aplicación
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalMessage: {
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-});
