@@ -189,7 +189,7 @@ export default function VistaEstacionInicio() {
     const { coords } = await Location.getCurrentPositionAsync({});
     const { latitude, longitude } = coords;
 
-    await setEstacionFavoritaSeleccionada(null); // Limpiar la estación favorita seleccionada
+    setEstacionFavoritaSeleccionada(null); // Limpiar la estación favorita seleccionada
 
     // Buscar cargadores en la ubicación del usuario
     handleRegionChange({ latitude, longitude });
