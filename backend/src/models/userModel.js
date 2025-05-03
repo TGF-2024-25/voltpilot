@@ -51,7 +51,7 @@ class UserModel {
 
   async updateUser(id, data) {
     try {
-      const userRef = db.collection("users").doc(id).doc("vehicle");
+      const userRef = db.collection("users").doc(id);
 
       const updateData = {};
 
@@ -71,21 +71,34 @@ class UserModel {
     }
   }
 
-  async updateVehicle(id, data) {
+  async updateVehicle(uid, vid, data) {
     try {
-      const userRef = db.collection("users").doc(id);
-
+      const vehicleRef = db.collection("users").doc(uid).collection("vehicles").doc(vid);
       const vehicle = {};
 
-      if (data.marca) vehicle['vehicle.marca'] = data.marca;
-      if (data.modelo) vehicle['vehicle.modelo'] = data.modelo;
-      if (data.autonomia) vehicle['vehicle.autonomia'] = data.autonomia;
-      if (data.tipo) vehicle['vehicle.tipo'] = data.tipo;
+      if (data.marca) vehicle.marca = data.marca;
+      if (data.modelo) vehicle.modelo = data.modelo;
+      if (data.autonomia) vehicle.autonomia = data.autonomia;
+      if (data.tipo) vehicle.tipo = data.tipo;
 
-      await userRef.update(vehicle);
+      await vehicleRef.update(vehicle);
 
       // conseguir usuario actualizado para actualizar el vista
-      const updatedUser = await this.findById(id);
+      const updatedUser = await this.findById(uid);
+      return updatedUser;
+    } catch (error) {
+      console.error("error actualizar vehiculo:", error);
+      throw new Error(`error actualizar vehiculo: ${error.message}`);
+    }
+  }
+  
+  async deleteVehicle(uid, vid) {
+    try {
+      const vehicleRef = db.collection("users").doc(uid).collection("vehicles").doc(vid);
+      await vehicleRef.delete();
+      
+      // conseguir usuario actualizado para actualizar el vista
+      const updatedUser = await this.findById(uid);
       return updatedUser;
     } catch (error) {
       console.error("error actualizar vehiculo:", error);

@@ -137,6 +137,7 @@ const userController = {
   updateUserVehicle: async (req, res) => {
     try {
       const userId = req.body.uid;
+      const carId  = req.body.vid;
       const { marca, modelo, autonomia, tipo} = req.body;
 
       // Prepara los datos para actualizar
@@ -148,7 +149,30 @@ const userController = {
       };
 
       // Actualiza el usuario en Firestore
-      const userDetail = await userModel.updateVehicle(userId, updateData);
+      const userDetail = await userModel.updateVehicle(userId,carId, updateData);
+
+      res.status(200).json({
+        success: true,
+        message: "Datos de vehículo actualizados exitosamente",
+        data: {userDetail: userDetail}
+      });
+    } catch (error) {
+      console.error("Error al actualizar datos de vehículo:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error al actualizar datos de vehículo",
+        error: error.message,
+      });
+    }
+  },
+
+  deleteUserVehicle: async (req, res) => {
+    try {
+      const userId = req.body.uid;
+      const carId  = req.body.vid;
+
+      // Actualiza el usuario en Firestore
+      const userDetail = await userModel.deleteVehicle(userId,carId);
 
       res.status(200).json({
         success: true,

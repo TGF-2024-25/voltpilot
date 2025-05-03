@@ -19,5 +19,5 @@ router.put("/profile", authMiddleware, userController.updateUserProfile); // Act
 router.put("/vehicle", authMiddleware, userController.updateUserVehicle); // Actualiza el vehículo del usuario autenticado
 router.get("/:id", authMiddleware, userController.getUserById); // Obtiene un usuario por su ID
 router.delete("/:id", authMiddleware, userController.deleteUser); // Elimina un usuario por su ID
-
+router.delete("/vehicle", authMiddleware, userController.deleteUserVehicle); // Elimina el vehículo del usuario autenticado
 export default router;
