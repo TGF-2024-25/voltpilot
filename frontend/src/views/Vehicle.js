@@ -12,35 +12,33 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
+import { useRoute } from '@react-navigation/native';
 
-export default function MiPerfil() {
-  const navigation = useNavigation();
-  const [vehicleData, setVehicleData] = useState({
+export default function VehicleScreen() {
+  //recibir datos de vehiculo
+  const route = useRoute();
+  const editVehicleData = route.params?.vehicleData || {
+    vid: '',
     marca: '',
     modelo: '',
     autonomia: '',
     tipo: '',
-  });
+    seleccionado: false,
+  };  const isEditMode = !!editVehicleData;
+
+  const navigation = useNavigation();
+  const [vehicleData, setVehicleData] = useState(editVehicleData);
   const [originalData, setOriginalData] = useState({});
   const [loading, setLoading] = useState(true);
   
   // carga datos de vehiculo de usuario
+  
   useEffect(() => {
     const getUserInfo = async () => {
       try {
+        console.log('editVehicleData', editVehicleData);
         setLoading(true);
-        const userJson = await AsyncStorage.getItem('user');
-        if (userJson) {
-          const parsedData = JSON.parse(userJson);
-          const vehicleJson = parsedData.vehicle || {
-            marca: '',
-            modelo: '',
-            autonomia: '',
-            tipo: ''
-          };
-          setVehicleData(vehicleJson);
-          setOriginalData(vehicleJson);
-        }
+        setOriginalData(editVehicleData);
       } catch (error) {
         console.error('Error loading user vehicle data:', error);
         Alert.alert('Error', 'No se pudo cargar la información de coche del usuario');
@@ -62,26 +60,57 @@ export default function MiPerfil() {
     try {
       setLoading(true);
       const uid = await AsyncStorage.getItem('uid');
+
+      // const vid = vehicleData.vid || ''; // ID del vehículo
+      if (!vehicleData?.marca || !vehicleData?.modelo || !vehicleData?.autonomia || !vehicleData?.tipo) {
+        Alert.alert('Error', 'Todos los campos son obligatorios. Por favor complete todos los datos del vehículo.');
+        return;
+      }
       
+      // validar la autonomia
+      const autonomia = parseInt(vehicleData.autonomia);
+      if (isNaN(autonomia) || autonomia <= 0) {
+        Alert.alert('Error', 'La autonomía debe ser un número válido mayor que cero.');
+        return;
+      }
       // 
+      
       const completeVehicleData = {
         marca: vehicleData.marca || '',
         modelo: vehicleData.modelo || '',
         autonomia: vehicleData.autonomia || '',
         tipo: vehicleData.tipo || '',
+        seleccionado: vehicleData.seleccionado || false,
+        vid:vehicleData.vid,
         uid
       };
-      
+      console.log('datos que va a guarda:', JSON.stringify(completeVehicleData));
+
       const response = await userAPI.updateVehicle(completeVehicleData);
       
       if (response.data && response.data.userDetail) {
-        const updatedVehicle = response.data.userDetail.vehicle || vehicleData;
-        await AsyncStorage.setItem('user', JSON.stringify(response.data.userDetail));
-        setOriginalData(updatedVehicle);
-        setVehicleData(updatedVehicle);
-        await AsyncStorage.setItem("autonomia", updatedVehicle.autonomia);
-        await AsyncStorage.setItem("tipo", updatedVehicle.tipo);
-        Alert.alert('Éxito', 'Vehículo actualizado correctamente');
+        const updatedVehicles = response.data.userDetail.vehicles;
+        await AsyncStorage.setItem('vehicles', JSON.stringify(updatedVehicles));
+        setOriginalData(updatedVehicles);
+        setVehicleData(updatedVehicles);
+
+        //await AsyncStorage.setItem("autonomia", updatedVehicles.autonomia);
+        //await AsyncStorage.setItem("tipo", updatedVehicles.tipo);
+        Alert.alert(
+          'Éxito', 
+          'Vehículo actualizado correctamente',
+          [
+            { 
+              text: 'OK', 
+              onPress: () => {
+                navigation.navigate('VehiclesList', { 
+                  refreshVehicles: true,
+                  timestamp: Date.now()
+                });
+              }
+            }
+          ]
+        );
       }
     } catch (error) {
       console.error('Error saving vehicle data:', error);
@@ -94,6 +123,7 @@ export default function MiPerfil() {
   // cancelar los cambios
   const handleCancel = () => {
     setVehicleData(originalData);
+    navigation.goBack(); // Regresar a la pantalla anterior
   };
 
   if (loading) {

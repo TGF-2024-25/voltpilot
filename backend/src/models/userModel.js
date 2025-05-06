@@ -8,7 +8,7 @@ class UserModel {
    */
   async createUser(userData) {
     try {
-      const userId = userData.id;
+      const userId = userData.uid;
       const newUser = {
         email: userData.email,
         name: userData.name || "",
@@ -31,7 +31,6 @@ class UserModel {
    */
   async findByEmail(email) {
     try {
-      // 使用新的 Firestore API
       const snapshot = await db
         .collection("users")
         .where("email", "==", email)
@@ -42,25 +41,17 @@ class UserModel {
       }
 
       const doc = snapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
+      return { uid: doc.id, ...doc.data() };
     } catch (error) {
       console.error("error buscar usuario:", error);
       throw new Error(`error buscar usuario: ${error.message}`);
     }
   }
 
-  async updateUser(id, data) {
+  async updateUser(id, userdata) {
     try {
       const userRef = db.collection("users").doc(id);
-
-      const updateData = {};
-
-      if (data.email) updateData.email = data.email;
-      if (data.name) updateData.name = data.name;
-      if (data.phone) updateData.phoneNumber = data.phoneNumber;
-      if (data.address) updateData.address = data.address;
-
-      await userRef.update(updateData);
+      await userRef.update(userdata);
 
       // conseguir usuario actualizado para actualizar el vista
       const updatedUser = await this.findById(id);
@@ -73,15 +64,10 @@ class UserModel {
 
   async updateVehicle(uid, vid, data) {
     try {
+      
       const vehicleRef = db.collection("users").doc(uid).collection("vehicles").doc(vid);
-      const vehicle = {};
-
-      if (data.marca) vehicle.marca = data.marca;
-      if (data.modelo) vehicle.modelo = data.modelo;
-      if (data.autonomia) vehicle.autonomia = data.autonomia;
-      if (data.tipo) vehicle.tipo = data.tipo;
-
-      await vehicleRef.update(vehicle);
+      
+      await vehicleRef.set(data);
 
       // conseguir usuario actualizado para actualizar el vista
       const updatedUser = await this.findById(uid);
@@ -114,7 +100,17 @@ class UserModel {
         return null;
       }
 
-      return { id: doc.id, ...doc.data() };
+    const vehiclesSnapshot = await db.collection("users").doc(id).collection("vehicles").get();
+    const vehicles = [];
+
+    vehiclesSnapshot.forEach(vehicleDoc => {
+      vehicles.push({
+        vid: vehicleDoc.id,
+        ...vehicleDoc.data()
+      });
+    });
+
+      return { uid: doc.id, ...doc.data(),vehicles };
     } catch (error) {
       console.error("error buscar usuario por ID:", error);
       throw new Error(`error buscar usuario por ID: ${error.message}`);

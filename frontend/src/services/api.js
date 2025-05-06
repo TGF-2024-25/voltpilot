@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // url de ka api backend
 //const DEV_API_URL = 'http://voltpilot.naivc.top/api';//cambia a la ip de tu backend 
-const DEV_API_URL = 'http://192.168.1.219/api';//cambia a la ip de tu backend 
+const DEV_API_URL = 'http://192.168.1.219:5000/api';//cambia a la ip de tu backend 
 
 const API_URL = DEV_API_URL;
 
@@ -62,7 +62,7 @@ export const userAPI = {
   getProfile: () => apiRequest('/users/profile', 'GET', null, true),
   updateProfile: (userData) => apiRequest('/users/profile', 'PUT', userData, true),
   updateVehicle: (vehicleData) => apiRequest('/users/vehicle', 'PUT', vehicleData, true),
-  deletevehicle: (vehicleData) => apiRequest('/users/vehicle', 'DELETE', vehicleData, true),
+  deletevehicle: ({uid,vid}) => apiRequest('/users/vehicle', 'DELETE', {uid,vid}, true),
 };
 
 // routing API

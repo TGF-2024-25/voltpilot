@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { VistaEstacionInicio, VistaRutas, VistaEstacionesFavoritas, VistaPerfil } from "./views";
 import UserDetails from "./views/UserDetails";
 import UserVehicle from "./views/UserVehicle";
+import VehicleScreen from "./views/Vehicle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuProvider } from "react-native-popup-menu";
 import { CargadorProvider } from "./contexts/EstacionContext";
@@ -28,13 +29,22 @@ function AuthStackScreen() {
   );
 }
 
+function UserVehicleScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="VehiclesList" component={UserVehicle} options={{ title: "Mis Vehículos" }} />
+      <Stack.Screen name="Vehiculo" component={VehicleScreen} options={{ title: "Datos de vehiculo" }} />
+    </Stack.Navigator>
+  );
+}
+
 // user profile stack
 function ProfileStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="ProfileMain" component={VistaPerfil} options={{ headerShown: false }} />
       <Stack.Screen name="UserDetails" component={UserDetails} options={{ title: "Detalles de Usuario" }} />
-      <Stack.Screen name="MisVehiculos" component={UserVehicle} options={{ title: "Mis Vehículos" }} />
+      <Stack.Screen name="MisVehiculos" component={UserVehicleScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MisPagos" component={PlaceholderScreen} options={{ title: "Mis Pagos" }} />
       <Stack.Screen name="MiHistoriaDeRecarga" component={PlaceholderScreen} options={{ title: "Mi Historia de Recarga" }} />
       <Stack.Screen name="TerminosYPrivacidad" component={PlaceholderScreen} options={{ title: "Términos y Privacidad" }} />

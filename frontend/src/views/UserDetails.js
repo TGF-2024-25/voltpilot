@@ -21,7 +21,7 @@ export default function MiPerfil() {
   const [userData, setUserData] = useState({
     name: '',
     email: '',
-    phone: '',
+    phoneNumber: '',
     address: '',
   });
   const [password, setPassword] = useState({
@@ -132,8 +132,8 @@ export default function MiPerfil() {
           <Text style={styles.label}>Teléfono</Text>
           <TextInput
             style={styles.input}
-            value={userData.phone}
-            onChangeText={(text) => handleChange('phone', text)}
+            value={userData.phoneNumber}
+            onChangeText={(text) => handleChange('phoneNumber', text)}
             placeholder="Ingresa tu teléfono"
             keyboardType="phone-pad"
           />
