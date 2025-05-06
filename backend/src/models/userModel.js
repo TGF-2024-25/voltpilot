@@ -8,7 +8,7 @@ class UserModel {
    */
   async createUser(userData) {
     try {
-      const userId = userData.id;
+      const userId = userData.uid;
       const newUser = {
         email: userData.email,
         name: userData.name || "",
@@ -31,7 +31,6 @@ class UserModel {
    */
   async findByEmail(email) {
     try {
-      // 使用新的 Firestore API
       const snapshot = await db
         .collection("users")
         .where("email", "==", email)
@@ -42,7 +41,7 @@ class UserModel {
       }
 
       const doc = snapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
+      return { uid: doc.id, ...doc.data() };
     } catch (error) {
       console.error("error buscar usuario:", error);
       throw new Error(`error buscar usuario: ${error.message}`);
@@ -105,12 +104,12 @@ class UserModel {
 
     vehiclesSnapshot.forEach(vehicleDoc => {
       vehicles.push({
-        id: vehicleDoc.id,
+        vid: vehicleDoc.id,
         ...vehicleDoc.data()
       });
     });
 
-      return { id: doc.id, ...doc.data(),vehicles };
+      return { uid: doc.id, ...doc.data(),vehicles };
     } catch (error) {
       console.error("error buscar usuario por ID:", error);
       throw new Error(`error buscar usuario por ID: ${error.message}`);

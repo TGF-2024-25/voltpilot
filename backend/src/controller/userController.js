@@ -31,7 +31,7 @@ const userController = {
 
       // Guarda el usuario en Firestore
       const userData = {
-        id: userRecord.uid,
+        uid: userRecord.uid,
         email,
         name: name || "",
         phoneNumber: phoneNumber || null,

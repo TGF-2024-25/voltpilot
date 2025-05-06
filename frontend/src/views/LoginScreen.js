@@ -54,7 +54,7 @@ export default function LoginScreen() {
       await AsyncStorage.setItem("authToken", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("expiresIn", expiresIn);
-      await AsyncStorage.setItem("uid", userDetail.id);
+      await AsyncStorage.setItem("uid", userDetail.uid);
       await AsyncStorage.setItem("id", userDetail.email);
 
       //si hay coche seleccionado, guardar datos de coche

@@ -68,9 +68,9 @@ export default function UserVehicleScreen() {
               setLoading(true);
               const uid = await AsyncStorage.getItem('uid');
               const response = await userAPI.deletevehicle({ uid, vid});
-              const parsedData = response.data.vehicles;
-              await AsyncStorage.setItem('user', JSON.stringify(userDetail));              
-              setVehicles(userDetail.vehicles || []); // Actualiza el estado de vehículos
+              const vehiclesData = response.data.userDetail.vehicles || []; // Asegúrate de que vehiclesData sea un array
+              await AsyncStorage.setItem('vehicles', JSON.stringify(vehiclesData));              
+              setVehicles(vehiclesData || []); // Actualiza el estado de vehículos
               Alert.alert('Éxito', 'Vehículo eliminado correctamente');
               await checkToken(); // refresca el view
             } catch (error) {
