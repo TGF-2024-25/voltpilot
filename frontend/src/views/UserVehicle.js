@@ -72,14 +72,7 @@ export default function UserVehicleScreen() {
       const updatedVehicles = vehicles.map(vehicle => ({
         ...vehicle,
         seleccionado: false
-      }));
-      
-      // selecciona el vehiculo que se ha elegido
-      const vehicleIndex = updatedVehicles.findIndex(vehicle => vehicle.vid === item.vid);
-      if (vehicleIndex !== -1) {
-        updatedVehicles[vehicleIndex].seleccionado = true;
-      }
-      
+      }));   
 
       let finalResponse = null;
       // actualiza en firestore
@@ -90,6 +83,13 @@ export default function UserVehicleScreen() {
           uid
         });
       }
+
+      const vehicleIndex = updatedVehicles.findIndex(vehicle => vehicle.vid === item.vid);
+      if (vehicleIndex !== -1) {
+        updatedVehicles[vehicleIndex].seleccionado = true;
+      }
+
+      finalResponse = await userAPI.updateVehicle({...updatedVehicles[vehicleIndex],uid});
       
       if (finalResponse.data && finalResponse.data.userDetail) {
         const updatedVehiclesFromServer = finalResponse.data.userDetail.vehicles || [];
