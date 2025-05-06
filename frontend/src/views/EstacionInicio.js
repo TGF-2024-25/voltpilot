@@ -37,6 +37,7 @@ export default function VistaEstacionInicio() {
   const [infoModalVisible, setInfoModalVisible] = useState(false); // Estado que determina la visibilidad del modal de información
   const [filterModalVisible, setFilterModalVisible] = useState(false); // Estado que determina la visibilidad del modal de filtros
   const [isBottomSheetActive, setIsBottomSheetActive] = useState(false); // Estado que determina si el BottomSheetModal está activo
+  const [isInitialRegion, setIsInitialRegion] = useState(true); // Estado para rastrear si es la región inicial
 
   // Estado para almacenar la región a mostrar en el mapa
   const [region, setRegion] = useState({
@@ -82,14 +83,30 @@ export default function VistaEstacionInicio() {
         console.error("Permiso de ubicación denegado");
         return;
       }
+
+      const { coords } = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = coords;
+
+      // Establece la región inicial del mapa a la ubicación actual del usuario
+      const userRegion = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      };
+      setRegion(userRegion);
     };
     solicitarPermisos();
   }, []);
 
   // Actualiza los cargadores mostrados en el mapa cada vez que cambian los filtros
   useEffect(() => {
-    handleRegionChange(region);
-  }, [filtros]);
+    if (!isInitialRegion && region !== null) {
+      handleRegionChange(region);
+    } else {
+      setIsInitialRegion(false); // Marca que la región inicial ya fue procesada
+    }
+  }, [region, filtros]);
 
   /********************************************* Funciones *******************************************************/
 
@@ -165,11 +182,12 @@ export default function VistaEstacionInicio() {
     // Limpiar la estación favorita seleccionada
     setEstacionFavorita(null);
 
-    // Obtén los cargadores y luego aplica los filtros
-    await obtenerCargadores(newRegion.latitude, newRegion.longitude, filtros.searchRadius);
-    filtrarCargadores(cargadores);
-
+    // Actualiza la región del mapa
     mapRef.current?.animateToRegion(newRegion, 2000);
+
+    // Obtén los cargadores y luego aplica los filtros
+    const data = await obtenerCargadores(newRegion.latitude, newRegion.longitude, filtros.searchRadius);
+    filtrarCargadores(data);
   };
 
   // Función que se invoca al pulsar el botón de ubicación
@@ -357,6 +375,7 @@ export default function VistaEstacionInicio() {
               setRegion(newRegion);
               handleRegionChange(newRegion);
             }}
+            showClearButton={true}
           />
         </View>
 
