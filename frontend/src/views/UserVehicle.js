@@ -63,6 +63,50 @@ export default function UserVehicleScreen() {
     }
   };
 
+  const handleSelectVehicle = async (item) => {
+    try {
+      setLoading(true);
+      const uid = await AsyncStorage.getItem('uid');
+      
+      // deja en todo deseleccionado los vehiculos
+      const updatedVehicles = vehicles.map(vehicle => ({
+        ...vehicle,
+        seleccionado: false
+      }));
+      
+      // selecciona el vehiculo que se ha elegido
+      const vehicleIndex = updatedVehicles.findIndex(vehicle => vehicle.vid === item.vid);
+      if (vehicleIndex !== -1) {
+        updatedVehicles[vehicleIndex].seleccionado = true;
+      }
+      
+      // actualiza en firestore
+      const vehicleData = {
+        ...item,
+        seleccionado: true,
+        uid
+      };
+      
+      const response = await userAPI.updateVehicle(vehicleData);
+      updatedVehiclesFromServer
+      if (response.data && response.data.userDetail) {
+        const updatedVehiclesFromServer = response.data.userDetail.vehicles || [];
+        await AsyncStorage.setItem('vehicles', JSON.stringify(updatedVehiclesFromServer));
+        await AsyncStorage.setItem("autonomia", item.autonomia); // Guardar autonomía del primer vehículo seleccionado
+        await AsyncStorage.setItem("tipo",item.tipo); 
+        setVehicles(updatedVehiclesFromServer);
+        Alert.alert('Éxito', 'Vehículo seleccionado correctamente');
+        loadUserVehicles();
+        checkToken();
+      }
+    } catch (error) {
+      console.error('Error selecting vehicle:', error);
+      Alert.alert('Error', 'No se pudo seleccionar el vehículo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   //  deletevehicle: ({uid,vid}) => apiRequest('/users/vehicle', 'DELETE', {uid,vid}, true),
   const handleDeleteVehicle = async (vid) => {    
     Alert.alert(
@@ -126,8 +170,21 @@ const renderVehicleItem = ({ item }) => (
       <Text style={styles.cardTitle}>{item.marca} {item.modelo}</Text>
       <Text style={styles.cardDetail}>Autonomía: {item.autonomia} km</Text>
       <Text style={styles.cardDetail}>Tipo: {item.tipo}</Text>
+      {item.seleccionado && (
+        <View style={styles.selectedBadge}>
+          <Text style={styles.selectedText}>Seleccionado</Text>
+        </View>
+      )}
     </View>
     <View style={styles.cardActions}>
+    {!item.seleccionado && (
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.selectButton]} 
+          onPress={() => handleSelectVehicle(item)}
+        >
+          <Ionicons name="checkmark-circle" size={20} color="#28a745" />
+        </TouchableOpacity>
+      )}
       <TouchableOpacity 
         style={styles.actionButton} 
         onPress={() => handleEditVehicle(item)}
@@ -259,5 +316,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-  }
+  },
+  selectButton: {
+    backgroundColor: '#e8f5e9',
+    borderRadius: 4,
+  },
+  selectedBadge: {
+    backgroundColor: '#28a745',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  selectedText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
 });
