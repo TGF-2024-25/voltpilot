@@ -62,20 +62,20 @@ const estacionController = {
       });
 
       if (!response.ok) {
-        throw new Error("Error fetching photo");
+        throw new Error("Error para obtener la foto: " + response.status);
       }
 
       const data = await response.json();
 
       // Verifica si la respuesta contiene la URI de la foto
       if (!data.photoUri) {
-        return res.status(404).json({ error: "Photo URI not found" });
+        return res.status(404).json({ error: "No se encontró la URI de la foto" });
       }
 
       return res.json({ photoUri: data.photoUri });
     } catch (error) {
       console.error("Error:", error);
-      return res.status(500).json({ error: "Error fetching photo" });
+      return res.status(500).json({ error: "Error al obtener la foto." });
     }
   },
 
