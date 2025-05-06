@@ -94,7 +94,7 @@ const userController = {
       const updateData = {};
       if (email) updateData.email = email;
       if (name) updateData.name = name;
-      if (phoneNumber) updateData.phone = phoneNumber;
+      if (phoneNumber) updateData.phoneNumber = phoneNumber;
       if (address) updateData.address = address;
 
       // Actualiza el email en Firebase Admin
@@ -136,9 +136,9 @@ const userController = {
 
   updateUserVehicle: async (req, res) => {
     try {
-      const userId = req.body.uid;
-      const carId  = req.body.vid;
-      const { marca, modelo, autonomia, tipo} = req.body;
+      const uid = req.body.uid;
+      const vid  = req.body.vid;
+      const { marca, modelo, autonomia, tipo, seleccionado} = req.body;
 
       // Prepara los datos para actualizar
       const updateData = {
@@ -146,10 +146,11 @@ const userController = {
         modelo: modelo,
         autonomia: autonomia,
         tipo: tipo,
+        seleccionado: seleccionado,
       };
 
       // Actualiza el usuario en Firestore
-      const userDetail = await userModel.updateVehicle(userId,carId, updateData);
+      const userDetail = await userModel.updateVehicle(uid,vid, updateData);
 
       res.status(200).json({
         success: true,
@@ -168,11 +169,11 @@ const userController = {
 
   deleteUserVehicle: async (req, res) => {
     try {
-      const userId = req.body.uid;
-      const carId  = req.body.vid;
+      const uid = req.body.uid;
+      const vid  = req.body.vid;
 
       // Actualiza el usuario en Firestore
-      const userDetail = await userModel.deleteVehicle(userId,carId);
+      const userDetail = await userModel.deleteVehicle(uid,vid);
 
       res.status(200).json({
         success: true,

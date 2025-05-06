@@ -62,7 +62,7 @@ export const userAPI = {
   getProfile: () => apiRequest('/users/profile', 'GET', null, true),
   updateProfile: (userData) => apiRequest('/users/profile', 'PUT', userData, true),
   updateVehicle: (vehicleData) => apiRequest('/users/vehicle', 'PUT', vehicleData, true),
-  deletevehicle: (vehicleData) => apiRequest('/users/vehicle', 'DELETE', vehicleData, true),
+  deletevehicle: ({uid,vid}) => apiRequest('/users/vehicle', 'DELETE', {uid,vid}, true),
 };
 
 // routing API

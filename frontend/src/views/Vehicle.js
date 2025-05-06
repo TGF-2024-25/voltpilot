@@ -69,6 +69,8 @@ export default function MiPerfil() {
         modelo: vehicleData.modelo || '',
         autonomia: vehicleData.autonomia || '',
         tipo: vehicleData.tipo || '',
+        seleccionado: vehicleData.seleccionado || false,
+        vid,
         uid
       };
       

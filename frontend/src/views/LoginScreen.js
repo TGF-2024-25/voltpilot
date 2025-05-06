@@ -36,27 +36,36 @@ export default function LoginScreen() {
         throw new Error(response.message || 'error en el login');
       }
       const userDetail = response.data.userDetail;
-      const vehicleJson = userDetail.vehicle || {
-        marca: '',
-        modelo: '',
-        autonomia: '',
-        tipo: ''
-      };
+      const vehicles = userDetail.vehicles || []; // Asegúrate de que vehicles sea un array
+      const selectedVehicles =[];
+      if(vehicles.length > 0){
+         selectedVehicles = vehicles.filter(vehicle => vehicle.seleccionado === true); // Only selected vehicles
+      }
       const token = response.data.token;
       const refreshToken = response.data.refreshToken;
       const expiresIn = response.data.expiresIn;
-
       console.log("userDetail", userDetail);
 
-      // guardar el token y los datos del usuario en dispositivo local
+      //cosa de user
+      await AsyncStorage.setItem("user", JSON.stringify({"email":userDetail.email, "name":userDetail.name, "phoneNumber":userDetail.phoneNumber, "address":userDetail.address})); // Guardar solo los datos necesarios
+      await AsyncStorage.setItem("vehicles", JSON.stringify(vehicles)); // Guardar vehículos como JSON
+      
+      //cosa de auth y otracosas
       await AsyncStorage.setItem("authToken", token);
-      await AsyncStorage.setItem("user", JSON.stringify(userDetail));
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("expiresIn", expiresIn);
       await AsyncStorage.setItem("uid", userDetail.id);
       await AsyncStorage.setItem("id", userDetail.email);
-      await AsyncStorage.setItem("autonomia", vehicleJson.autonomia);
-      await AsyncStorage.setItem("tipo", vehicleJson.tipo);
+
+      //si hay coche seleccionado, guardar datos de coche
+      if(selectedVehicles.length > 0){
+        await AsyncStorage.setItem("autonomia", selectedVehicles[0].autonomia); // Guardar autonomía del primer vehículo seleccionado
+        await AsyncStorage.setItem("tipo",selectedVehicles[0].tipo);      
+      }else{
+        await AsyncStorage.setItem("autonomia", ""); // Guardar autonomía del primer vehículo seleccionado
+        await AsyncStorage.setItem("tipo",""); 
+      }
+
 
       await checkToken(); //verifica si el token es valido
     } catch (error) {
