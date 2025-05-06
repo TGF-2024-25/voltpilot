@@ -64,9 +64,10 @@ class UserModel {
 
   async updateVehicle(uid, vid, data) {
     try {
+      
       const vehicleRef = db.collection("users").doc(uid).collection("vehicles").doc(vid);
       
-      await vehicleRef.update(data);
+      await vehicleRef.set(data);
 
       // conseguir usuario actualizado para actualizar el vista
       const updatedUser = await this.findById(uid);

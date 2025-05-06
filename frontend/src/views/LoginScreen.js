@@ -37,7 +37,7 @@ export default function LoginScreen() {
       }
       const userDetail = response.data.userDetail;
       const vehicles = userDetail.vehicles || []; // Asegúrate de que vehicles sea un array
-      const selectedVehicles =[];
+      let selectedVehicles =[];
       if(vehicles.length > 0){
          selectedVehicles = vehicles.filter(vehicle => vehicle.seleccionado === true); // Only selected vehicles
       }

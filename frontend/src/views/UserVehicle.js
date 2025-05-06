@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {
   View,
   Text,
@@ -15,31 +15,41 @@ import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
 import { Ionicons } from '@expo/vector-icons'; // Make sure you have expo/vector-icons installed
 import { AuthContext } from '../App';
+import { useRoute } from '@react-navigation/native';
+
+
 
 
 export default function UserVehicleScreen() {
+  const route = useRoute();
   const { checkToken } = useContext(AuthContext);
   const navigation = useNavigation();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [vehicleData, setVehicleData] = useState({
+    vid: '',
     marca: '',
     modelo: '',
     autonomia: '',
     tipo: '',
-    selecionado: false,
+    seleccionado: false,
   });
 
   // Cargar vehículos del usuario
   useEffect(() => {
-    loadUserVehicles();
-  }, []);
+    if (route.params?.refreshVehicles) {
+      loadUserVehicles();
+      navigation.setParams({ refreshVehicles: undefined });
+    }else{
+      loadUserVehicles();
+    }
+  }, [route.params?.refreshVehicles]);
 
   const loadUserVehicles = async () => {
     try {
       setLoading(true);
       const vehiclejson = await AsyncStorage.getItem('vehicles');
-      if (userJson) {
+      if (vehiclejson) {
         const parsedData = JSON.parse(vehiclejson);
         // Verificar si user.vehicles existe, si no, crear un array vacío
         const userVehicles = parsedData || [];
@@ -86,16 +96,25 @@ export default function UserVehicleScreen() {
   };
 
   // Modifica la función handleEditVehicle para navegar a Vehicle.js
-const handleEditVehicle = (index) => {
-  // Navegar a Vehicle.js pasando los datos del vehículo seleccionado
-  navigation.navigate('Vehicle', { 
-    vehicleData: vehicles[index],
+const handleEditVehicle = (item) => {
+  console.log('datos que va a edita:', JSON.stringify(item));
+  navigation.navigate('Vehiculo', { 
+    vehicleData: item 
   });
 };
 
   const handleAddVehicle = () => {
     const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    navigation.navigate('Vehicle', randomId);
+    const newVehicleData = {
+      vid: randomId,
+      marca: '',
+      modelo: '',
+      autonomia: '',
+      tipo: '',
+      seleccionado: false,
+    };
+    
+    navigation.navigate('Vehiculo', { vehicleData: newVehicleData });
   };
 
   
