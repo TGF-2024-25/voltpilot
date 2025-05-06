@@ -15,6 +15,7 @@ import EstacionFiltro from "./EstacionFiltro";
 import { estacionAPI } from "../services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import styles from "../styles/estacionInicioStyle";
+import SearchBar from "../components/SearchBar";
 
 // Ejecutar para probar Expo Go en móvil android por cable, y servidor back en local
 // adb -s b3060cfe reverse tcp:5000 tcp:5000
@@ -316,7 +317,7 @@ export default function VistaEstacionInicio() {
         </TouchableOpacity>
 
         {/* Barra de búsqueda */}
-        <View style={styles.searchBarContainer}>
+        {/* <View style={styles.searchBarContainer}>
           <GooglePlacesAutocomplete
             fetchDetails={true}
             placeholder="Buscar en Mapas"
@@ -337,6 +338,25 @@ export default function VistaEstacionInicio() {
             }}
             query={{ key: GOOGLE_MAPS_API_KEY, language: "es" }}
             styles={styles.searchBarTextInput}
+          />
+        </View> */}
+
+        {/* Barra de búsqueda */}
+        <View style={styles.searchBarContainer}>
+          <SearchBar
+            placeholder="Buscar en Mapas"
+            onSelect={({ latitude, longitude, name }) => {
+              const newRegion = {
+                latitude,
+                longitude,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0121,
+              };
+
+              // Actualizar la región del mapa y obtener cargadores
+              setRegion(newRegion);
+              handleRegionChange(newRegion);
+            }}
           />
         </View>
 

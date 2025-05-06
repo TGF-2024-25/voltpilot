@@ -14,7 +14,6 @@ import { CargadorProvider } from "./contexts/EstacionContext";
 import LoginScreen from "./views/LoginScreen";
 import RegisterScreen from "./views/RegisterScreen";
 
-
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
@@ -131,16 +130,9 @@ export default function App() {
     );
   }
 
-  // <MenuProvider>
-  // </MenuProvider>
-  {
-    /* <NavigationContainer>{userToken ? <MainAppStack /> : <AuthStackScreen />}</NavigationContainer> */
-  }
   return (
     <AuthContext.Provider value={{ checkToken }}>
-    <NavigationContainer>
-      {userToken ? <MainAppStack /> : <AuthStackScreen />}
-    </NavigationContainer>
+      <NavigationContainer>{userToken ? <MainAppStack /> : <AuthStackScreen />}</NavigationContainer>
     </AuthContext.Provider>
   );
 }

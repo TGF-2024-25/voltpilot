@@ -56,7 +56,7 @@ const estacionModel = {
       // Filtrar los comentarios válidos (que no sean null)
       const comentarios = comentariosDocs.filter((comentario) => comentario !== null);
 
-      return comentarios; // Devuelve los comentarios completos con datos del usuario
+      return comentarios;
     } catch (error) {
       console.error("Error al obtener comentarios desde Firestore:", error);
       throw new Error("Error al obtener comentarios desde Firestore");
