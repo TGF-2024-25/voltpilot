@@ -80,17 +80,19 @@ export default function UserVehicleScreen() {
         updatedVehicles[vehicleIndex].seleccionado = true;
       }
       
+
+      let finalResponse = null;
       // actualiza en firestore
-      const vehicleData = {
-        ...item,
-        seleccionado: true,
-        uid
-      };
+       for (let i = 0; i < updatedVehicles.length; i++) {
+        const currentVehicle = updatedVehicles[i];
+        finalResponse = await userAPI.updateVehicle({
+          ...currentVehicle,
+          uid
+        });
+      }
       
-      const response = await userAPI.updateVehicle(vehicleData);
-      updatedVehiclesFromServer
-      if (response.data && response.data.userDetail) {
-        const updatedVehiclesFromServer = response.data.userDetail.vehicles || [];
+      if (finalResponse.data && finalResponse.data.userDetail) {
+        const updatedVehiclesFromServer = finalResponse.data.userDetail.vehicles || [];
         await AsyncStorage.setItem('vehicles', JSON.stringify(updatedVehiclesFromServer));
         await AsyncStorage.setItem("autonomia", item.autonomia); // Guardar autonomía del primer vehículo seleccionado
         await AsyncStorage.setItem("tipo",item.tipo); 
