@@ -34,7 +34,6 @@ const Autonomia = forwardRef((props, ref) => {
       if(data) {
         set_ini(data.inicial);
         set_min(data.minima);
-        set_totalKm(data.total);
       }
     } catch (error) { 
       console.error('Error de red al obtener autonomía: ', error);
@@ -57,6 +56,9 @@ const Autonomia = forwardRef((props, ref) => {
     const getCurrentUserId = async () => {
       try {
         const userId = await AsyncStorage.getItem('uid');
+        const autoKm = await AsyncStorage.getItem('autonomia');
+        console.log('autoKM: ', autoKm);
+        set_totalKm(autoKm ? parseFloat(autoKm) : 0);
         if (userId) {
           set_uid(userId);
         } else {
@@ -140,13 +142,11 @@ const Autonomia = forwardRef((props, ref) => {
                   <TextInput
                     style={styles.input}
                     value={totalKm.toString()}
-                    onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, "");
-                      set_totalKm(Number(numericValue));
-                    }}
+                    editable={false}
                     keyboardType="numeric"
                   />
                 </View>
+
 
                 <TouchableOpacity style={styles.acceptButton} onPress={function_accept}>
                   <Text style={styles.acceptButtonText}>Aceptar</Text>

@@ -82,7 +82,10 @@ export default function VistaRutas() {
     setDestinos(nuevosDestinos);
 
     // Si no hay destinos, quitamos polilinea y modo ruta
-    if (nuevosDestinos.length === 0) setModRuta(false);
+    if (nuevosDestinos.length === 0) {
+      setModRuta(false);
+      yaParadoRef.current = false;
+    }
   };
 
   // Filtrar estaciones para devolver solo las 3 más cercanas a la ruta
@@ -136,6 +139,11 @@ export default function VistaRutas() {
     }));
   };
 
+  // Reducir la ruta para peticiones tan largas
+  function reducirRuta(ruta, salto = 10) {
+    return ruta.filter((_, i) => i % salto === 0);
+  }
+
   // Función principal que recalcula la ruta completa (con origen y todos los destinos intermedios)
   const fetchRoute = async (yaParado = false) => {
     if (destinos.length === 0 || !destinos[0]) return;
@@ -170,7 +178,11 @@ export default function VistaRutas() {
 
         // Solo mostrar estaciones para el primer tramo de momento
         if (i === 0 && !paradaRealizada) {
-          const res_estaciones = await routingAPI.getEstacionesRuta(data.route, autonomiaKm, data.distanciaKm);
+          let ruta_reduced = data.route;
+          if(data.distancia > 300)
+            ruta_reduced = reducirRuta(data.route, 10);
+
+          const res_estaciones = await routingAPI.getEstacionesRuta(ruta_reduced, autonomiaKm, data.distanciaKm);
           const filtradas = filtrar_estaciones(res_estaciones.estaciones);
           tot_estaciones = filtradas;
         }

@@ -1,10 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
-// url de ka api backend
-const DEV_API_URL = "http://voltpilot.naivc.top/api"; //cambia a la ip de tu backend
-// const DEV_API_URL = 'http://192.168.193.136:5000/api';//cambia a la ip de tu backend
-
+// url de la api backend
+//const DEV_API_URL = 'http://voltpilot.naivc.top/api';//cambia a la ip de tu backend 
+const DEV_API_URL = 'http://192.168.1.242:5000/api';//cambia a la ip de tu backen
 const API_URL = DEV_API_URL;
 
 // patrone de facade de api
