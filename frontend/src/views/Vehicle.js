@@ -13,6 +13,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
 import { useRoute } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
+
+const connectorTypes = [
+  { label: "Seleccionar tipo de conector", value: "" },
+  { label: "Tipo 1 (SAE J1772)", value: "Tipo 1" },
+  { label: "Tipo 2 (Mennekes)", value: "Tipo 2" },
+  { label: "CHAdeMO", value: "CHAdeMO" },
+  { label: "CCS Combo 1", value: "CCS Combo 1" },
+  { label: "CCS Combo 2", value: "CCS Combo 2" },
+  { label: "Tesla", value: "Tesla" },
+  { label: "Schuko (Enchufe doméstico)", value: "Schuko" },
+  { label: "Otro", value: "Otro" }
+];
 
 export default function VehicleScreen() {
   //recibir datos de vehiculo
@@ -171,12 +184,21 @@ export default function VehicleScreen() {
 
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>Tipo de conector</Text>
-          <TextInput
-            style={styles.input}
-            value={vehicleData?.tipo|| ''}
-            onChangeText={(text) => handleChange('tipo', text)}
-            placeholder="Ingresa tipo de conector"
-          />
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={vehicleData?.tipo || ''}
+              style={styles.picker}
+              onValueChange={(itemValue) => handleChange('tipo', itemValue)}
+            >
+              {connectorTypes.map((connector) => (
+                <Picker.Item 
+                  key={connector.value} 
+                  label={connector.label} 
+                  value={connector.value} 
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
 
       </View>
@@ -205,6 +227,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f5f5f5',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 4,
+    backgroundColor: 'white',
+  },
+  picker: {
+    height: 50,
   },
   loadingContainer: {
     flex: 1,

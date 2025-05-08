@@ -4,7 +4,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "启动 VoltPilot 后端",
+            "name": "run VoltPilot backend",
             "skipFiles": [
                 "<node_internals>/**"
             ],
@@ -21,15 +21,6 @@
             ],
             "outFiles": [
                 "${workspaceFolder}/backend/src/**/*.js"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "附加到已运行的后端",
-            "port": 9229,
-            "skipFiles": [
-                "<node_internals>/**"
             ]
         }
     ]

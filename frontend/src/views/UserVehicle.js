@@ -123,6 +123,9 @@ export default function UserVehicleScreen() {
             try {
               setLoading(true);
               const uid = await AsyncStorage.getItem('uid');
+              console.log('uid:', uid);
+              console.log('vid:', vid);
+              // Eliminar el vehículo de la API y actualizar el estado local
               const response = await userAPI.deletevehicle({ uid, vid});
               const vehiclesData = response.data.userDetail.vehicles || []; // Asegúrate de que vehiclesData sea un array
               await AsyncStorage.setItem('vehicles', JSON.stringify(vehiclesData));              
