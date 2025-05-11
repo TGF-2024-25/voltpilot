@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 // Crear un contexto para que las pantallas dentro del contexto puedan acceder a los datos
 const CargadorContext = createContext();

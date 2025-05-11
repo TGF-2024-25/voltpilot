@@ -78,7 +78,7 @@ export default function VistaEstacionInicio() {
     const solicitarPermisos = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.error("Permiso de ubicación denegado");
+        console.log("Permiso de ubicación denegado");
         return;
       }
 
@@ -262,6 +262,7 @@ export default function VistaEstacionInicio() {
             initialRegion={region}
             showsUserLocation={true}
             showsMyLocationButton={false}
+            testID="map-view"
           >
             {/* Renderizar solo el marcador de la estación favorita si está presente */}
             {estacionFavorita ? (
