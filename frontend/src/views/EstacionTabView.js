@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { useCargador } from "../contexts/EstacionContext";
+import { estacionAPI } from "../services/api";
 import VistaEstacionConectores from "./EstacionConectores";
 import VistaEstacionInfo from "./EstacionInfo";
 import VistaEstacionComentarios from "./EstacionComentarios";
 import VistaEstacionFotos from "./EstacionFotos";
-import { useCargador } from "../contexts/EstacionContext";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { estacionAPI } from "../services/api";
 import styles from "../styles/EstacionTabViewStyle";
 
 const renderScene = SceneMap({

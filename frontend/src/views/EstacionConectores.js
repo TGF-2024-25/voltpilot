@@ -1,9 +1,8 @@
-import React from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
-import * as Clipboard from "expo-clipboard"; // Importar Clipboard desde expo-clipboard
 import { useCargador } from "../contexts/EstacionContext";
 import { FlatList } from "react-native-gesture-handler";
-import styles from "../styles/estacionConectoresStyle"; // Asegúrate de que la ruta sea correcta
+import * as Clipboard from "expo-clipboard"; // Importar Clipboard desde expo-clipboard
+import styles from "../styles/estacionConectoresStyle";
 
 export default function VistaEstacionConectores() {
   const { selectedCargador } = useCargador();
@@ -13,15 +12,15 @@ export default function VistaEstacionConectores() {
     return type
       .replace("EV_CONNECTOR_TYPE_", "") // Eliminar el prefijo
       .replace(/_/g, " ") // Reemplazar guiones bajos por espacios
-      .toLowerCase() // Convertir a minúsculas
+      .toLowerCase()
       .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalizar cada palabra
   };
 
   // Formatear la hora de actualización
   const formatUpdateTime = (time) => {
     const date = new Date(time);
-    const hours = date.getHours().toString().padStart(2, "0"); // Asegurar formato de 2 dígitos
-    const minutes = date.getMinutes().toString().padStart(2, "0"); // Asegurar formato de 2 dígitos
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 

@@ -1,21 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, TouchableOpacity, Modal } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModal, BottomSheetView, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import "react-native-get-random-values";
-import { GOOGLE_MAPS_API_KEY } from "@env"; // Importar la clave de API de Google Maps
 import { useCargador } from "../contexts/EstacionContext";
+import { estacionAPI } from "../services/api";
+import { useFocusEffect } from "@react-navigation/native";
+import "react-native-get-random-values";
 import EstacionTabView from "./EstacionTabView";
 import * as Location from "expo-location";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Importar íconos
 import MarcadoresInfo from "./MarcadoresInfo";
 import EstacionFiltro from "./EstacionFiltro";
-import { estacionAPI } from "../services/api";
-import { useFocusEffect } from "@react-navigation/native";
-import styles from "../styles/estacionInicioStyle";
 import SearchBar from "../components/SearchBar";
+import styles from "../styles/estacionInicioStyle";
 
 // Ejecutar para probar Expo Go en móvil android por cable, y servidor back en local
 // adb -s b3060cfe reverse tcp:5000 tcp:5000
@@ -333,31 +331,6 @@ export default function VistaEstacionInicio() {
         >
           <Icon name="info" size={24} color="white" />
         </TouchableOpacity>
-
-        {/* Barra de búsqueda */}
-        {/* <View style={styles.searchBarContainer}>
-          <GooglePlacesAutocomplete
-            fetchDetails={true}
-            placeholder="Buscar en Mapas"
-            onPress={(data, details = null) => {
-              if (details) {
-                const { lat, lng } = details.geometry.location;
-                const newRegion = {
-                  latitude: lat,
-                  longitude: lng,
-                  latitudeDelta: 0.015,
-                  longitudeDelta: 0.0121,
-                };
-
-                // Actualizar la región del mapa y obtener cargadores
-                setRegion(newRegion);
-                handleRegionChange(newRegion);
-              }
-            }}
-            query={{ key: GOOGLE_MAPS_API_KEY, language: "es" }}
-            styles={styles.searchBarTextInput}
-          />
-        </View> */}
 
         {/* Barra de búsqueda */}
         <View style={styles.searchBarContainer}>

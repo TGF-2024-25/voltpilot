@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import Slider from "@react-native-community/slider"; // Biblioteca para sliders
 import { ApplyButton, CancelButton } from "../components/Botones";
+import Slider from "@react-native-community/slider"; // Biblioteca para sliders
 import styles from "../styles/estacionFiltrosStyle";
 
 export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters }) {

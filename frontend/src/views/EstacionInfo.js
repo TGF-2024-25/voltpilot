@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, FlatList, Image } from "react-native";
 import { useCargador } from "../contexts/EstacionContext";
 import styles from "../styles/estacionInfoStyle";

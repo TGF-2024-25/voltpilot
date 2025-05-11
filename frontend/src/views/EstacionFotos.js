@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, Image, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useCargador } from "../contexts/EstacionContext";
-import Icon from "react-native-vector-icons/FontAwesome"; // Importar íconos
 import { FlatList } from "react-native-gesture-handler";
 import { estacionAPI } from "../services/api";
+import Icon from "react-native-vector-icons/FontAwesome"; // Importar íconos
 import styles from "../styles/estacionFotosStyle"; // Importar estilos
 
 export default function VistaEstacionFotos() {

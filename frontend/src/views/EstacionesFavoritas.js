@@ -1,11 +1,12 @@
-import { View, StyleSheet, Text, FlatList, Modal, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, Modal, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { estacionAPI } from "../services/api";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Asegúrate de instalar react-native-vector-icons
-import { ApplyButton, CancelButton } from "../components/Botones"; // Importa tus botones personalizados
+import { ApplyButton, CancelButton } from "../components/Botones";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import React from "react"; // Asegúrate de importar React
-import { useCargador } from "../contexts/EstacionContext"; // Asegúrate de que la ruta sea correcta
+import { useCargador } from "../contexts/EstacionContext";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import React from "react";
+import styles from "../styles/estacionesFavoritasStyle";
 
 const VistaEstacionesFavoritas = () => {
   const [idEstacionesFavoritas, setIdEstacionesFavoritas] = useState([]);
@@ -13,7 +14,7 @@ const VistaEstacionesFavoritas = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState(null); // Para almacenar el placeId seleccionado
   const navigation = useNavigation(); // Navegación para ir a la vista de estaciones
-  const { setEstacionFavorita, setSelectedCargador } = useCargador(); // Asegúrate de que el contexto esté configurado correctamente
+  const { setEstacionFavorita, setSelectedCargador } = useCargador();
 
   // Obtener los IDs de las estaciones favoritas
   useFocusEffect(
@@ -28,12 +29,12 @@ const VistaEstacionesFavoritas = () => {
       };
 
       obtenerIdEstacionesFavoritas();
-    }, []), // Se ejecuta cada vez que la pantalla se enfoca
+    }, []),
   );
 
   // Obtener la información de las estaciones favoritas cuando los IDs estén disponibles
   useEffect(() => {
-    if (idEstacionesFavoritas.length === 0) return; // No hacer nada si no hay IDs
+    if (idEstacionesFavoritas.length === 0) return;
 
     const obtenerEstacionesFavoritas = async () => {
       try {
@@ -57,7 +58,7 @@ const VistaEstacionesFavoritas = () => {
 
   const onDeleteFavorito = async () => {
     try {
-      await estacionAPI.deleteEstacionFavorita({ placeId: selectedPlaceId }); // Llama a la API para eliminar la estación favorita
+      await estacionAPI.deleteEstacionFavorita({ placeId: selectedPlaceId });
       setIdEstacionesFavoritas((prev) => prev.filter((id) => id !== selectedPlaceId)); // Actualiza el estado de idEstacionesFavoritas
       setModalVisible(false); // Cierra el modal después de eliminar
     } catch (error) {
@@ -81,8 +82,8 @@ const VistaEstacionesFavoritas = () => {
           size={24}
           color="#65558F"
           onPress={() => {
-            setSelectedPlaceId(item.id); // Establece el placeId seleccionado
-            setModalVisible(true); // Muestra el modal
+            setSelectedPlaceId(item.id);
+            setModalVisible(true);
           }}
           style={styles.closeIcon}
         />
@@ -127,80 +128,5 @@ const VistaEstacionesFavoritas = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5", // Fondo claro para la pantalla
-    padding: 10,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  card: {
-    backgroundColor: "#FFF", // Fondo blanco para las tarjetas
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    borderLeftWidth: 5, // Indicador de color en el borde izquierdo
-    borderLeftColor: "#65558F", // Morado característico
-  },
-  cardHeader: {
-    flexDirection: "row", // Alinea los elementos en una fila
-    justifyContent: "space-between", // Espacio entre el texto y el ícono
-    alignItems: "center", // Alinea verticalmente el texto y el ícono
-    marginBottom: 10, // Espaciado inferior para separar del contenido
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#65558F", // Morado para el título
-  },
-  closeIcon: {
-    padding: 5, // Espaciado alrededor del ícono para facilitar el toque
-  },
-  cardText: {
-    fontSize: 14,
-    color: "#333", // Texto oscuro para la información
-    marginBottom: 5,
-  },
-  cardStatus: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#65558F", // Morado para el estado (Abierto/Cerrado)
-  },
-  separator: {
-    height: 10,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo transparente oscuro
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    padding: 20,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalText: {
-    fontSize: 16,
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-});
 
 export default VistaEstacionesFavoritas;

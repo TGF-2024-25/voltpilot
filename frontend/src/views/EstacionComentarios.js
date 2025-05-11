@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { useCargador } from "../contexts/EstacionContext";
 import { FlatList } from "react-native-gesture-handler";
 import { ApplyButton, CancelButton } from "../components/Botones";
 import { estacionAPI } from "../services/api";
+import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "../styles/estacionComentariosStyle";
 
@@ -139,7 +139,6 @@ export default function VistaEstacionComentarios() {
 
       // Cierra el modal
       setDeleteModalVisible(false);
-      setSelectedCommentId(null);
       setSelectedCommentId(null);
     } catch (error) {
       console.error("Error al eliminar comentario:", error);
