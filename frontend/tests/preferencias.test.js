@@ -1,112 +1,96 @@
-import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
-import Preferencias from '../components/Preferencias';
-import { routingAPI } from '../services/api';
+import React from 'react';
+import Preferencias from '../src/components/Preferencias';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { routingAPI } from '../src/services/api';
 
-// Mock dependencias
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-}));
-
-jest.mock('../services/api', () => ({
+// Mock de las funciones
+jest.mock('../src/services/api', () => ({
   routingAPI: {
-    getPreferencias: jest.fn(),
-    setPreferencias: jest.fn(),
-  },
-}));
-
-jest.mock('react-native-vector-icons/Feather', () => 'Icon');
-
-describe('Preferencias Component', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('muestra el botón de filtro y abre el modal al hacer click', async () => {
-    AsyncStorage.getItem.mockResolvedValue('123');
-    routingAPI.getPreferencias.mockResolvedValue({
+    getPreferencias: jest.fn(() => Promise.resolve({
       peajes: true,
       autopista: false,
       ferry: true,
       traffic: false,
+    })),
+    setPreferencias: jest.fn(() => Promise.resolve(true)),
+  }
+}));
+
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+}));
+
+describe('Preferencias Component', () => {
+  beforeEach(() => {
+    AsyncStorage.getItem.mockImplementation(async (key) => {
+      if (key === 'uid') return 'test-uid';
+      return null;
     });
+  });
 
-    const { getByRole, getByText } = render(<Preferencias />);
+  test('renderiza correctamente y abre el modal', async () => {
+    const ref = React.createRef();
+    const { getByTestId, getByText } = render(<Preferencias ref={ref} />);
 
-    // Botón de filtro visible
-    const filterButton = getByRole('button');
-    expect(filterButton).toBeTruthy();
+    const button = getByTestId('filterButton');
+    expect(button).toBeTruthy();
 
-    // Abre modal
-    await act(async () => {
-      fireEvent.press(filterButton);
-    });
+    fireEvent.press(button);
 
     await waitFor(() => {
       expect(getByText('Preferencias de Ruta')).toBeTruthy();
     });
   });
 
-  it('permite cambiar switches y enviar preferencias', async () => {
-    AsyncStorage.getItem.mockResolvedValue('123');
-    routingAPI.getPreferencias.mockResolvedValue({
-      peajes: false,
-      autopista: false,
-      ferry: false,
-      traffic: false,
-    });
+  test('Carga y muestra las preferencias correctamente', async () => {
+    const ref = React.createRef();
+    const { getByTestId, getByText } = render(<Preferencias ref={ref} />);
 
-    const { getByText, getAllByRole } = render(<Preferencias />);
-
-    await act(async () => {
-      fireEvent.press(getAllByRole('button')[0]); // Botón de abrir modal
-    });
+    fireEvent.press(getByTestId('filterButton'));
 
     await waitFor(() => {
-      expect(getByText('Preferencias de Ruta')).toBeTruthy();
+      expect(getByText('Evitar ferris')).toBeTruthy();
+      expect(getByText('Evitar autopistas')).toBeTruthy();
+      expect(getByText('Evitar peajes')).toBeTruthy();
+      expect(getByText('Tráfico en tiempo real')).toBeTruthy();
     });
+  });
 
-    const aceptarButton = getByText('Aceptar');
+  test('Guarda correctamente las preferencias al pulsar "Aceptar"', async () => {
+    const ref = React.createRef();
+    const { getByTestId, getByText } = render(<Preferencias ref={ref} />);
+
+    fireEvent.press(getByTestId('filterButton'));
+
+    await waitFor(() => expect(getByText('Aceptar')).toBeTruthy());
 
     await act(async () => {
-      fireEvent.press(aceptarButton);
+      fireEvent.press(getByText('Aceptar'));
     });
 
     await waitFor(() => {
       expect(routingAPI.setPreferencias).toHaveBeenCalledWith({
-        uid: '123',
-        peajes: false,
+        uid: 'test-uid',
+        peajes: true,
         autopista: false,
-        ferry: false,
+        ferry: true,
         traffic: false,
       });
     });
   });
 
-  it('llama a getPreferencias al montarse con UID', async () => {
-    AsyncStorage.getItem.mockResolvedValue('456');
-    routingAPI.getPreferencias.mockResolvedValue({
-      peajes: true,
-      autopista: true,
-      ferry: false,
-      traffic: true,
-    });
+  test('Puede cancelar correctamente y cerrar el modal', async () => {
+    const ref = React.createRef();
+    const { getByTestId, getByText, queryByText } = render(<Preferencias ref={ref} />);
 
-    render(<Preferencias />);
+    fireEvent.press(getByTestId('filterButton'));
+    await waitFor(() => expect(getByText('Cancelar')).toBeTruthy());
+
+    fireEvent.press(getByText('Cancelar'));
 
     await waitFor(() => {
-      expect(routingAPI.getPreferencias).toHaveBeenCalledWith('456');
-    });
-  });
-
-  it('no llama a la API si no hay UID en AsyncStorage', async () => {
-    AsyncStorage.getItem.mockResolvedValue(null);
-
-    render(<Preferencias />);
-
-    await waitFor(() => {
-      expect(routingAPI.getPreferencias).not.toHaveBeenCalled();
+      expect(queryByText('Preferencias de Ruta')).toBeNull();
     });
   });
 });

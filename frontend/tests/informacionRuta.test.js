@@ -1,113 +1,71 @@
-import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import InformacionRuta from '../components/InformacionRuta';
-import Feather from 'react-native-vector-icons/Feather';
+import InformacionRuta from '../src/components/InformacionRuta';
 
 describe('InformacionRuta Component', () => {
-  const infoRutaMock = [
+  const mockInfoRuta = [
     {
       tipo: 'normal',
       origen: 'Madrid',
-      destino: 'Barcelona',
-      distancia: 500,
-      duracion: '5h 30m',
+      destino: 'Toledo',
+      distancia: 72,
+      duracion: '3600s'
     },
     {
       tipo: 'carga',
-      estacion: 'Estacion 1',
-      tiempoCarga: '20',
+      estacion: 'Estación ABC',
+      tiempoCarga: '20 min'
     },
     {
       tipo: 'normal',
-      origen: 'Barcelona',
-      destino: 'Valencia',
-      distancia: 350,
-      duracion: '3h 45m',
-    },
+      origen: 'Toledo',
+      destino: 'Córdoba',
+      distancia: 320,
+      duracion: '14400s'
+    }
   ];
 
-  it('debería renderizar correctamente el componente', () => {
-    const { getByTestId } = render(<InformacionRuta infoRuta={infoRutaMock} />);
-    const infoButton = getByTestId('infoRutaButton');
-    expect(infoButton).toBeTruthy();
+  test('renderiza correctamente el botón de información', () => {
+    const { getByTestId } = render(<InformacionRuta infoRuta={mockInfoRuta} />);
+    const button = getByTestId('infoRutaButton');
+    expect(button).toBeTruthy();
   });
 
-  it('debería abrir y cerrar el modal correctamente', async () => {
-    const { getByTestId, getByText } = render(<InformacionRuta infoRuta={infoRutaMock} />);
+  test('abre el modal y muestra información de los tramos', async () => {
+    const { getByTestId, getByText, getAllByText } = render(<InformacionRuta infoRuta={mockInfoRuta} />);
 
-    const infoButton = getByTestId('infoRutaButton');
-    fireEvent.press(infoButton);
-
-    const modalText = getByText('Información de la Ruta');
-    expect(modalText).toBeTruthy();
-
-    const closeButton = getByText('Cerrar');
-    fireEvent.press(closeButton);
+    fireEvent.press(getByTestId('infoRutaButton'));
 
     await waitFor(() => {
-      expect(modalText).not.toBeVisible();
+      expect(getByText('Información de la Ruta')).toBeTruthy();
+      expect(getByText('Madrid')).toBeTruthy();
+      expect(getAllByText('Toledo').length).toBeGreaterThan(0);
+      expect(getByText('Córdoba')).toBeTruthy();
+      expect(getByText('Estación ABC')).toBeTruthy();
+      expect(getByText('20 min de espera')).toBeTruthy();
     });
   });
 
-  it('debería calcular correctamente la duración y distancia total de la ruta', () => {
-    const { getByText } = render(<InformacionRuta infoRuta={infoRutaMock} />);
+  test('muestra correctamente el total de la ruta', async () => {
+    const { getByTestId, getByText } = render(<InformacionRuta infoRuta={mockInfoRuta} />);
+    fireEvent.press(getByTestId('infoRutaButton'));
 
-    const totalDistanciaText = getByText('850.0 km');
-    const totalTiempoText = getByText('9h 15m');
-    
-    expect(totalDistanciaText).toBeTruthy();
-    expect(totalTiempoText).toBeTruthy();
+    await waitFor(() => {
+      expect(getByText('Total de la Ruta')).toBeTruthy();
+      expect(getByText('392.0 km')).toBeTruthy(); // 72 + 320
+      expect(getByText('5h 20m')).toBeTruthy();    // 1h + 4h + 30min
+    });
   });
 
-  it('debería mostrar la información de los tramos correctamente', () => {
-    const { getByText, getByTestId } = render(<InformacionRuta infoRuta={infoRutaMock} />);
-    
-    // Abrir el modal
-    const infoButton = getByTestId('infoRutaButton');
-    fireEvent.press(infoButton);
+  test('cierra correctamente el modal al pulsar "Cerrar"', async () => {
+    const { getByTestId, getByText, queryByText } = render(<InformacionRuta infoRuta={mockInfoRuta} />);
+    fireEvent.press(getByTestId('infoRutaButton'));
 
-    // Verificamos que los tramos se muestren correctamente
-    const tramo1 = getByText('Madrid');
-    const tramo2 = getByText('Barcelona');
-    const tramo3 = getByText('500 km');
-    const tramo4 = getByText('5h 30m');
-    
-    expect(tramo1).toBeTruthy();
-    expect(tramo2).toBeTruthy();
-    expect(tramo3).toBeTruthy();
-    expect(tramo4).toBeTruthy();
-  });
+    await waitFor(() => expect(getByText('Cerrar')).toBeTruthy());
 
-  it('debería mostrar la información de carga correctamente', () => {
-    const { getByText } = render(<InformacionRuta infoRuta={infoRutaMock} />);
+    fireEvent.press(getByText('Cerrar'));
 
-    // Abrimos el modal
-    const infoButton = getByTestId('infoRutaButton');
-    fireEvent.press(infoButton);
-
-    // Verificamos que el tramo de carga esté visible
-    const estacionText = getByText('Estacion 1');
-    const tiempoCargaText = getByText('20 de espera');
-
-    expect(estacionText).toBeTruthy();
-    expect(tiempoCargaText).toBeTruthy();
-  });
-
-  it('debería calcular correctamente el formato de tiempo', () => {
-    const { getByText } = render(<InformacionRuta infoRuta={infoRutaMock} />);
-    
-    const tiempoFormateado = '5h 31m'; // 5 horas y 31 minutos
-    const tramoText = getByText(tiempoFormateado);
-    expect(tramoText).toBeTruthy();
-  });
-
-  it('debería cambiar el estado de modalVisible al presionar el botón', () => {
-    const { getByTestId } = render(<InformacionRuta infoRuta={infoRutaMock} />);
-    
-    const infoButton = getByTestId('infoRutaButton');
-    fireEvent.press(infoButton);
-
-    // Verificamos que el modal esté visible
-    expect(getByTestId('modalContent')).toBeTruthy();
+    await waitFor(() => {
+      expect(queryByText('Información de la Ruta')).toBeNull();
+    });
   });
 });

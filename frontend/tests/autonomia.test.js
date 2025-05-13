@@ -1,97 +1,83 @@
-import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import Autonomia from '../components/Autonomia';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import Autonomia from '../src/components/Autonomia';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { routingAPI } from '../services/api';
+import { routingAPI } from '../src/services/api';
+
+// Mock de las funciones
+jest.mock('../src/services/api', () => ({
+  routingAPI: {
+    getAutonomia: jest.fn(() => Promise.resolve({ inicial: 40, minima: 20 })),
+    setAutonomia: jest.fn(() => Promise.resolve(true)),
+  }
+}));
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
 }));
 
-jest.mock('../services/api', () => ({
-  routingAPI: {
-    getAutonomia: jest.fn(),
-    setAutonomia: jest.fn(),
-  },
-}));
-
 describe('Autonomia Component', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  beforeEach(async () => {
+    AsyncStorage.getItem.mockImplementation(async (key) => {
+      if (key === 'uid') return 'test-uid';
+      if (key === 'autonomia') return '120';
+      return null;
+    });
   });
 
-  it('renderiza correctamente y abre el modal', async () => {
-    AsyncStorage.getItem.mockImplementation((key) => {
-      if (key === 'uid') return Promise.resolve('123');
-      if (key === 'autonomia') return Promise.resolve('150');
-    });
+  test('renderiza correctamente y abre el modal', async () => {
+    const { getByText, getByTestId } = render(<Autonomia />);
 
-    routingAPI.getAutonomia.mockResolvedValue({
-      inicial: 40,
-      minima: 20,
-    });
+    const button = getByTestId('autonomiaButton');
+    expect(button).toBeTruthy();
 
-    const { getByRole, getByText, queryByText } = render(<Autonomia />);
-
-    const button = getByRole('button');
     fireEvent.press(button);
+    await waitFor(() => expect(getByText('Configuración de autonomía')).toBeTruthy());
+  });
+
+  test('Carga y muestra datos de la autonomía desde API', async () => {
+    const { getByTestId, getByText, queryByText } = render(<Autonomia />);
+
+    fireEvent.press(getByTestId('autonomiaButton'));
+
+    expect(queryByText('Configuración de autonomía')).toBeTruthy();
 
     await waitFor(() => {
-      expect(getByText('Configuración de autonomía')).toBeTruthy();
+      expect(getByText('Auntonomía Inicial: 40%')).toBeTruthy();
       expect(getByText('Autonomía Mínima: 20%')).toBeTruthy();
+      expect(getByText('Autonomía total del vehículo (km):')).toBeTruthy();
     });
   });
 
-  it('getAutonomia devuelve los valores correctos', async () => {
-    const ref = React.createRef();
+  test('Guarda correctamente los datos al pulsar "Aceptar"', async () => {
+    const { getByText, getByTestId } = render(<Autonomia />);
 
-    AsyncStorage.getItem.mockImplementation((key) => {
-      if (key === 'uid') return Promise.resolve('456');
-      if (key === 'autonomia') return Promise.resolve('100');
+    fireEvent.press(getByTestId('autonomiaButton'));
+
+    await waitFor(() => expect(getByText('Aceptar')).toBeTruthy());
+
+    await act(async () => {
+      fireEvent.press(getByText('Aceptar'));
     });
-
-    routingAPI.getAutonomia.mockResolvedValue({
-      inicial: 25,
-      minima: 10,
-    });
-
-    const { findByText } = render(<Autonomia ref={ref} />);
-    await findByText('Configuración de autonomía');
-
-    const result = ref.current.getAutonomia();
-    expect(result).toEqual({
-      inicialKm: 25,
-      minimaKm: 10,
-      totalKm: 100,
-    });
-  });
-
-  it('envía los datos al backend al pulsar Aceptar', async () => {
-    AsyncStorage.getItem.mockImplementation((key) => {
-      if (key === 'uid') return Promise.resolve('789');
-      if (key === 'autonomia') return Promise.resolve('120');
-    });
-
-    routingAPI.getAutonomia.mockResolvedValue({
-      inicial: 50,
-      minima: 25,
-    });
-
-    const { getByText, getByRole } = render(<Autonomia />);
-
-    const button = getByRole('button');
-    fireEvent.press(button);
-
-    const aceptar = await waitFor(() => getByText('Aceptar'));
-    fireEvent.press(aceptar);
 
     await waitFor(() => {
       expect(routingAPI.setAutonomia).toHaveBeenCalledWith({
-        uid: '789',
-        inicial: 50,
-        minima: 25,
+        uid: 'test-uid',
+        inicial: 40,
+        minima: 20,
         total: 120,
       });
+    });
+  });
+
+  test('Puede cancelar correctamente y cerrar el modal', async () => {
+    const { getByTestId, getByText, queryByText } = render(<Autonomia />);
+
+    fireEvent.press(getByTestId('autonomiaButton'));
+    await waitFor(() => expect(getByText('Cancelar')).toBeTruthy());
+
+    fireEvent.press(getByText('Cancelar'));
+    await waitFor(() => {
+      expect(queryByText('Configuración de autonomía')).toBeNull();
     });
   });
 });

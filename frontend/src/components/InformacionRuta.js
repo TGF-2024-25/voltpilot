@@ -49,7 +49,7 @@ const InformacionRuta = ({ infoRuta }) => {
   // Vista del Componente InformacionRuta
   return (
     <>
-      <TouchableOpacity style={styles.infoRutaButton} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity testID="infoRutaButton" style={styles.infoRutaButton} onPress={() => setModalVisible(true)}>
         <Feather name="info" size={24} color="white" />
       </TouchableOpacity>
 

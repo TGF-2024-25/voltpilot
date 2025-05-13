@@ -13,7 +13,7 @@ const Instrucciones = ({ instruccionesRuta }) => {
         <Text style={{ color: "white", fontSize: 14, fontWeight: "bold" }}>Cómo llegar</Text>
       </TouchableOpacity>
 
-      <Modal transparent animationType="slide" visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+      <Modal testID="modal" transparent animationType="slide" visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
             <View style={styles.header}>
