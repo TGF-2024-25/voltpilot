@@ -119,7 +119,7 @@ const Preferencias = forwardRef((props, ref) => {
 return (
   <View style={styles.container}>
     {/* Botón flotante para abrir preferencias */}
-    <TouchableOpacity style={styles.filterButton} onPress={openModal}>
+    <TouchableOpacity testID="filterButton" style={styles.filterButton} onPress={openModal}>
       <Feather name="filter" size={24} color="white" />
     </TouchableOpacity>
 
