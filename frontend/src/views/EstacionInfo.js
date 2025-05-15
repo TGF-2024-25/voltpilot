@@ -3,7 +3,7 @@ import { useCargador } from "../contexts/EstacionContext";
 import styles from "../styles/estacionInfoStyle";
 
 // Formatea la información de horarios de apertura
-const formatOpeningHours = (currentOpeningHours) => {
+export const formatOpeningHours = (currentOpeningHours) => {
   if (!currentOpeningHours || !currentOpeningHours.periods || currentOpeningHours.periods.length === 0) {
     return "Sin información";
   }

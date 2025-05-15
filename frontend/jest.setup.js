@@ -19,7 +19,6 @@ jest.mock("react-native-gesture-handler", () => {
     PanGestureHandler: View,
     PinchGestureHandler: View,
     RotationGestureHandler: View,
-    /* eslint-disable @typescript-eslint/no-empty-function */
     GestureHandlerRootView: View,
     createNativeWrapper: jest.fn(),
     Directions: {},

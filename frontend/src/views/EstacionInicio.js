@@ -9,16 +9,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import "react-native-get-random-values";
 import EstacionTabView from "./EstacionTabView";
 import * as Location from "expo-location";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Importar íconos
+import Icon from "react-native-vector-icons/MaterialIcons";
 import MarcadoresInfo from "./MarcadoresInfo";
 import EstacionFiltro from "./EstacionFiltro";
 import SearchBar from "../components/SearchBar";
 import styles from "../styles/estacionInicioStyle";
 
-// Ejecutar para probar Expo Go en móvil android por cable, y servidor back en local
-// adb -s b3060cfe reverse tcp:5000 tcp:5000
-
-// Definición de los tipos de conectores
+// Definición de los tipos de conectores soportados
 const tipoConectores = [
   { id: "1", name: "EV_CONNECTOR_TYPE_TYPE_2" },
   { id: "2", name: "EV_CONNECTOR_TYPE_CHADEMO" },
@@ -27,15 +24,15 @@ const tipoConectores = [
 ];
 
 // Componente principal
-export default function VistaEstacionInicio() {
+export default function VistaEstacionInicio({ initialRegion = true, cargadoresIniciales = [], cargadoresInicialesFiltrados = [] }) {
   // Variables de estado
-  const [cargadores, setCargadores] = useState([]); // Estado para almacenar los cargadores obtenidos de la API
-  const [cargadoresFiltrados, setCargadoresFiltrados] = useState([]); // Estado para almacenar los cargadores filtrados (mostrados en el mapa)
+  const [cargadores, setCargadores] = useState(cargadoresIniciales); // Estado para almacenar los cargadores obtenidos de la API
+  const [cargadoresFiltrados, setCargadoresFiltrados] = useState(cargadoresInicialesFiltrados); // Estado para almacenar los cargadores filtrados (mostrados en el mapa)
   const { estacionFavorita, setEstacionFavorita, setSelectedCargador } = useCargador(); // Hook personlizado para manejar el cargador seleccionado
   const [infoModalVisible, setInfoModalVisible] = useState(false); // Estado que determina la visibilidad del modal de información
   const [filterModalVisible, setFilterModalVisible] = useState(false); // Estado que determina la visibilidad del modal de filtros
   const [isBottomSheetActive, setIsBottomSheetActive] = useState(false); // Estado que determina si el BottomSheetModal está activo
-  const [isInitialRegion, setIsInitialRegion] = useState(true); // Estado para rastrear si es la región inicial
+  const [isInitialRegion, setIsInitialRegion] = useState(initialRegion); // Estado para rastrear si es la región inicial
 
   // Estado para almacenar la región a mostrar en el mapa
   const [region, setRegion] = useState({
@@ -102,7 +99,7 @@ export default function VistaEstacionInicio() {
     if (!isInitialRegion && region !== null) {
       handleRegionChange(region);
     } else {
-      setIsInitialRegion(false); // Marca que la región inicial ya fue procesada
+      setIsInitialRegion(false);
     }
   }, [region, filtros]);
 
@@ -116,7 +113,7 @@ export default function VistaEstacionInicio() {
 
       // Actualiza el estado
       setCargadores(data);
-      console.log("Cargadores actualizados!");
+      // console.log("Cargadores actualizados!");
       return data;
     } catch (error) {
       console.error("Error función obtenerCargadores: ", error);
@@ -126,6 +123,7 @@ export default function VistaEstacionInicio() {
 
   // Filtro de cargadores según los criterios seleccionados
   const filtrarCargadores = (cargadores) => {
+    // console.log("cargadores filtrados:", cargadores);
     // Función para obtener el id del conector por su nombre
     const obtenerIdPorNombre = (name) => {
       const conector = tipoConectores.find((conector) => conector.name === name);
@@ -174,8 +172,8 @@ export default function VistaEstacionInicio() {
 
   // Actualiza los cargadores a mostrar en el mapa al cambiar la región
   const handleRegionChange = async (newRegion) => {
-    console.log(newRegion);
-    console.log("Filtros aplicados:", filtros);
+    // console.log(newRegion);
+    // console.log("Filtros aplicados:", filtros);
 
     // Limpiar la estación favorita seleccionada
     setEstacionFavorita(null);
@@ -251,7 +249,7 @@ export default function VistaEstacionInicio() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="EstacionInicio">
       <GestureHandlerRootView>
         {/* La vista del mapa */}
         <View>
@@ -288,6 +286,7 @@ export default function VistaEstacionInicio() {
                   title={cargador.displayName.text}
                   icon={getIconCargador(cargador)}
                   onPress={() => handleMarkerPress(cargador)}
+                  testID={`marker-${cargador.id}`}
                 />
               ))
             )}
@@ -295,7 +294,7 @@ export default function VistaEstacionInicio() {
         </View>
 
         {/* Botón personalizado para centrar la ubicación */}
-        <TouchableOpacity style={styles.myLocationButton} onPress={centrarEnUbicacion}>
+        <TouchableOpacity style={styles.myLocationButton} onPress={centrarEnUbicacion} testID="location-button">
           <Icon name="my-location" size={24} color="white" />
         </TouchableOpacity>
 
@@ -312,6 +311,7 @@ export default function VistaEstacionInicio() {
               }, 300);
             }
           }}
+          testID="filter-button"
         >
           <Icon name="filter-list" size={24} color="white" />
         </TouchableOpacity>
@@ -329,12 +329,13 @@ export default function VistaEstacionInicio() {
               }, 300);
             }
           }}
+          testID="info-button"
         >
           <Icon name="info" size={24} color="white" />
         </TouchableOpacity>
 
         {/* Barra de búsqueda */}
-        <View style={styles.searchBarContainer}>
+        <View style={styles.searchBarContainer} testID={"search-bar-container"}>
           <SearchBar
             placeholder="Buscar en Mapas"
             onSelect={({ latitude, longitude, name }) => {
@@ -355,30 +356,44 @@ export default function VistaEstacionInicio() {
 
         {/* Modal inferior que aparece cuando se pulsa sobre marcador */}
         <BottomSheetModalProvider>
-          <BottomSheetModal
-            ref={bottomSheetModalRef}
-            snapPoints={["50%", "95%"]} // Ajusta los puntos que puede alcanzar el modal
-            backgroundComponent={(props) => <BottomSheetBackground {...props} />}
-            style={styles.bottomSheetModal}
-            onDismiss={() => {
-              setIsBottomSheetActive(false); // Actualiza el estado al cerrar el modal
-            }}
-          >
-            <BottomSheetView style={styles.bottomTabContainer}>
-              <View style={{ backgroundColor: "white" }}>
-                <EstacionTabView></EstacionTabView>
-              </View>
-            </BottomSheetView>
-          </BottomSheetModal>
+          <View testID="bottom-sheet-modal">
+            <BottomSheetModal
+              ref={bottomSheetModalRef}
+              snapPoints={["50%", "95%"]} // Ajusta los puntos que puede alcanzar el modal
+              backgroundComponent={(props) => <BottomSheetBackground {...props} />}
+              style={styles.bottomSheetModal}
+              onDismiss={() => {
+                setIsBottomSheetActive(false); // Actualiza el estado al cerrar el modal
+              }}
+            >
+              <BottomSheetView style={styles.bottomTabContainer} testID="bottom-sheet-modal">
+                <View style={{ backgroundColor: "white" }}>
+                  <EstacionTabView></EstacionTabView>
+                </View>
+              </BottomSheetView>
+            </BottomSheetModal>
+          </View>
         </BottomSheetModalProvider>
 
         {/* Modal de información de marcadores */}
-        <Modal visible={infoModalVisible} transparent={false} animationType="slide" onRequestClose={() => setInfoModalVisible(false)}>
+        <Modal
+          visible={infoModalVisible}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => setInfoModalVisible(false)}
+          testID="info-modal"
+        >
           <MarcadoresInfo onClose={() => setInfoModalVisible(false)} />
         </Modal>
 
         {/* Modal de filtros */}
-        <Modal visible={filterModalVisible} transparent={false} animationType="slide" onRequestClose={() => setFilterModalVisible(false)}>
+        <Modal
+          visible={filterModalVisible}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => setFilterModalVisible(false)}
+          testID="filter-modal"
+        >
           <EstacionFiltro
             onClose={() => setFilterModalVisible(false)}
             onApplyFilters={(filters) => {

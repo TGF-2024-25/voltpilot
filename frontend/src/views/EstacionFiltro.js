@@ -72,6 +72,7 @@ export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters
           minimumTrackTintColor="#65558F"
           maximumTrackTintColor="#d3d3d3"
           thumbTintColor="#65558F"
+          testID="min-kwh-slider"
         />
         <Text style={styles.sliderValue}>{minKwh} kWh</Text>
       </View>
@@ -89,13 +90,14 @@ export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters
           minimumTrackTintColor="#65558F"
           maximumTrackTintColor="#d3d3d3"
           thumbTintColor="#65558F"
+          testID="search-radius-slider"
         />
         <Text style={styles.sliderValue}>{searchRadius} km</Text>
       </View>
 
       <View style={styles.buttonContainer}>
         {/* Botón para aplicar los filtros */}
-        <ApplyButton onPress={handleApplyFilters} text="Aplicar filtros" />
+        <ApplyButton onPress={handleApplyFilters} text="Aplicar filtros" testID="apply-filters-button" />
 
         {/* Botón para borrar los filtros */}
         <CancelButton

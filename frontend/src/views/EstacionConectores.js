@@ -74,7 +74,7 @@ export default function VistaEstacionConectores() {
           }}
           ListFooterComponent={
             <View style={styles.shareButtonContainer}>
-              <TouchableOpacity style={styles.shareButton} onPress={handleCopyLocation}>
+              <TouchableOpacity style={styles.shareButton} onPress={handleCopyLocation} testID="share-button">
                 <Text style={styles.shareButtonText}>Compartir ubicación</Text>
               </TouchableOpacity>
             </View>

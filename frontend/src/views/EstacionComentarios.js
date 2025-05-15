@@ -69,12 +69,12 @@ export default function VistaEstacionComentarios() {
         photoUri: null,
         text: comentario.comentarioData.text || "El usuario no ha dejado comentarios",
         rating: comentario.comentarioData.rating || 0,
-        source: "Voltipilot",
+        source: "VoltiPilot",
         timestamp: new Date(comentario.comentarioData.timestamp).toLocaleDateString("es-ES"), // Convertir timestamp a formato legible
       }));
 
       setAllComentarios([...comentariosGoogleNormalizados, ...comentariosBdNormalizados]);
-      console.log("Comentarios normalizados");
+      // console.log("Comentarios normalizados");
     };
 
     if (googleComentarios.length > 0 || bdComentarios.length > 0) {
@@ -95,7 +95,7 @@ export default function VistaEstacionComentarios() {
   // Menaja el envío del comentario
   const handleSendComment = async () => {
     if (!newComment || rating === 0) {
-      Alert.alert("Error", "Por favor, escribe un comentario y selecciona una calificación.");
+      Alert.alert("Error", "Por favor, escriba un comentario y seleccione una calificación.");
       return;
     }
 
@@ -163,7 +163,7 @@ export default function VistaEstacionComentarios() {
           <Text style={styles.authorName}>{item.authorName}</Text>
           {/* Ícono de eliminar si el userId coincide */}
           {item.userId === userId && (
-            <TouchableOpacity onPress={() => openDeleteModal(item.commentId)}>
+            <TouchableOpacity onPress={() => openDeleteModal(item.commentId)} testID={`delete-icon-${item.commentId}`}>
               <Icon name="close" size={20} color="#65558F" style={styles.deleteIcon} />
             </TouchableOpacity>
           )}
@@ -200,12 +200,18 @@ export default function VistaEstacionComentarios() {
       )}
 
       {/* Botón flotante para abrir el modal */}
-      <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)} testID="comment-button">
         <Text style={styles.floatingButtonText}>Comentar</Text>
       </TouchableOpacity>
 
       {/* Modal para escribir un comentario */}
-      <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
+      <Modal
+        visible={modalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+        testID="comment-modal"
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Escribir un comentario</Text>
@@ -220,7 +226,7 @@ export default function VistaEstacionComentarios() {
               <Text style={styles.ratingLabel}>Calificación:</Text>
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                  <Icon name="star" size={24} color={star <= rating ? "#65558F" : "#CCC"} style={styles.starIcon} />
+                  <Icon name="star" size={24} color={star <= rating ? "#65558F" : "#CCC"} style={styles.starIcon} testID={`star-${star}`} />
                 </TouchableOpacity>
               ))}
             </View>
@@ -232,21 +238,28 @@ export default function VistaEstacionComentarios() {
                   setRating(0);
                 }}
                 text="Cancelar"
+                testID={"cancel-button"}
               />
-              <ApplyButton onPress={handleSendComment} text="Enviar" />
+              <ApplyButton onPress={handleSendComment} text="Enviar" testID={"send-button"} />
             </View>
           </View>
         </View>
       </Modal>
 
-      <Modal visible={deleteModalVisible} animationType="fade" transparent={true} onRequestClose={() => setDeleteModalVisible(false)}>
+      <Modal
+        visible={deleteModalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setDeleteModalVisible(false)}
+        testID="delete-modal"
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>¿Eliminar comentario?</Text>
             <Text style={styles.modalMessage}>Esta acción no se puede deshacer.</Text>
             <View style={styles.modalButtons}>
-              <CancelButton onPress={() => setDeleteModalVisible(false)} text="Cancelar" />
-              <ApplyButton onPress={handleDeleteComment} text="Eliminar" />
+              <CancelButton onPress={() => setDeleteModalVisible(false)} text="Cancelar" testID={"cancel-delete-button"} />
+              <ApplyButton onPress={handleDeleteComment} text="Eliminar" testID={"delete-comment-button"} />
             </View>
           </View>
         </View>

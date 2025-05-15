@@ -2,7 +2,7 @@ import { View, Text, FlatList, Modal, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { estacionAPI } from "../services/api";
 import { ApplyButton, CancelButton } from "../components/Botones";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useCargador } from "../contexts/EstacionContext";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import React from "react";
@@ -74,6 +74,7 @@ const VistaEstacionesFavoritas = () => {
         navigation.navigate("Estaciones"); // Navega a la vista de estaciones.
       }} // Navega al TabView con los datos de la estación
       style={styles.card}
+      testID={`station-card-${item.id}`} // ID de prueba para la tarjeta de estación
     >
       <View style={styles.cardHeader}>
         <Text style={styles.cardTitle}>{item.displayName.text}</Text>
@@ -86,6 +87,7 @@ const VistaEstacionesFavoritas = () => {
             setModalVisible(true);
           }}
           style={styles.closeIcon}
+          testID={`delete-icon-${item.id}`}
         />
       </View>
       <Text style={styles.cardText}>{item.formattedAddress}</Text>
@@ -114,13 +116,14 @@ const VistaEstacionesFavoritas = () => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)} // Cierra el modal al presionar atrás
+        testID="delete-modal"
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>¿Estás seguro de que deseas eliminar esta estación de tus favoritos?</Text>
             <View style={styles.modalButtons}>
-              <ApplyButton text="Eliminar" onPress={onDeleteFavorito} />
-              <CancelButton text="Cancelar" onPress={() => setModalVisible(false)} />
+              <ApplyButton text="Eliminar" onPress={onDeleteFavorito} testID="delete-button" />
+              <CancelButton text="Cancelar" onPress={() => setModalVisible(false)} testID="cancel-button" />
             </View>
           </View>
         </View>

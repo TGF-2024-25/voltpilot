@@ -3,9 +3,8 @@ import React, { useRef } from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 import { TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Importar íconos
-
-export default function SearchBar({ placeholder, onSelect, showClearButton = false, clearButtonColor = "white" }) {
+import Icon from "react-native-vector-icons/MaterialIcons";
+export default function SearchBar({ placeholder, onSelect, showClearButton = false, clearButtonColor = "white", testID = "search-bar" }) {
   const searchBarRef = useRef(null); // Crea una referencia para el componente
 
   return (
@@ -13,6 +12,7 @@ export default function SearchBar({ placeholder, onSelect, showClearButton = fal
       ref={searchBarRef} // Asigna la referencia al componente
       fetchDetails={true}
       placeholder={placeholder}
+      testID={testID}
       onPress={(data, details = null) => {
         if (details) {
           const { lat, lng } = details.geometry.location;

@@ -2,15 +2,15 @@ import { TouchableOpacity } from "react-native";
 import { Text, StyleSheet } from "react-native";
 
 // Botón reutilizable para "Aplicar"
-export const ApplyButton = ({ onPress, text = "Aplicar", style, textStyle }) => (
-  <TouchableOpacity style={[styles.applyButton, style]} onPress={onPress}>
+export const ApplyButton = ({ onPress, text = "Aplicar", style, textStyle, testID }) => (
+  <TouchableOpacity style={[styles.applyButton, style]} onPress={onPress} testID={testID}>
     <Text style={[styles.applyButtonText, textStyle]}>{text}</Text>
   </TouchableOpacity>
 );
 
 // Botón reutilizable para "Cancelar"
-export const CancelButton = ({ onPress, text = "Cancelar", style, textStyle }) => (
-  <TouchableOpacity style={[styles.clearButton, style]} onPress={onPress}>
+export const CancelButton = ({ onPress, text = "Cancelar", style, textStyle, testID }) => (
+  <TouchableOpacity style={[styles.clearButton, style]} onPress={onPress} testID={testID}>
     <Text style={[styles.clearButtonText, textStyle]}>{text}</Text>
   </TouchableOpacity>
 );
