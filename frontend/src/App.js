@@ -7,9 +7,12 @@ import { VistaEstacionInicio, VistaRutas, VistaEstacionesFavoritas, VistaPerfil 
 import UserDetails from "./views/UserDetails";
 import UserVehicle from "./views/UserVehicle";
 import VehicleScreen from "./views/Vehicle";
+import PaymentScreen from "./views/PaymentScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuProvider } from "react-native-popup-menu";
 import { CargadorProvider } from "./contexts/EstacionContext";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // import patalla login y registro
 import LoginScreen from "./views/LoginScreen";
@@ -45,7 +48,7 @@ function ProfileStack() {
       <Stack.Screen name="ProfileMain" component={VistaPerfil} options={{ headerShown: false }} />
       <Stack.Screen name="UserDetails" component={UserDetails} options={{ title: "Detalles de Usuario" }} />
       <Stack.Screen name="MisVehiculos" component={UserVehicleScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="MisPagos" component={PlaceholderScreen} options={{ title: "Mis Pagos" }} />
+      <Stack.Screen name="MisPagos" component={PaymentScreen} options={{ title: "Mis Pagos" }} />
       <Stack.Screen name="MiHistoriaDeRecarga" component={PlaceholderScreen} options={{ title: "Mi Historia de Recarga" }} />
       <Stack.Screen name="TerminosYPrivacidad" component={PlaceholderScreen} options={{ title: "Términos y Privacidad" }} />
     </Stack.Navigator>
@@ -92,11 +95,47 @@ function MainAppStack() {
 // Tab Navigator separado
 function MainTabs() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Estaciones" component={VistaEstacionInicio} options={{ headerShown: false }} />
-      <Tab.Screen name="Enrutado" component={VistaRutas} options={{ headerShown: false }} />
-      <Tab.Screen name="Favoritas" component={VistaEstacionesFavoritas} />
-      <Tab.Screen name="Perfil" component={ProfileStack} options={{ headerShown: false }} />
+    <Tab.Navigator
+    >
+      <Tab.Screen
+        name="Estaciones"
+        component={VistaEstacionInicio}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="location-sharp" size={24} color={"#65558F"} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Enrutado"
+        component={VistaRutas}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="car" size={24} color={"#65558F"} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Favoritas"
+        component={VistaEstacionesFavoritas}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart" size={24} color={"#65558F"} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Perfil"
+        component={ProfileStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="user-circle-o" size={24} color={"#65558F"} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

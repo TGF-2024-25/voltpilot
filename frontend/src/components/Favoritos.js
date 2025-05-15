@@ -97,7 +97,7 @@ const Favoritos = ({ on_selected_destino }) => {
   
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.favButton} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity testID="favButton" style={styles.favButton} onPress={() => setModalVisible(true)}>
         <Feather name="star" size={24} color="white" />
       </TouchableOpacity>
 
@@ -111,6 +111,7 @@ const Favoritos = ({ on_selected_destino }) => {
             <View style={styles.searchContainer}>
               <Text style={styles.searchTitle}>Añadir nuevo favorito</Text>
               <SearchBar
+                testID="searchBar"
                 placeholder="Buscar nuevo favorito"
                 onSelect={(location) => {
                   set_nuevo({ ...nuevo, location });

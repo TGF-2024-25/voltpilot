@@ -189,21 +189,6 @@ const userController = {
       });
     }
   },
-  /**
-   * Obtiene un usuario por su ID
-   * GET /api/users/getUserById
-   */
-  getUserById: async (req, res) => {
-    // Implementación pendiente
-  },
-
-  /**
-   * Elimina un usuario
-   * DELETE /api/users/deleteUser
-   */
-  deleteUser: async (req, res) => {
-    // Implementación pendiente
-  },
 };
 
 export default userController;

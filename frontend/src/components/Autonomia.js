@@ -92,7 +92,7 @@ const Autonomia = forwardRef((props, ref) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.autonomiaButton} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity testID="autonomiaButton" style={styles.autonomiaButton} onPress={() => setModalVisible(true)}>
         <Feather name="battery-charging" size={24} color="white" style={{ transform: [{ rotate: '270deg' }] }} />
       </TouchableOpacity>
 

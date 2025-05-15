@@ -35,7 +35,7 @@ const authController = {
       // Si el login es exitoso, obtenemos el usuario de Firebase
       const userRecord = await auth.getUser(authData.localId);
       const userDetails = await userModel.findById(userRecord.uid);
-
+      console.log("userDetails", userDetails);
       // Responde con los detalles del usuario y los tokens
       res.status(200).json({
         success: true,
