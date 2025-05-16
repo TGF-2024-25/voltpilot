@@ -3,26 +3,10 @@ import { useCargador } from "../contexts/EstacionContext";
 import { FlatList } from "react-native-gesture-handler";
 import * as Clipboard from "expo-clipboard"; // Importar Clipboard desde expo-clipboard
 import styles from "../styles/estacionConectoresStyle";
+import { formatConnectorType, formatUpdateTime } from "../utils/estacionUtils";
 
 export default function VistaEstacionConectores() {
   const { selectedCargador } = useCargador();
-
-  // Formatear el tipo de conector
-  const formatConnectorType = (type) => {
-    return type
-      .replace("EV_CONNECTOR_TYPE_", "") // Eliminar el prefijo
-      .replace(/_/g, " ") // Reemplazar guiones bajos por espacios
-      .toLowerCase()
-      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalizar cada palabra
-  };
-
-  // Formatear la hora de actualización
-  const formatUpdateTime = (time) => {
-    const date = new Date(time);
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
 
   // Manejar el evento de copiar ubicación
   const handleCopyLocation = async () => {

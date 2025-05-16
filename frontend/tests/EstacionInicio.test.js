@@ -1,4 +1,4 @@
-console.warn = jest.fn();
+// console.warn = jest.fn();
 console.error = jest.fn();
 import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";

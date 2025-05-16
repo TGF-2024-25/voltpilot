@@ -39,9 +39,11 @@ export default function VistaEstacionComentarios() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await AsyncStorage.getItem("user");
-        const userDetail = JSON.parse(userData);
-        setUserId(userDetail.id); // Guardar el userId del usuario
+        // const userData = await AsyncStorage.getItem("user");
+        // const userDetail = JSON.parse(userData);
+        // setUserId(userDetail.id); // Guardar el userId del usuario
+        const userID = await AsyncStorage.getItem("uid");
+        setUserId(userID); // Guardar el userId del usuario
       } catch (error) {
         console.error("Error al obtener los datos del usuario:", error);
       }
@@ -54,6 +56,7 @@ export default function VistaEstacionComentarios() {
     // Normalizar los comentarios para que tengan un formato uniforme
     const normalizarComentarios = () => {
       const comentariosGoogleNormalizados = googleComentarios.map((comentario) => ({
+        userId: null,
         authorName: comentario.authorAttribution?.displayName || "Usuario de Google",
         photoUri: comentario.authorAttribution?.photoUri || null,
         text: comentario.originalText?.text || comentario.text?.text || "El usuario no ha dejado comentarios",
@@ -162,7 +165,7 @@ export default function VistaEstacionComentarios() {
         <View style={styles.headerRow}>
           <Text style={styles.authorName}>{item.authorName}</Text>
           {/* Ícono de eliminar si el userId coincide */}
-          {item.userId === userId && (
+          {item.userId === userId && item.source === "VoltiPilot" && (
             <TouchableOpacity onPress={() => openDeleteModal(item.commentId)} testID={`delete-icon-${item.commentId}`}>
               <Icon name="close" size={20} color="#65558F" style={styles.deleteIcon} />
             </TouchableOpacity>

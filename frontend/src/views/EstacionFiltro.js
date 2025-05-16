@@ -1,20 +1,14 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { ApplyButton, CancelButton } from "../components/Botones";
-import Slider from "@react-native-community/slider"; // Biblioteca para sliders
+import Slider from "@react-native-community/slider";
 import styles from "../styles/estacionFiltrosStyle";
+import { conectoresFormateados } from "../utils/estacionUtils";
 
 export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters }) {
   const [selectedConnectors, setSelectedConnectors] = useState(initialFilters.selectedConnectors || []);
   const [minKwh, setMinKwh] = useState(initialFilters.minKwh || 0);
   const [searchRadius, setSearchRadius] = useState(initialFilters.searchRadius || 1);
-
-  const connectors = [
-    { id: "1", name: "Tipo 2" },
-    { id: "2", name: "CHAdeMO" },
-    { id: "3", name: "Tesla" },
-    { id: "4", name: "CCS Combo 2" },
-  ];
 
   const toggleConnector = (id) => {
     if (selectedConnectors.includes(id)) {
@@ -45,7 +39,7 @@ export default function EstacionFiltro({ onClose, onApplyFilters, initialFilters
       <View style={styles.filterSection}>
         <Text style={styles.filterLabel}>Conectores</Text>
         <View style={styles.connectorContainer}>
-          {connectors.map((connector) => (
+          {conectoresFormateados.map((connector) => (
             <TouchableOpacity
               key={connector.id}
               style={[styles.connectorButton, selectedConnectors.includes(connector.id) && styles.connectorButtonSelected]}

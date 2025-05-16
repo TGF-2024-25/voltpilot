@@ -14,14 +14,7 @@ import MarcadoresInfo from "./MarcadoresInfo";
 import EstacionFiltro from "./EstacionFiltro";
 import SearchBar from "../components/SearchBar";
 import styles from "../styles/estacionInicioStyle";
-
-// Definición de los tipos de conectores soportados
-const tipoConectores = [
-  { id: "1", name: "EV_CONNECTOR_TYPE_TYPE_2" },
-  { id: "2", name: "EV_CONNECTOR_TYPE_CHADEMO" },
-  { id: "3", name: "EV_CONNECTOR_TYPE_TESLA" },
-  { id: "4", name: "EV_CONNECTOR_TYPE_CCS_COMBO_2" },
-];
+import { filtrarCargadores, getIconCargador } from "../utils/estacionUtils";
 
 // Componente principal
 export default function VistaEstacionInicio({ initialRegion = true, cargadoresIniciales = [], cargadoresInicialesFiltrados = [] }) {
@@ -110,7 +103,6 @@ export default function VistaEstacionInicio({ initialRegion = true, cargadoresIn
     try {
       // Llamada a la API para obtener cargadores
       const data = await estacionAPI.getEstaciones({ latitude: lat, longitude: lng, radius: rad });
-
       // Actualiza el estado
       setCargadores(data);
       // console.log("Cargadores actualizados!");
@@ -121,43 +113,9 @@ export default function VistaEstacionInicio({ initialRegion = true, cargadoresIn
     }
   };
 
-  // Filtro de cargadores según los criterios seleccionados
-  const filtrarCargadores = (cargadores) => {
-    // console.log("cargadores filtrados:", cargadores);
-    // Función para obtener el id del conector por su nombre
-    const obtenerIdPorNombre = (name) => {
-      const conector = tipoConectores.find((conector) => conector.name === name);
-      return conector ? conector.id : null;
-    };
-
-    const cargadoresFiltrados = cargadores.filter((cargador) => {
-      // Verificar las propiedades evChargeOptions y connectorAggregation
-      if (!cargador.evChargeOptions || !cargador.evChargeOptions.connectorAggregation) {
-        return false;
-      }
-
-      // Filtrar por conectores que cumplan ambos criterios: tipo y kWh mínimo
-      const tieneConectorValido = cargador.evChargeOptions.connectorAggregation.some((conector) => {
-        const idConector = obtenerIdPorNombre(conector.type); // Obtener el ID del conector
-
-        // Verificar que el conector esté seleccionado y cumpla con el kWh mínimo
-        const cumpleConectorSeleccionado =
-          filtros.selectedConnectors.length === 0 || // Si no hay conectores seleccionados, no se filtra por este criterio
-          (idConector && filtros.selectedConnectors.includes(idConector));
-
-        const cumpleKwhMinimo =
-          conector.maxChargeRateKw !== undefined && conector.maxChargeRateKw !== null && conector.maxChargeRateKw >= filtros.minKwh;
-
-        // El conector debe cumplir ambos criterios
-        return cumpleConectorSeleccionado && cumpleKwhMinimo;
-      });
-
-      // Devuelve true si al menos un conector cumple ambos filtros
-      return tieneConectorValido;
-    });
-
-    // Actualiza el estado con los cargadores filtrados
-    setCargadoresFiltrados(cargadoresFiltrados);
+  const obtenerCargadoresFiltrados = async (cargadores) => {
+    const filtrados = filtrarCargadores(cargadores, filtros);
+    setCargadoresFiltrados(filtrados);
   };
 
   // Evento cuando se pulsa un marcador
@@ -183,7 +141,7 @@ export default function VistaEstacionInicio({ initialRegion = true, cargadoresIn
 
     // Obtén los cargadores y luego aplica los filtros
     const data = await obtenerCargadores(newRegion.latitude, newRegion.longitude, filtros.searchRadius);
-    filtrarCargadores(data);
+    await obtenerCargadoresFiltrados(data);
   };
 
   // Función que se invoca al pulsar el botón de ubicación
@@ -206,46 +164,6 @@ export default function VistaEstacionInicio({ initialRegion = true, cargadoresIn
       },
       2000,
     );
-  };
-
-  // Obtiene el icono del cargador según su disponibilidad
-  const getIconCargador = (cargador) => {
-    if (!cargador.evChargeOptions) {
-      return require("../assets/Marcador_4.png");
-    }
-
-    let availableCount = 0;
-
-    // Obtiene el availableCount del primer cargador si tiene
-    if (cargador.evChargeOptions.connectorAggregation[0]?.availableCount !== undefined) {
-      availableCount += cargador.evChargeOptions.connectorAggregation[0].availableCount;
-    }
-
-    // Recorre el resto de los conectores
-    for (let i = 1; i < cargador.evChargeOptions.connectorAggregation.length; i++) {
-      const currentConnector = cargador.evChargeOptions.connectorAggregation[i];
-      if (currentConnector?.availableCount !== undefined) {
-        availableCount += currentConnector.availableCount;
-      }
-    }
-
-    // Si no se encontró ningún count disponible, retonar el marcador gris
-    if (availableCount === 0) {
-      return require("../assets/Marcador_3.png");
-    }
-
-    // Calcular la ratio de disponibilidad de los cargadores
-    const availabilityRatio = availableCount / cargador.evChargeOptions.connectorCount;
-
-    // Selecciona el icono basado en la disponibilidad
-    if (availabilityRatio >= 0.5) {
-      return require("../assets/Marcador_1.png");
-    }
-    if (availabilityRatio > 0) {
-      return require("../assets/Marcador_2.png");
-    }
-
-    return require("../assets/Marcador_3.png");
   };
 
   return (

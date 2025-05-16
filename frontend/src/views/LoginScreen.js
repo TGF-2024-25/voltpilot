@@ -52,8 +52,8 @@ export default function LoginScreen() {
         JSON.stringify({
           email: userDetail.email,
           name: userDetail.name,
-          phoneNumber: userDetail.phoneNumber|| "",
-          address: userDetail.address|| "",
+          phoneNumber: userDetail.phoneNumber || "",
+          address: userDetail.address || "",
         }),
       ); // Guardar solo los datos necesarios
       await AsyncStorage.setItem("vehicles", JSON.stringify(vehicles)); // Guardar vehículos como JSON
@@ -63,7 +63,7 @@ export default function LoginScreen() {
       await AsyncStorage.setItem("authToken", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("expiresIn", expiresIn);
-      await AsyncStorage.setItem("uid", userDetail.uid|| userDetail.id);
+      await AsyncStorage.setItem("uid", userDetail.uid || userDetail.id);
       await AsyncStorage.setItem("id", userDetail.email);
 
       //si hay coche seleccionado, guardar datos de coche
