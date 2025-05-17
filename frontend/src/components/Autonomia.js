@@ -83,6 +83,9 @@ const Autonomia = forwardRef((props, ref) => {
       minimaKm: (min / 100) * totalKm,
       totalKm: totalKm,
     }),
+    resetAutonomia: () => {
+      set_ini(100);
+    },
   })); 
   
   const function_accept = async () => {

@@ -32,6 +32,7 @@ export default function VistaRutas() {
   const [modalEstacionVisible, setModalEstacionVisible] = useState(false);
   const [estConsultada, setEstConsultada] = useState(null);
   const [estSeleccionadas, setEstSeleccionadas] = useState([]);
+  const [indiceTramoConEstacion, setIndiceTramoConEstacion] = useState(null);
 
   const mapRef = useRef(null);
 
@@ -145,7 +146,7 @@ export default function VistaRutas() {
   }
 
   // Función principal que recalcula la ruta completa (con origen y todos los destinos intermedios)
-  const fetchRoute = async (yaParado = false) => {
+  const fetchRoute = async () => {
     if (destinos.length === 0 || !destinos[0]) return;
 
     const autonomiaKm = autonomiaRef.current?.getAutonomia(); // Obtener autonomía en km
@@ -159,7 +160,7 @@ export default function VistaRutas() {
 
       // Calcular la ruta por tramos: origen -> destino1, destino1 -> destino2...
       let origenActual = origen;
-      let paradaRealizada = yaParado;
+      //let paradaRealizada = yaParado;
 
       for (let i = 0; i < destinos.length; i++) {
         const destinoActual = destinos[i];
@@ -177,15 +178,26 @@ export default function VistaRutas() {
         instruccionesCompleta = [...instruccionesCompleta, ...instruccionesTramo];
 
         // Solo mostrar estaciones para el primer tramo de momento
-        if (i === 0 && !paradaRealizada) {
-          let ruta_reduced = data.route;
-          if(data.distancia > 300)
-            ruta_reduced = reducirRuta(data.route, 10);
+        let ruta_reduced = data.route;
+        if (data.distanciaKm > 300)
+          ruta_reduced = reducirRuta(data.route, 10);
 
+        // Evitar buscar estaciones si ya es una estación seleccionada
+        const esEstacionSeleccionada = estSeleccionadas.some(
+          (est) => est.latitude === destinoActual.latitude && est.longitude === destinoActual.longitude
+        );
+
+        if (!esEstacionSeleccionada) {
           const res_estaciones = await routingAPI.getEstacionesRuta(ruta_reduced, autonomiaKm, data.distanciaKm);
           const filtradas = filtrar_estaciones(res_estaciones.estaciones);
-          tot_estaciones = filtradas;
+
+          if (filtradas.length > 0) {
+            tot_estaciones = filtradas;
+            setIndiceTramoConEstacion(i);
+            break; // Esperar selección
+          }
         }
+
 
         origenActual = destinoActual;
         paradaRealizada = true;
@@ -213,11 +225,13 @@ export default function VistaRutas() {
     setModalEstacionVisible(false);
 
     setDestinos((prev) => {
-      if (prev.length < 1) return [coords];
+      if (prev.length < 1 || indiceTramoConEstacion === null) return [coords];
       const nuevosDestinos = [...prev];
-      nuevosDestinos.splice(0, 0, coords); // Inserta justo después del origen
+      nuevosDestinos.splice(indiceTramoConEstacion, 0, coords); // Inserta en el lugar correcto
       return nuevosDestinos;
     });
+
+    autonomiaRef.current?.resetAutonomia();
 
     yaParadoRef.current = true;
     setEstaciones([]); // Limpia las estaciones para evitar seguir viendolas tras selección

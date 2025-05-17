@@ -163,6 +163,7 @@ return (
                 <Switch
                   trackColor={{ false: "#ccc", true: "#b066c3" }}
                   thumbColor={peajes ? "#76048e" : "#f4f3f4"}
+                  testID="switch-peajes"
                   value={peajes}
                   onValueChange={() => toggleSwitch("peajes")}
                 />
