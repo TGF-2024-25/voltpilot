@@ -24,6 +24,7 @@ jest.mock("../src/contexts/EstacionContext", () => ({
 }));
 
 describe("VistaEstacionInfo", () => {
+  // Test 1: Verifica que el componente se renderiza con la información correcta
   it("renderiza correctamente las descripciones", () => {
     const { getByText } = render(<VistaEstacionInfo />);
     expect(getByText("Calle Falsa 123")).toBeTruthy();
@@ -32,25 +33,3 @@ describe("VistaEstacionInfo", () => {
     expect(getByText("https://web.com")).toBeTruthy();
   });
 });
-
-// describe("formatOpeningHours", () => {
-//   it("devuelve 'Sin información' si no hay datos", () => {
-//     expect(formatOpeningHours(null)).toBe("Sin información");
-//     expect(formatOpeningHours({})).toBe("Sin información");
-//     expect(formatOpeningHours({ periods: [] })).toBe("Sin información");
-//   });
-
-//   it("devuelve 'Abierto 24 horas' si el horario es completo", () => {
-//     const opening = {
-//       periods: [{ open: { hour: 0, minute: 0 }, close: { hour: 23, minute: 59 } }],
-//     };
-//     expect(formatOpeningHours(opening)).toBe("Abierto 24 horas");
-//   });
-
-//   it("formatea correctamente otros horarios", () => {
-//     const opening = {
-//       periods: [{ open: { hour: 8, minute: 30 }, close: { hour: 18, minute: 0 } }],
-//     };
-//     expect(formatOpeningHours(opening)).toBe("Abierto 08:30 - 18:00");
-//   });
-// });

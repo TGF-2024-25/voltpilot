@@ -178,8 +178,8 @@ describe("formatConnectorType", () => {
 });
 
 // Test unitario 5: formatUpdateTime
-// Estas pruebas funcionan cuando se ejecutan en un entorno local de UTC+2
 describe("formatUpdateTime", () => {
+  // Estas pruebas funcionan cuando se ejecutan en un entorno local de UTC+2
   it("formatea correctamente la hora de actualización", () => {
     // Se agregan 2 horas por UTC+2 en españa
     expect(formatUpdateTime("2025-05-16T17:15:00Z")).toBe("19:15");

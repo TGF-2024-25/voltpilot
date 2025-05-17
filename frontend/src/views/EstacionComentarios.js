@@ -194,10 +194,11 @@ export default function VistaEstacionComentarios() {
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          keyboardShouldPersistTaps="handled" // Permitir interacción con el teclado abierto
+          keyboardShouldPersistTaps="handled"
+          testID="comments-list"
         />
       ) : (
-        <View style={styles.noCommentsContainer}>
+        <View style={styles.noCommentsContainer} testID="no-comments-message">
           <Text style={styles.noCommentsText}>No hay comentarios disponibles.</Text>
         </View>
       )}

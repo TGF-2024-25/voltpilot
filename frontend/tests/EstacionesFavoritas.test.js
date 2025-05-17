@@ -1,5 +1,3 @@
-console.warn = jest.fn();
-console.error = jest.fn();
 import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
 import VistaEstacionesFavoritas from "../src/views/EstacionesFavoritas";
 const api = require("../src/services/api").estacionAPI;
@@ -11,7 +9,7 @@ jest.mock("@react-navigation/native", () => ({
   useFocusEffect: (cb) => cb(), // Simula el efecto de enfoque
 }));
 
-// simula las funciones de la API
+// Simula las funciones de la API
 jest.mock("../src/services/api", () => ({
   estacionAPI: {
     getEstacionesFavoritas: jest.fn(),
@@ -37,6 +35,7 @@ const mockStation = {
 };
 
 describe("VistaEstacionesFavoritas", () => {
+  // Se ejecuta antes de cada prueba (it)
   beforeEach(() => {
     jest.clearAllMocks();
     require("../src/services/api").estacionAPI.getEstacionesFavoritas.mockResolvedValue([mockStation.id]);
@@ -44,6 +43,7 @@ describe("VistaEstacionesFavoritas", () => {
     require("../src/services/api").estacionAPI.deleteEstacionFavorita.mockResolvedValue();
   });
 
+  // Test 1: Verifica que muestra la estación favorita(mockStation) correctamente
   it("muestra las estaciones favoritas correctamente", async () => {
     const { getByText } = render(<VistaEstacionesFavoritas />);
     await waitFor(() => {
@@ -54,6 +54,7 @@ describe("VistaEstacionesFavoritas", () => {
     });
   });
 
+  // Test 2: Verifica que muestra un modal al pulsar el icono de eliminar
   it("abre el modal al pulsar el icono de eliminar", async () => {
     const { getByText, getByTestId, queryByText } = render(<VistaEstacionesFavoritas />);
 
@@ -79,6 +80,7 @@ describe("VistaEstacionesFavoritas", () => {
     expect(getByText("¿Estás seguro de que deseas eliminar esta estación de tus favoritos?")).toBeTruthy();
   });
 
+  // Test 3: Verifica que elimina la estación favorita al pulsar el botón de eliminar en el modal
   it("elimina una estación favorita al pulsar Eliminar", async () => {
     const { getByText, getByTestId } = render(<VistaEstacionesFavoritas />);
 
@@ -105,6 +107,7 @@ describe("VistaEstacionesFavoritas", () => {
     });
   });
 
+  // Test 4: Verifica que cierra el modal de eliminación al pulsar Cancelar
   it("cierra el modal al pulsar Cancelar", async () => {
     const { getByText, getByTestId, queryByText } = render(<VistaEstacionesFavoritas />);
     await waitFor(() => getByText("Electrolinera Ficticia"));
@@ -126,6 +129,7 @@ describe("VistaEstacionesFavoritas", () => {
     expect(queryByText("delete-modal")).toBeNull();
   });
 
+  // Test 5: Verifica que navega a la pantalla de Estaciones al pulsar una estación favorita
   it("navega al pulsar una estación", async () => {
     const { getByText, getByTestId } = render(<VistaEstacionesFavoritas />);
     await waitFor(() => getByText("Electrolinera Ficticia"));
@@ -138,6 +142,8 @@ describe("VistaEstacionesFavoritas", () => {
     });
 
     // Verificar que se navega a la pantalla Estaciones
-    expect(mockNavigate).toHaveBeenCalledWith("Estaciones");
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("Estaciones");
+    });
   });
 });

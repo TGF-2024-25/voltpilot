@@ -15,6 +15,7 @@ describe("EstacionFiltro", () => {
     jest.clearAllMocks();
   });
 
+  // Test 1: Verifica que el componente se renderiza correctamente
   it("renderiza correctamente los elementos principales", () => {
     const { getByText, getByTestId } = render(
       <EstacionFiltro onClose={mockOnClose} onApplyFilters={mockOnApplyFilters} initialFilters={initialFilters} />,
@@ -31,6 +32,7 @@ describe("EstacionFiltro", () => {
     expect(getByText("Cerrar")).toBeTruthy();
   });
 
+  // Test 2: Verifica que permite seleccionar y deseleccionar conectores
   it("permite seleccionar y deseleccionar conectores", () => {
     const { getByText } = render(
       <EstacionFiltro
@@ -51,6 +53,7 @@ describe("EstacionFiltro", () => {
     expect(tipo2.props.style).toContainEqual(expect.objectContaining({ color: "#333" }));
   });
 
+  // Test 3: Verifica que el slider de kWh mínimo se actualiza correctamente
   it("actualiza el valor del slider de kWh mínimo", () => {
     const { getByTestId, getByText } = render(
       <EstacionFiltro onClose={mockOnClose} onApplyFilters={mockOnApplyFilters} initialFilters={initialFilters} />,
@@ -65,6 +68,7 @@ describe("EstacionFiltro", () => {
     expect(slider.props.value).toBe(50);
   });
 
+  // Test 4: Verifica que el slider de radio de búsqueda se actualiza correctamente
   it("actualiza el valor del slider de radio de búsqueda", () => {
     const { getByTestId, getByText } = render(
       <EstacionFiltro onClose={mockOnClose} onApplyFilters={mockOnApplyFilters} initialFilters={initialFilters} />,
@@ -79,6 +83,7 @@ describe("EstacionFiltro", () => {
     expect(slider.props.value).toBe(12);
   });
 
+  // Test 5: Verifica que el botón de "Aplicar filtros" llama a las funciones correctas
   it("llama a onApplyFilters y onClose al pulsar 'Aplicar filtros'", () => {
     const { getByText } = render(
       <EstacionFiltro onClose={mockOnClose} onApplyFilters={mockOnApplyFilters} initialFilters={initialFilters} />,
@@ -89,6 +94,7 @@ describe("EstacionFiltro", () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
+  // Test 6: Verifica que el botón de "Borrar filtros" restablece los filtros
   it("restablece los filtros al pulsar 'Borrar filtros'", () => {
     const { getByText, getByTestId } = render(
       <EstacionFiltro
@@ -114,6 +120,7 @@ describe("EstacionFiltro", () => {
     expect(getByText("1 km")).toBeTruthy();
   });
 
+  // Test 7: Verifica que el botón de "Cerrar" llama a la función onClose
   it("llama a onClose al pulsar 'Cerrar'", () => {
     const { getByText } = render(
       <EstacionFiltro onClose={mockOnClose} onApplyFilters={mockOnApplyFilters} initialFilters={initialFilters} />,

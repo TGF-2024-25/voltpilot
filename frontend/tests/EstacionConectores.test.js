@@ -65,6 +65,7 @@ describe("VistaEstacionConectores", () => {
     jest.clearAllMocks();
   });
 
+  // Test 1: Verificar que se renderizan los conectores disponibles correctamente
   it("renderiza los conectores disponibles correctamente", () => {
     require("../src/contexts/EstacionContext").useCargador.mockReturnValue({
       selectedCargador: mockCargadorConConectores,
@@ -88,6 +89,7 @@ describe("VistaEstacionConectores", () => {
     expect(getByTestId("share-button")).toBeTruthy();
   });
 
+  // Test 2: Verificar que se renderiza el mensaje de no disponibilidad
   it("muestra mensaje cuando no hay conectores", () => {
     // Configurar el mock del contexto
     require("../src/contexts/EstacionContext").useCargador.mockReturnValue({
@@ -100,6 +102,7 @@ describe("VistaEstacionConectores", () => {
     expect(getByText("No se pudo encontrar información sobre conectores.")).toBeTruthy();
   });
 
+  // Test 3: Verificar que se copia la URL al pulsar el botón de compartir
   it("copia la URL al pulsar el botón de compartir ubicación", async () => {
     require("../src/contexts/EstacionContext").useCargador.mockReturnValue({
       selectedCargador: mockCargadorConConectores,
@@ -121,6 +124,7 @@ describe("VistaEstacionConectores", () => {
     expect(Alert.alert).toHaveBeenCalledWith("Enlace copiado", "El enlace de la ubicación se ha copiado.");
   });
 
+  // Test 4: Verificar que se muestra un mensaje de error si no hay URI al compartir
   it("muestra un mensaje de error si no hay URI al compartir", async () => {
     require("../src/contexts/EstacionContext").useCargador.mockReturnValue({
       selectedCargador: {
@@ -153,6 +157,7 @@ describe("VistaEstacionConectores", () => {
     expect(Clipboard.setStringAsync).not.toHaveBeenCalled();
   });
 
+  // Test 5: Verificar que se renderizan los conectores sin información de disponibilidad
   it("renderiza conectores sin información de disponibilidad", () => {
     require("../src/contexts/EstacionContext").useCargador.mockReturnValue({
       selectedCargador: {
@@ -178,6 +183,7 @@ describe("VistaEstacionConectores", () => {
     expect(getByText("Sin información")).toBeTruthy();
   });
 
+  // Test 6: Verificar que se renderizan los conectores de diferentes tipos
   it("formatea correctamente los diferentes tipos de conectores", () => {
     // Configurar el mock del contexto con diferentes tipos de conectores
     require("../src/contexts/EstacionContext").useCargador.mockReturnValue({

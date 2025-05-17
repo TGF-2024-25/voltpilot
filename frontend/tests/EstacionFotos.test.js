@@ -1,6 +1,7 @@
 const { render, waitFor } = require("@testing-library/react-native");
 
 describe("VistaEstacionFotos", () => {
+  // Test 1: Verifica que el componente se renderiza correctamente
   it("muestra el mensaje si no hay fotos", async () => {
     jest.doMock("../src/contexts/EstacionContext", () => ({
       useCargador: () => ({

@@ -150,6 +150,7 @@ const mockCargadores = [
 ];
 
 describe("VistaEstacionInicio", () => {
+  // Test 1: Verifica que se renderizan los componentes correctamente
   it("renderiza los componentes de VistaEstacionInicio correctamente", () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
@@ -167,6 +168,7 @@ describe("VistaEstacionInicio", () => {
     expect(getByTestId("search-bar-container")).toBeTruthy();
   });
 
+  // Test 2: Verifica que se muestre el modal de información al pulsar el botón correspondiente
   it("muestra infoModal al pulsar el botón de información", async () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
@@ -190,6 +192,7 @@ describe("VistaEstacionInicio", () => {
     expect(getByTestId("info-modal")).toBeTruthy();
   });
 
+  // Test 3: Verifica que se muestre el modal de filtro al pulsar el botón correspondiente
   it("muestra filterModal al pulsar el botón de filtro", async () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
@@ -213,6 +216,7 @@ describe("VistaEstacionInicio", () => {
     expect(getByTestId("filter-modal")).toBeTruthy();
   });
 
+  // Test 4: Verifica que se ha llamado a la función de ubicación al pulsar el botón correspondiente
   it("llama a Location.getCurrentPositionAsync al pulsar el botón de centrar ubicación", async () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
@@ -238,6 +242,7 @@ describe("VistaEstacionInicio", () => {
     expect(Location.getCurrentPositionAsync).toHaveBeenCalled();
   });
 
+  // Test 5: Verifica que se renderizan los marcadores correctos
   it("renderiza el número de marcadores exactos en función de cargadoresFiltrados", () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
@@ -254,6 +259,7 @@ describe("VistaEstacionInicio", () => {
     expect(markers.length).toBe(mockCargadores.length);
   });
 
+  // Test 6: Verifica que no se renderizan los marcadores que no están en cargadoresFiltrados
   it("no se renderiza las estaciones que no están en cargadoresFiltrados", () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
@@ -272,6 +278,7 @@ describe("VistaEstacionInicio", () => {
     expect(queryByTestId("marker-0")).toBeNull();
   });
 
+  // Test 7: Verifica que se aplican los filtros y se reflejen en las estaciones mostradas
   it("aplica filtros y solo muestra los marcadores que cumplen los criterios", async () => {
     const VistaEstacionInicio = require("../src/views/EstacionInicio").default;
 
