@@ -8,7 +8,7 @@ El enfoque principal del proyecto ha sido la especificación y el diseño de la 
 
 ## Instalación
 
-Para empezar, se ha que localizar en el directorio base del proyecto.
+Para empezar, se hay que localizar en el directorio base del proyecto.
 
 Ejecutar los siguientes comandos en orden para instalar las dependencias y paquetes necesarias:
 
