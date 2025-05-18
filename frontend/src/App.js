@@ -12,6 +12,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import { CargadorProvider } from "./contexts/EstacionContext";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from './contexts/AuthContext';
 
 // import patalla login y registro
 import LoginScreen from "./views/LoginScreen";
@@ -139,7 +140,6 @@ function MainTabs() {
   );
 }
 
-export const AuthContext = createContext();
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);

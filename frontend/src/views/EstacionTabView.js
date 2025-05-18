@@ -118,9 +118,9 @@ const EstacionTabView = () => {
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Text
-            style={[styles.infoText, { maxWidth: "60%" }]} // Limita el ancho al 70%
+            style={[styles.infoText, { maxWidth: "60%" }]} // Limita el ancho al 60%
             numberOfLines={2} // Permite un máximo de 2 líneas
-            ellipsizeMode="tail" // Trunca el texto con "..." si excede las 2 líneas
+            ellipsizeMode="tail"
           >
             {selectedCargador.displayName.text}
           </Text>

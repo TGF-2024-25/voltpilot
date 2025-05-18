@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "../styles/loginStyle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authAPI } from "../services/api.js";
-import { AuthContext } from "../App";
+import { AuthContext } from "../contexts/AuthContext"; 
 
 export default function LoginScreen() {
   const { checkToken } = useContext(AuthContext);

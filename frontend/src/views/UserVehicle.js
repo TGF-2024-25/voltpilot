@@ -13,8 +13,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
-import { Ionicons } from '@expo/vector-icons'; // Make sure you have expo/vector-icons installed
-import { AuthContext } from '../App';
+import { AuthContext } from "../contexts/AuthContext"; 
 import { useRoute } from '@react-navigation/native';
 
 
@@ -187,20 +186,20 @@ const renderVehicleItem = ({ item }) => (
           style={[styles.actionButton, styles.selectButton]} 
           onPress={() => handleSelectVehicle(item)}
         >
-          <Ionicons name="checkmark-circle" size={20} color="#28a745" />
+          <Text style={{fontSize: 20}}>✅</Text>
         </TouchableOpacity>
       )}
       <TouchableOpacity 
         style={styles.actionButton} 
         onPress={() => handleEditVehicle(item)}
       >
-        <Ionicons name="pencil" size={20} color="#007bff" />
+        <Text style={{fontSize: 20, color: "#007bff"}}>✏️</Text>
       </TouchableOpacity>
       <TouchableOpacity 
         style={styles.actionButton} 
         onPress={() => handleDeleteVehicle(item.vid)}
       >
-        <Ionicons name="trash" size={20} color="#ff3b30" />
+        <Text style={{fontSize: 20, color: "#ff3b30"}}>🗑️</Text>
       </TouchableOpacity>
     </View>
   </View>
@@ -209,7 +208,7 @@ const renderVehicleItem = ({ item }) => (
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#0000ff" testID="loading-indicator"/>
       </View>
     );
   }
@@ -235,7 +234,7 @@ const renderVehicleItem = ({ item }) => (
         style={styles.addButton}
         onPress={handleAddVehicle}
       >
-        <Ionicons name="add" size={24} color="white" />
+        <Text style={{fontSize: 24, color: "white"}}>➕</Text>
         <Text style={styles.addButtonText}>Añadir Vehículo</Text>
       </TouchableOpacity>
     </View>

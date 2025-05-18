@@ -3,8 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ProfileScreen from '../src/views/ProfileScreen';
-import { AuthContext } from '../src/App';
-
+import { AuthContext } from "../src/contexts/AuthContext";
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
   clear: jest.fn(),

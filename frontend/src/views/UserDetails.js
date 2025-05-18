@@ -12,7 +12,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
-import { AuthContext } from '../App';
+import { AuthContext } from "../contexts/AuthContext"; 
 
 
 export default function MiPerfil() {
@@ -65,12 +65,13 @@ export default function MiPerfil() {
   const handleSave = async () => {
     try {
       setLoading(true);
-      userData.password
       const uid = await AsyncStorage.getItem('uid');
       if (password.password !== password.confirmPassword) {
         password.password = '';
         password.confirmPassword = '';
         Alert.alert('Error', 'Las contraseñas no coinciden');
+        setLoading(false);
+        return;
       }
       const passwordupdate = password.password;
       const userDataToUpdate = { ...userData,passwordupdate,uid };
@@ -97,7 +98,7 @@ export default function MiPerfil() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#0000ff" testID="ActivityIndicator" />
       </View>
     );
   }

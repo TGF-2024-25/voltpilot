@@ -1,6 +1,6 @@
 // console.warn = jest.fn();
 console.error = jest.fn();
-import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
+import { render, fireEvent, act } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { CargadorProvider } from "../src/contexts/EstacionContext";
 import * as Location from "expo-location";

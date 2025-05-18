@@ -94,7 +94,7 @@ export default function VistaEstacionInicio({ initialRegion = true, cargadoresIn
     } else {
       setIsInitialRegion(false);
     }
-  }, [region, filtros]);
+  }, [filtros]);
 
   /********************************************* Funciones *******************************************************/
 
