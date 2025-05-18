@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { userAPI } from '../services/api';
 import { AuthContext } from "../contexts/AuthContext"; 
+import styles from '../styles/userDetailStyle';
 
 
 export default function MiPerfil() {
@@ -190,68 +191,3 @@ export default function MiPerfil() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-  },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    fontWeight: 'bold',
-    marginBottom: 6,
-    fontSize: 14,
-    color: '#333',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-    padding: 10,
-    fontSize: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  button: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  saveButton: {
-    backgroundColor: '#007bff',
-    marginLeft: 8,
-  },
-  cancelButton: {
-    backgroundColor: '#f2f2f2',
-    marginRight: 8,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButtonText: {
-    color: '#333',
-  },
-});

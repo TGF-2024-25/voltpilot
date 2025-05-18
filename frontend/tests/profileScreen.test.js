@@ -36,7 +36,7 @@ describe('ProfileScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-
+  
   // test1: Verifica que el componente se renderiza correctamente
   test('renders correctly', async () => {
     AsyncStorage.getItem.mockResolvedValue(JSON.stringify({ name: 'Test User' }));

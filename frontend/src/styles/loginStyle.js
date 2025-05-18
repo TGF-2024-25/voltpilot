@@ -18,6 +18,25 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
   },
+  loginbotton: {
+    backgroundColor: '#65558F',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  registerbotton: {
+    backgroundColor: '#f2f2f2',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  width: '100%',
+  marginTop: 20,
+},
   
 });
 
