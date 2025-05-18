@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const DEV_API_URL = "https://voltpilot.naivc.top/api";
 // Ejecutar esto en caso de utilizar expo go desde dispositivo móvil android
 // conectado por usb y el modo desarrollador activado: adb reverse tcp:5000 tcp:5000
 
