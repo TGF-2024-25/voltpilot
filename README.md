@@ -23,6 +23,27 @@ cd .\backend
 npm install
 ```
 
+## Pasos previos a la ejecución
+
+Para que la aplicación pueda consumir servicios de terceros es necesario incluir 2 ficheros en directorios específicos para su correcto funcionamiento:
+
+Crear un archivo con nombre .env y almacenalo en la raíz de .\backend con los siguientes campos rellenos:
+
+```
+GOOGLE_MAPS_API_KEY=tu-google-api-key-aquí
+FIREBASE_API_KEY=tu-firebase-api-key-aquí
+NODE_ENV=development
+```
+
+Luego obtener un archivo serviceAccountKey.json de Firebase Console y ubicar el archivo en un directorio específico siguiendo estos pasos:
+
+1. Accede a Firebase Console
+2. Selecciona tu proyecto
+3. Ve a la configuración del proyecto
+4. Accede a las cuentas de servicio
+5. Genera la clave privada
+6. Guarda el archivo en .\backend\src\config
+
 ## Ejecución
 
 Dado que no se ha generado un binario o archivo .apk para la aplicación, la ejecución se realizará a través de Expo Go. Esto permite probar la aplicación en un dispositivo móvil fácilmente. Solamente necesita escanear el código QR generado por Expo, y estar ambos dispositivos conectados en la misma red local.
@@ -43,7 +64,6 @@ npm start
 Ejecución del backend:
 
 ```
-cd ..
 cd .\backend
 npm start
 ```
@@ -51,7 +71,6 @@ npm start
 También se puede ejecutar el backend en un contenedor docker con los comandos siguientes (sustituye al fragmento de comando anterior):
 
 ```
-cd ..
 cd .\backend
 docker build -t voltpilot-backend .
 docker run -p 5000:5000 voltpilot-backend
