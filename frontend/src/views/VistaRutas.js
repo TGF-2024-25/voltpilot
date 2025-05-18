@@ -12,10 +12,11 @@ import Preferencias from "../components/Preferencias.js";
 import InformacionRuta from "../components/InformacionRuta.js";
 import InstruccionesRuta from "../components/InstruccionesRuta.js";
 
+import { routingAPI } from '../services/api.js';
+import { formatConnectorType, centrarEnUbicacion, centrarEnDestino, addDestino, eliminarDestino, filtrar_estaciones, make_tramos, make_instrucciones, reducirRuta, addEstacionAsDestino } from '../utils/rutaUtils.js';
 
 import styles from "../styles/routesStyle.js";
 import stylesEstacion from "../styles/rutaEstacionStyle.js";
-import { routingAPI } from '../services/api.js';
 
 export default function VistaRutas() {
   const [origen, setOrigen] = UserLocation();
@@ -35,115 +36,6 @@ export default function VistaRutas() {
   const [indiceTramoConEstacion, setIndiceTramoConEstacion] = useState(null);
 
   const mapRef = useRef(null);
-
-  // Para formatear el tipo de conexión
-  const formatConnectorType = (type) => {
-    return type
-      .replace("EV_CONNECTOR_TYPE_", "") // Eliminar el prefijo
-      .replace(/_/g, " ") // Reemplazar guiones bajos por espacios
-      .toLowerCase() // Convertir a minúsculas
-      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalizar cada palabra
-  };
-
-  // Función para centrar el mapa en la ubicación del usuario
-  const centrarEnUbicacion = () => {
-    if (mapRef.current && origen) {
-      mapRef.current.animateToRegion(
-        {
-          latitude: origen.latitude,
-          longitude: origen.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        },
-        1000,
-      );
-    }
-  };
-
-  // Funcion para centrar el mapa en destino seleccionado.
-  const centrarEnDestino = ({ latitude, longitude }) => {
-    if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-    }
-  };
-
-  // Añadir un nuevo destino vacío (cuando se presiona "Agregar nuevo destino")
-  const addDestino = () => {
-    setDestinos([...destinos, null]);
-  };
-
-  // Borrar Destino de la SearchBar
-  const eliminarDestino = (index) => {
-    const nuevosDestinos = destinos.filter((_, idx) => idx !== index);
-    setDestinos(nuevosDestinos);
-
-    // Si no hay destinos, quitamos polilinea y modo ruta
-    if (nuevosDestinos.length === 0) {
-      setModRuta(false);
-      yaParadoRef.current = false;
-    }
-  };
-
-  // Filtrar estaciones para devolver solo las 3 más cercanas a la ruta
-  const filtrar_estaciones = (est) => {
-    if (!Array.isArray(est)) return [];
-
-    if (est.length <= 3) return est;
-
-    const ordenadas = est.sort((a, b) => a.distanceToRuta - b.distanceToRuta);
-    return ordenadas.slice(0, 3);
-  };
-
-  // Formar el tramo según sea estación de carga o destino
-  const make_tramos = (origenActual, destinoActual, data, estSeleccionadas, index) => {
-    const esEstacion = estSeleccionadas.some(
-      (est) => Math.abs(est.latitude - destinoActual.latitude) < 0.0001 && Math.abs(est.longitude - destinoActual.longitude) < 0.0001,
-    );
-
-    const tramos = [];
-
-    // Siempre añadimos el tramo de desplazamiento
-    tramos.push({
-      tipo: "normal",
-      origen: origenActual.name || `Parada ${index}`,
-      destino: destinoActual.name || `Parada ${index + 1}`,
-      distancia: data.distanciaKm,
-      duracion: data.duration,
-    });
-
-    // Si además es estación, añadimos el tramo de carga
-    if (esEstacion) {
-      tramos.push({
-        tipo: "carga",
-        estacion: destinoActual.name || `Estación ${index + 1}`,
-        tiempoCarga: "20 min",
-      });
-    }
-
-    return tramos;
-  };
-
-  // Formar las instrucciones según el tramo también es necesario
-  const make_instrucciones = (steps) => {
-    // Mapeamos los steps para obtener las instrucciones necesarias
-    return steps.map((step) => ({
-      instruction: step.instruction,  // Instrucción de la ruta
-      distanceMeters: step.distanceMeters,
-      duration: step.duration,
-      startLocation: step.startLocation,
-      endLocation: step.endLocation,
-    }));
-  };
-
-  // Reducir la ruta para peticiones tan largas
-  function reducirRuta(ruta, salto = 10) {
-    return ruta.filter((_, i) => i % salto === 0);
-  }
 
   // Función principal que recalcula la ruta completa (con origen y todos los destinos intermedios)
   const fetchRoute = async () => {
@@ -198,9 +90,8 @@ export default function VistaRutas() {
           }
         }
 
-
         origenActual = destinoActual;
-        paradaRealizada = true;
+        //paradaRealizada = true;
       }
 
       setRuta(rutaCompleta);
@@ -215,24 +106,12 @@ export default function VistaRutas() {
 
   // Cuando el usuario selecciona una estación, se añade como nuevo destino y se recalcula la ruta
   const seleccionarEstacion = async (estacion) => {
-    const coords = {
-      latitude: estacion.latitude,
-      longitude: estacion.longitude,
-      name: estacion.name || "Estación sin nombre",
-    };
-
     setEstSeleccionadas((prev) => [...prev, estacion]);
     setModalEstacionVisible(false);
 
-    setDestinos((prev) => {
-      if (prev.length < 1 || indiceTramoConEstacion === null) return [coords];
-      const nuevosDestinos = [...prev];
-      nuevosDestinos.splice(indiceTramoConEstacion, 0, coords); // Inserta en el lugar correcto
-      return nuevosDestinos;
-    });
+    setDestinos((prev) => addEstacionAsDestino(prev, indiceTramoConEstacion, estacion));
 
     autonomiaRef.current?.resetAutonomia();
-
     yaParadoRef.current = true;
     setEstaciones([]); // Limpia las estaciones para evitar seguir viendolas tras selección
   };
@@ -265,7 +144,7 @@ export default function VistaRutas() {
           <SearchBar
             placeholder="Seleccione un destino"
             onSelect={(coords) => {
-              centrarEnDestino(coords);
+              centrarEnDestino(mapRef, coords);
               setDestinos([{ ...coords, name: coords.name || "Destino principal" }]);
             }}
           />
@@ -276,7 +155,7 @@ export default function VistaRutas() {
               placeholder={origen?.name || "Ubicación actual"}
               initialValue={origen} // Esto hace editable el origen
               onSelect={(coords) => {
-                centrarEnDestino(coords);
+                centrarEnDestino(mapRef, coords);
                 setOrigen({
                   ...coords,
                   name: coords.name || "Origen personalizado",
@@ -292,13 +171,13 @@ export default function VistaRutas() {
                   placeholder={destino?.name ? destino.name : `Parada ${index + 1}`}
                   initialValue={destino} // Esto hace editable la parada
                   onSelect={(coords) => {
-                    centrarEnDestino(coords);
+                    centrarEnDestino(mapRef, coords);
                     const actualizados = [...destinos];
                     actualizados[index] = { ...coords, name: coords.name || `Parada ${index + 1}` };
                     setDestinos(actualizados);
                   }}
                 />
-                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarDestino(index)}>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarDestino(setDestinos, destinos, index, setModRuta, yaParadoRef)}>
                   <Text style={styles.deleteText}>x</Text>
                 </TouchableOpacity>
               </View>
@@ -308,7 +187,7 @@ export default function VistaRutas() {
 
         {/* Botón nuevos destinos */}
         {modRuta && (
-          <TouchableOpacity style={styles.botonAgregar} onPress={addDestino}>
+          <TouchableOpacity style={styles.botonAgregar} onPress={() => addDestino(setDestinos, destinos)}>
             <Icon name="add-location-alt" size={26} color="#9b59b6" />
           </TouchableOpacity>
         )}
@@ -320,7 +199,7 @@ export default function VistaRutas() {
           on_selected_destino={(favorito) => {
             const location = favorito.location;
             location.name = location.name || favorito.description || "Destino favorito";
-            centrarEnDestino(location);
+            centrarEnDestino(mapRef, location);
             setDestinos((prevDestinos) => [...prevDestinos, location]);
             setModRuta(false);
           }}
@@ -333,7 +212,7 @@ export default function VistaRutas() {
         <Preferencias ref={preferenciasRef} />
 
         {/* Botón para centrar la ubicación */}
-        <TouchableOpacity style={styles.myLocationButton} onPress={centrarEnUbicacion}>
+        <TouchableOpacity style={styles.myLocationButton} onPress={() => centrarEnUbicacion(mapRef, origen)}>
           <Icon name="my-location" size={24} color="white" />
         </TouchableOpacity>
       </View>

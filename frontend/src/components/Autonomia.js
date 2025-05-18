@@ -113,6 +113,7 @@ const Autonomia = forwardRef((props, ref) => {
                 <View style={styles.section}>
                   <Text style={styles.label}>Auntonomía Inicial: {ini}%</Text>
                   <Slider
+                    testID="sliderInicial"
                     style={styles.slider}
                     value={ini}
                     minimumValue={0}

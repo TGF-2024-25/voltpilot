@@ -85,7 +85,7 @@ const InformacionRuta = ({ infoRuta }) => {
                           </View>
 
                           <View style={styles.flechaCentro}>
-                            <Text style={styles.distanciaTexto}>{tramo.distancia} km</Text>
+                            <Text style={styles.totalRutaText}>{tramo.distancia.toFixed(1)} km</Text>
                             <Feather name="arrow-right" size={24} color="#65558F" />
                             <Text style={styles.infoText}>{get_timeFormat(parseInt(tramo.duracion.split("s")[0], 10))}</Text>
                           </View>
@@ -121,6 +121,5 @@ const InformacionRuta = ({ infoRuta }) => {
     </>
   );
 };
-
 
 export default InformacionRuta;
