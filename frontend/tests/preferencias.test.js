@@ -80,6 +80,33 @@ describe('Preferencias Component', () => {
     });
   });
 
+  test('Modifica correctamente una preferencia (switch)', async () => {
+    const ref = React.createRef();
+    const { getByTestId, getByText } = render(<Preferencias ref={ref} />);
+
+    fireEvent.press(getByTestId('filterButton'));
+
+    await waitFor(() => expect(getByText('Aceptar')).toBeTruthy());
+
+    // Simulamos el cambio del switch "Evitar peajes"
+    const switchPeajes = getByTestId('switch-peajes'); // asegúrate de tener testID en el switch
+    fireEvent(switchPeajes, 'valueChange', false); // cambiamos a false
+
+    await act(async () => {
+      fireEvent.press(getByText('Aceptar'));
+    });
+
+    await waitFor(() => {
+      expect(routingAPI.setPreferencias).toHaveBeenCalledWith({
+        uid: 'test-uid',
+        peajes: false,  // aquí se espera que haya cambiado
+        autopista: false,
+        ferry: true,
+        traffic: false,
+      });
+    });
+  });
+
   test('Puede cancelar correctamente y cerrar el modal', async () => {
     const ref = React.createRef();
     const { getByTestId, getByText, queryByText } = render(<Preferencias ref={ref} />);
@@ -93,4 +120,33 @@ describe('Preferencias Component', () => {
       expect(queryByText('Preferencias de Ruta')).toBeNull();
     });
   });
+
+  test('Método getPreferencias devuelve valores correctos', async () => {
+    const ref = React.createRef();
+    const { getByTestId } = render(<Preferencias ref={ref} />);
+
+    fireEvent.press(getByTestId('filterButton'));
+
+    await waitFor(() => {
+      const result = ref.current.getPreferencias();
+      expect(result).toEqual({
+        peajes: true,
+        autopista: false,
+        ferry: true,
+        traffic: false,
+      });
+    });
+  });
+
+  test('No llama a getPreferencias si no hay UID', async () => {
+    jest.clearAllMocks();
+
+    AsyncStorage.getItem.mockResolvedValueOnce(null);
+    render(<Preferencias />);
+
+    await waitFor(() => {
+      expect(routingAPI.getPreferencias).not.toHaveBeenCalled();
+    });
+  });
+
 });

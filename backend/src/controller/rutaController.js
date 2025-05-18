@@ -221,16 +221,11 @@ const rutaController = {
         searchPoints = 7;
         searchRadius = 2500;
         pointGap = 10;
-      } else if (distancia <= 120) {
-        safety = 15;
-        searchPoints = 10;
-        searchRadius = 3000;
-        pointGap = 30;
       } else {
-        safety = 20;
-        searchPoints = 15;
+        safety = 10;
+        searchPoints = 5;
         searchRadius = 3500;
-        pointGap = 50;
+        pointGap = 15;
       }
 
       const recorrible = autonomia.inicialKm - autonomia.minimaKm + safety; // Distancia que puedo recorrer antes de recargar

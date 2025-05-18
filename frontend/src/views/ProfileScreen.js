@@ -2,8 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MaterialIcons } from '@expo/vector-icons';
-import { AuthContext } from "../App";
+import { AuthContext } from "../contexts/AuthContext"; 
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -37,7 +36,8 @@ export default function ProfileScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileImageContainer}>
-            <MaterialIcons name="account-circle" size={80} color="#0066CC" style={styles.profileIcon} />
+            {/* <MaterialIcons name="account-circle" size={80} color="#0066CC" style={styles.profileIcon} /> */}
+            <Text style={{fontSize: 80}}>👤</Text>
           </View>
           <View style={styles.userInfoContainer}>
             <Text style={styles.greeting}>¡Hola!</Text>
@@ -52,18 +52,22 @@ export default function ProfileScreen() {
             style={styles.option} 
             onPress={() => navigation.navigate('UserDetails')}
           >
-            <MaterialIcons name="person" size={24} color="#0066CC" />
+            {/* <MaterialIcons name="person" size={24} color="#0066CC" /> */}
+            <Text style={{fontSize: 24, color: "#0066CC"}}>🧑</Text>
             <Text style={styles.optionText}>Detalles de Usuario</Text>
-            <MaterialIcons name="chevron-right" size={24} color="#888" />
+            {/* <MaterialIcons name="chevron-right" size={24} color="#888" /> */}
+            <Text style={{fontSize: 24, color: "#888"}}>›</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.option} 
             onPress={() => navigation.navigate('MisVehiculos')}
           >
-            <MaterialIcons name="electric-car" size={24} color="#0066CC" />
+            {/* <MaterialIcons name="electric-car" size={24} color="#0066CC" /> */}
+            <Text style={{fontSize: 24, color: "#0066CC"}}>🚗</Text>
             <Text style={styles.optionText}>Mis Vehículos</Text>
-            <MaterialIcons name="chevron-right" size={24} color="#888" />
+            {/* <MaterialIcons name="chevron-right" size={24} color="#888" /> */}
+            <Text style={{fontSize: 24, color: "#888"}}>›</Text>
           </TouchableOpacity>
           
           <Text style={styles.sectionTitle}>Actividad</Text>
@@ -72,18 +76,22 @@ export default function ProfileScreen() {
             style={styles.option} 
             onPress={() => navigation.navigate('MisPagos')}
           >
-            <MaterialIcons name="payment" size={24} color="#0066CC" />
+            {/* <MaterialIcons name="payment" size={24} color="#0066CC" /> */}
+            <Text style={{fontSize: 24, color: "#0066CC"}}>💳</Text>
             <Text style={styles.optionText}>Mis Pagos</Text>
-            <MaterialIcons name="chevron-right" size={24} color="#888" />
+            {/* <MaterialIcons name="chevron-right" size={24} color="#888" /> */}
+            <Text style={{fontSize: 24, color: "#888"}}>›</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.option} 
             onPress={() => navigation.navigate('MiHistoriaDeRecarga')}
           >
-            <MaterialIcons name="history" size={24} color="#0066CC" />
+            {/* <MaterialIcons name="history" size={24} color="#0066CC" /> */}
+            <Text style={{fontSize: 24, color: "#0066CC"}}>🕓</Text>
             <Text style={styles.optionText}>Mi Historia de Recarga</Text>
-            <MaterialIcons name="chevron-right" size={24} color="#888" />
+            {/* <MaterialIcons name="chevron-right" size={24} color="#888" /> */}
+            <Text style={{fontSize: 24, color: "#888"}}>›</Text>
           </TouchableOpacity>
           
           <Text style={styles.sectionTitle}>Información</Text>
@@ -92,19 +100,22 @@ export default function ProfileScreen() {
             style={styles.option} 
             onPress={() => navigation.navigate('TerminosYPrivacidad')}
           >
-            <MaterialIcons name="security" size={24} color="#0066CC" />
+            {/* <MaterialIcons name="security" size={24} color="#0066CC" /> */}
+            <Text style={{fontSize: 24, color: "#0066CC"}}>🔒</Text>
             <Text style={styles.optionText}>Términos y Privacidad</Text>
-            <MaterialIcons name="chevron-right" size={24} color="#888" />
+            {/* <MaterialIcons name="chevron-right" size={24} color="#888" /> */}
+            <Text style={{fontSize: 24, color: "#888"}}>›</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={[styles.option, styles.logoutOption]}
             onPress={async () => {
               await AsyncStorage.clear();
-              await checkToken(); // Verifica si el token es válido
+              await checkToken();
             }}
           >
-            <MaterialIcons name="logout" size={24} color="#FF3B30" />
+            {/* <MaterialIcons name="logout" size={24} color="#FF3B30" /> */}
+            <Text style={{fontSize: 24, color: "#FF3B30"}}>🚪</Text>
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </TouchableOpacity>
         </View>

@@ -52,6 +52,8 @@ export default function VehicleScreen() {
         console.log('editVehicleData', editVehicleData);
         setLoading(true);
         setOriginalData(editVehicleData);
+        await new Promise(resolve => setTimeout(resolve, 100));
+
       } catch (error) {
         console.error('Error loading user vehicle data:', error);
         Alert.alert('Error', 'No se pudo cargar la información de coche del usuario');
@@ -76,14 +78,14 @@ export default function VehicleScreen() {
 
       // const vid = vehicleData.vid || ''; // ID del vehículo
       if (!vehicleData?.marca || !vehicleData?.modelo || !vehicleData?.autonomia || !vehicleData?.tipo) {
-        Alert.alert('Error', 'Todos los campos son obligatorios. Por favor complete todos los datos del vehículo.');
+        Alert.alert('Error', 'Todos los campos son obligatorios. Por favor complete todos los datos del vehículo.',[{ text: 'OK' }]);
         return;
       }
       
       // validar la autonomia
       const autonomia = parseInt(vehicleData.autonomia);
       if (isNaN(autonomia) || autonomia <= 0) {
-        Alert.alert('Error', 'La autonomía debe ser un número válido mayor que cero.');
+        Alert.alert('Error', 'La autonomía debe ser un número válido mayor que cero.',[{ text: 'OK' }]);
         return;
       }
       // 
@@ -142,7 +144,7 @@ export default function VehicleScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#0000ff" testID="loading-indicator" />
       </View>
     );
   }
