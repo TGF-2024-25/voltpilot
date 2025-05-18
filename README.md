@@ -27,12 +27,18 @@ npm install
 
 Para que la aplicación pueda consumir servicios de terceros es necesario incluir 2 ficheros en directorios específicos para su correcto funcionamiento:
 
-Crear un archivo con nombre .env y almacenalo en la raíz de .\backend con los siguientes campos rellenos:
+Crear un archivo con nombre .env y almacenalo tanto en la raíz de .\backend como .\frontend con los siguientes campos rellenos respectivamente.
+
+Es posible que no sea necesario incluir el archivo en .\frontend pero se recomienda hacerlo para que todo funcione correctamente.
 
 ```
+// Para backend
 GOOGLE_MAPS_API_KEY=tu-google-api-key-aquí
 FIREBASE_API_KEY=tu-firebase-api-key-aquí
 NODE_ENV=development
+
+// Para frontend
+GOOGLE_MAPS_API_KEY=tu-google-api-key-aquí
 ```
 
 Luego obtener un archivo serviceAccountKey.json de Firebase Console y ubicar el archivo en un directorio específico siguiendo estos pasos:
@@ -52,27 +58,39 @@ La aplicación también puede ejecutarse mediante un emulador utilizando la herr
 
 La versión de Expo Go para la ejecución de esta aplicación se puede instalar en el siguiente enlace: https://expo.dev/go?sdkVersion=52&platform=android&device=false.
 
-De nuevo nos ubicamos en el directorio raíz del proyecto.
+### Ejecución en local
+
+De nuevo, los comandos se deben ejecutar desde el directorio raíz del proyecto.
 
 Ejecución del frontend, donde se genera el código QR:
 
 ```
 cd .\frontend
-npm start
+npm start --restart-cache
 ```
 
 Ejecución del backend:
 
 ```
 cd .\backend
-npm start
+npm start --restart-cache
 ```
 
+### Ejecución en contenedor Docker
+
 También se puede ejecutar el backend en un contenedor docker con los comandos siguientes (sustituye al fragmento de comando anterior):
+
+Construir la imagen de Docker si es la primera vez que se ejecuta:
 
 ```
 cd .\backend
 docker build -t voltpilot-backend .
+```
+
+Ejecución de servicio backend habitual:
+
+```
+cd .\backend
 docker run -p 5000:5000 voltpilot-backend
 ```
 
@@ -82,6 +100,12 @@ Las pruebas únicamente se pueden ejecutar una vez dentro del directorio .\front
 
 ```
 npm test
+```
+
+Se puede ejecutar una prueba específica de la siguiente manera:
+
+```
+npm test [Nombre de fichero de prueba]
 ```
 
 ## Licencia
