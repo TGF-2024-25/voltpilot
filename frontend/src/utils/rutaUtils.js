@@ -94,7 +94,9 @@ export const make_tramos = (origenActual, destinoActual, data, estSeleccionadas,
 
 // Formar las instrucciones según el tramo también es necesario
 export const make_instrucciones = (steps) => {
-  // Mapeamos los steps para obtener las instrucciones necesarias
+  if (!Array.isArray(steps)) return [];
+  
+  // Mapeamos los steps para obtener las instrucciones necesarias (si recibimos steps valido solo)
   return steps.map((step) => ({
     instruction: step.instruction, // Instrucción de la ruta
     distanceMeters: step.distanceMeters,
@@ -106,6 +108,7 @@ export const make_instrucciones = (steps) => {
 
 // Reducir la ruta para peticiones tan largas
 export function reducirRuta(ruta, salto = 10) {
+  if (!Array.isArray(ruta) || ruta.length === 0 || salto <= 0) return [];
   return ruta.filter((_, i) => i % salto === 0);
 }
 

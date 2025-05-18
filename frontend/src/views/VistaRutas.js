@@ -52,7 +52,6 @@ export default function VistaRutas() {
 
       // Calcular la ruta por tramos: origen -> destino1, destino1 -> destino2...
       let origenActual = origen;
-      //let paradaRealizada = yaParado;
 
       for (let i = 0; i < destinos.length; i++) {
         const destinoActual = destinos[i];
@@ -91,7 +90,6 @@ export default function VistaRutas() {
         }
 
         origenActual = destinoActual;
-        //paradaRealizada = true;
       }
 
       setRuta(rutaCompleta);

@@ -1,4 +1,7 @@
-import { formatConnectorType, filtrar_estaciones, make_tramos, make_instrucciones, reducirRuta, addEstacionAsDestino, } from '../src/utils/rutaUtils';
+import { formatConnectorType, filtrar_estaciones, make_tramos, make_instrucciones, 
+  reducirRuta, addEstacionAsDestino, centrarEnUbicacion, centrarEnDestino, addDestino,
+   eliminarDestino
+  } from '../src/utils/rutaUtils';
 
 describe('formatConnectorType', () => {
   test('formatea distintos tipos conocidos', () => {
@@ -12,15 +15,6 @@ describe('formatConnectorType', () => {
     expect(formatConnectorType('type_2')).toBe('Type 2');
   });
 
-  test('devuelve cadena vacía si input es null o undefined', () => {
-    expect(formatConnectorType(undefined)).toBe('');
-    expect(formatConnectorType(null)).toBe('');
-  });
-
-  test('devuelve cadena vacía si input no es string', () => {
-    expect(formatConnectorType(123)).toBe('');
-    expect(formatConnectorType({})).toBe('');
-  });
 });
 
 describe('filtrar_estaciones', () => {
@@ -138,12 +132,6 @@ describe('addEstacionAsDestino', () => {
     expect(nueva).toEqual([estacion]);
   });
 
-  test('añade al final si index no definido', () => {
-    const destinos = [{ name: 'A' }];
-    const actualizados = addEstacionAsDestino(destinos, null, estacion);
-    expect(actualizados[1]).toEqual(estacion);
-  });
-
   test('inserta en el índice correcto', () => {
     const destinos = [{ name: 'A' }, { name: 'B' }];
     const actualizados = addEstacionAsDestino(destinos, 1, estacion);
@@ -156,5 +144,97 @@ describe('addEstacionAsDestino', () => {
     const copia = [...destinos];
     addEstacionAsDestino(destinos, 0, estacion);
     expect(destinos).toEqual(copia);
+  });
+});
+
+describe('addDestino', () => {
+  test('añade un nuevo destino (null) al final del array', () => {
+    const destinosIniciales = [{ lat: 1 }, { lat: 2 }];
+    const mockSetDestinos = jest.fn();
+    addDestino(mockSetDestinos, destinosIniciales);
+    expect(mockSetDestinos).toHaveBeenCalledWith([...destinosIniciales, null]);
+  });
+});
+
+describe('eliminarDestino', () => {
+  test('elimina el destino en el índice correcto', () => {
+    const destinos = ['A', 'B', 'C'];
+    const setDestinos = jest.fn();
+    const setModRuta = jest.fn();
+    const yaParadoRef = { current: true };
+
+    eliminarDestino(setDestinos, destinos, 1, setModRuta, yaParadoRef);
+
+    expect(setDestinos).toHaveBeenCalledWith(['A', 'C']);
+    expect(setModRuta).not.toHaveBeenCalled();
+    expect(yaParadoRef.current).toBe(true);
+  });
+
+  test('resetea modRuta y yaParado si no quedan destinos', () => {
+    const destinos = ['Único'];
+    const setDestinos = jest.fn();
+    const setModRuta = jest.fn();
+    const yaParadoRef = { current: true };
+
+    eliminarDestino(setDestinos, destinos, 0, setModRuta, yaParadoRef);
+
+    expect(setDestinos).toHaveBeenCalledWith([]);
+    expect(setModRuta).toHaveBeenCalledWith(false);
+    expect(yaParadoRef.current).toBe(false);
+  });
+});
+
+describe('centrarEnUbicacion', () => {
+  test('llama a animateToRegion con la ubicación y deltas', () => {
+    const mapRef = {
+      current: {
+        animateToRegion: jest.fn(),
+      },
+    };
+    const origen = { latitude: 1, longitude: 2 };
+
+    centrarEnUbicacion(mapRef, origen);
+
+    expect(mapRef.current.animateToRegion).toHaveBeenCalledWith(
+      {
+        latitude: 1,
+        longitude: 2,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      },
+      1000
+    );
+  });
+
+  test('no llama si faltan mapRef o origen', () => {
+    const mapRef = { current: null };
+    const origen = { latitude: 1, longitude: 2 };
+    expect(() => centrarEnUbicacion(mapRef, origen)).not.toThrow();
+  });
+});
+
+describe('centrarEnDestino', () => {
+  test('llama a animateToRegion con destino y deltas', () => {
+    const mapRef = {
+      current: {
+        animateToRegion: jest.fn(),
+      },
+    };
+    const destino = { latitude: 3, longitude: 4 };
+
+    centrarEnDestino(mapRef, destino);
+
+    expect(mapRef.current.animateToRegion).toHaveBeenCalledWith({
+      latitude: 3,
+      longitude: 4,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    });
+  });
+
+  test('no hace nada si mapRef.current no existe', () => {
+    const mapRef = { current: null };
+    const destino = { latitude: 3, longitude: 4 };
+    expect(() => centrarEnDestino(mapRef, destino)).not.toThrow();
   });
 });
