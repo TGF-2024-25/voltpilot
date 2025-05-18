@@ -88,4 +88,50 @@ describe('Favoritos Component', () => {
       });
     });
   });
+
+  test('Elimina favorito correctamente y refresca lista', async () => {
+    const mockFavorito = { description: 'Favorito a eliminar', location: { latitude: 1, longitude: 2 } };
+
+    routingAPI.getFavoritos.mockResolvedValueOnce([mockFavorito]);
+    const { getByTestId, getByText } = render(<Favoritos />);
+
+    fireEvent.press(getByTestId('favButton'));
+    await waitFor(() => expect(getByText(mockFavorito.description)).toBeTruthy());
+
+    const deleteButton = getByTestId(`delItemButton-${mockFavorito.description}`);
+    await act(async () => {
+      fireEvent.press(deleteButton);
+    });
+
+    expect(routingAPI.deleteFavorito).toHaveBeenCalledWith({
+      uid: 'test-uid',
+      description: mockFavorito.description,
+      location: mockFavorito.location,
+    });
+  });
+
+  test('Selecciona favorito llama callback y cierra modal', async () => {
+    const mockFavorito = { description: 'Favorito', location: { latitude: 1, longitude: 2 } };
+    routingAPI.getFavoritos.mockResolvedValueOnce([mockFavorito]);
+
+    const onSelectMock = jest.fn();
+
+    const { getByTestId, getByText, queryByText } = render(<Favoritos on_selected_destino={onSelectMock} />);
+
+    fireEvent.press(getByTestId('favButton'));
+    await waitFor(() => expect(getByText(mockFavorito.description)).toBeTruthy());
+
+    const itemButton = getByTestId(`favItemButton-${mockFavorito.description}`);
+    await act(async () => {
+      fireEvent.press(itemButton);
+
+    });
+
+    expect(onSelectMock).toHaveBeenCalledWith(mockFavorito);
+
+    await waitFor(() => {
+      expect(queryByText('Destinos de Ruta Favoritos')).toBeNull(); // modal cerrado
+    });
+  });
+
 });

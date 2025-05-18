@@ -107,7 +107,7 @@ const Favoritos = ({ on_selected_destino }) => {
             <View style={styles.header}>
               <Text style={styles.title}>Destinos de Ruta Favoritos</Text>
             </View>
-            
+
             <View style={styles.searchContainer}>
               <Text style={styles.searchTitle}>Añadir nuevo favorito</Text>
               <SearchBar
@@ -122,7 +122,7 @@ const Favoritos = ({ on_selected_destino }) => {
                 style={styles.input}
                 placeholder="Nombre personalizado"
                 value={nuevo.description}
-                onChangeText={(text) => set_nuevo({ ...nuevo, description: text })} 
+                onChangeText={(text) => set_nuevo({ ...nuevo, description: text })}
               />
 
               <TouchableOpacity
@@ -145,31 +145,25 @@ const Favoritos = ({ on_selected_destino }) => {
                   renderItem={({ item }) => (
                     <View style={styles.favoritoContainer}>
                       <View style={styles.favoritoBotones}>
-                        <TouchableOpacity style={styles.delItemButton} onPress={() => delete_favorito(item)}>
+                        <TouchableOpacity testID={`delItemButton-${item.description}`} style={styles.delItemButton} onPress={() => delete_favorito(item)}>
                           <Feather name="trash-2" size={20} color="#fff" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.favItemButton} onPress={() => select_favorito(item)}>
+                        <TouchableOpacity testID={`favItemButton-${item.description}`} style={styles.favItemButton} onPress={() => select_favorito(item)}>
                           <Text style={styles.botonTexto}>{item.description}</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
                   )}
-                  ListEmptyComponent={
-                    <Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>
-                  }
+                  ListEmptyComponent={<Text style={styles.emptyMessage}>¡Aún no tienes favoritos! Añade uno nuevo.</Text>}
                   style={styles.list}
                 />
               )}
             </View>
 
-            <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.backButtonText}>Cancelar</Text>
-              </TouchableOpacity>
-
+            <TouchableOpacity style={styles.backButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.backButtonText}>Cancelar</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

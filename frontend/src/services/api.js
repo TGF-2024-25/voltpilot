@@ -1,14 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-
-const DEV_API_URL = "http://voltpilot.naivc.top/api";
 
 // Ejecutar esto en caso de utilizar expo go desde dispositivo móvil android
 // conectado por usb y el modo desarrollador activado: adb reverse tcp:5000 tcp:5000
 
 // Descomentar en caso de lanzar el servidor backend localmente
 // const DEV_API_URL = "http://localhost:5000/api";
-
 const API_URL = DEV_API_URL;
 
 // patrone de facade de api
