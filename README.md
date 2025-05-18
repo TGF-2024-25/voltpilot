@@ -18,7 +18,8 @@ npm install
 ```
 
 ```
-cd .. && cd .\backend
+cd ..
+cd .\backend
 npm install
 ```
 
@@ -42,14 +43,16 @@ npm start
 Ejecución del backend:
 
 ```
-cd .. && cd .\backend
+cd ..
+cd .\backend
 npm start
 ```
 
 También se puede ejecutar el backend en un contenedor docker con los comandos siguientes (sustituye al fragmento de comando anterior):
 
 ```
-cd .. && cd .\backend
+cd ..
+cd .\backend
 docker build -t voltpilot-backend .
 docker run -p 5000:5000 voltpilot-backend
 ```
