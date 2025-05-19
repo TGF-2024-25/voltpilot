@@ -5,6 +5,8 @@ import styles from "../styles/loginStyle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authAPI } from "../services/api.js";
 import { AuthContext } from "../contexts/AuthContext"; 
+import { ApplyButton, CancelButton } from "../components/Botones";
+
 
 export default function LoginScreen() {
   const { checkToken } = useContext(AuthContext);
@@ -93,8 +95,18 @@ export default function LoginScreen() {
         autoCapitalize="none"
       />
       <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Register" onPress={() => navigation.navigate("Register")} />
-    </View>
+      <View style={styles.buttonContainer}>
+        <ApplyButton 
+          onPress={handleLogin} 
+          text="Login" 
+          testID="login-button" 
+        />
+        <CancelButton 
+          onPress={() => navigation.navigate("Register")} 
+          text="Register" 
+          testID="register-button" 
+        />
+      </View>
+      </View>
   );
 }

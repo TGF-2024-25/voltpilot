@@ -4,7 +4,7 @@ import styles from "../styles/registerStyle";
 //import { AuthContext } from '../App'; 
 import { authAPI } from '../services/api.js';
 import { useNavigation } from '@react-navigation/native';
-
+import { ApplyButton, CancelButton } from "../components/Botones";
 
 // const { email, password, name, phoneNumber } = req.body;
 export default function RegisterScreen() {
@@ -63,7 +63,13 @@ export default function RegisterScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
+      <View style={styles.buttonContainer}>
+        <ApplyButton 
+          onPress={handleRegister} 
+          text="Register" 
+          testID="register-button" 
+        />
+      </View>
     </View>
   );
 }

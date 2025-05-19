@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-nati
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from "../contexts/AuthContext"; 
+import styles from "../styles/profileStyle"; // Import your styles here
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -124,89 +125,3 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-    backgroundColor: '#F8F9FA',
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
-  },
-  profileImageContainer: {
-    width: 80,
-    height: 80,
-    marginRight: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileIcon: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 40,
-    overflow: 'hidden',
-  },
-  userInfoContainer: {
-    flex: 1,
-  },
-  greeting: {
-    fontSize: 16,
-    color: '#666',
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  menuContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderRadius: 8,
-    marginVertical: 5,
-    backgroundColor: '#FFFFFF',
-    borderLeftWidth: 4,
-    borderLeftColor: '#0066CC',
-  },
-  optionText: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 15,
-    color: '#333',
-  },
-  logoutOption: {
-    marginTop: 20,
-    borderLeftColor: '#FF3B30',
-  },
-  logoutText: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 15,
-    color: '#FF3B30',
-    fontWeight: '500',
-  },
-});

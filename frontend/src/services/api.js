@@ -55,7 +55,6 @@ export const apiRequest = async (endpoint, method = "GET", data = null, requires
 export const authAPI = {
   login: (email, password) => apiRequest("/auth/login", "POST", { email, password }),
   register: (userData) => apiRequest("/users/register", "POST", userData),
-  changePassword: (currentPassword, newPassword) => apiRequest("/auth/changePassword", "POST", { currentPassword, newPassword }, true),
 };
 
 // user API
