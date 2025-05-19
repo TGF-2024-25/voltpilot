@@ -8,14 +8,30 @@ El enfoque principal del proyecto ha sido la especificación y el diseño de la 
 
 ## Instalación
 
-Para empezar, se hay que localizar en el directorio base del proyecto.
+1. Instalar node.js si lo tienes. Disponible en https://nodejs.org/
 
-Ejecutar los siguientes comandos en orden para instalar las dependencias y paquetes necesarias:
+Ahora procedemos con los pasos para clonar el repositorio y la instalación de las dependencias.
+
+2. Clonar el repositorio.
+
+```
+git clone https://github.com/TGF-2024-25/voltpilot.git
+```
+
+3. Ubicar en el directorio correcto.
+
+```
+cd .\voltpilot
+```
+
+4. Instalación de las dependencias del frontend.
 
 ```
 cd .\frontend
 npm install
 ```
+
+5. Instalación de las dependencias del backend
 
 ```
 cd ..
@@ -60,16 +76,29 @@ La versión de Expo Go para la ejecución de esta aplicación se puede instalar 
 
 ### Ejecución en local
 
-De nuevo, los comandos se deben ejecutar desde el directorio raíz del proyecto.
+Como matiz antes de la ejecución de la aplicación, si se ha optado por una ejecución en un dispositivo físico Android, conectado por USB y con el modo desarrollador activado, hay que seguir los siguientes pasos para que la aplicación funcione de manera esperada:
 
-Ejecución del frontend, donde se genera el código QR:
+1. Comprobar que su dispositivo haya sido reconocido y aparece con el comando
+   (opcional).
+
+```
+adb devices
+```
+
+2. Redirección de puertos mencionado (opcional).
+
+```
+adb reverse tcp:5000 tcp:5000
+```
+
+3. Ejecución del frontend, donde se genera el código QR.
 
 ```
 cd .\frontend
 npm start --restart-cache
 ```
 
-Ejecución del backend:
+4. Ejecución del backend.
 
 ```
 cd .\backend
@@ -80,14 +109,14 @@ npm start --restart-cache
 
 También se puede ejecutar el backend en un contenedor docker con los comandos siguientes (sustituye al fragmento de comando anterior):
 
-Construir la imagen de Docker si es la primera vez que se ejecuta:
+Construir la imagen de Docker si es la primera vez que se ejecuta.
 
 ```
 cd .\backend
 docker build -t voltpilot-backend .
 ```
 
-Ejecución de servicio backend habitual:
+Ejecución de servicio backend habitual.
 
 ```
 cd .\backend
@@ -99,6 +128,7 @@ docker run -p 5000:5000 voltpilot-backend
 Las pruebas únicamente se pueden ejecutar una vez dentro del directorio .\frontend mediante:
 
 ```
+cd .\frontend
 npm test
 ```
 
