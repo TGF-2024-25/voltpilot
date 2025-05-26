@@ -76,7 +76,9 @@ La versión de Expo Go para la ejecución de esta aplicación se puede instalar 
 
 ### Ejecución en local
 
-Como matiz antes de la ejecución de la aplicación, si se ha optado por una ejecución en un dispositivo físico Android, conectado por USB y con el modo desarrollador activado, hay que seguir los siguientes pasos para que la aplicación funcione de manera esperada:
+Como matiz antes de la ejecución de la aplicación, si se ha optado por una ejecución en un dispositivo físico Android, conectado por USB y con el modo desarrollador activado, hay que seguir los siguientes pasos para que la aplicación funcione de manera esperada.
+
+Si desea realizar la ejecución inalámbricamente en red local empezar por el paso 3, y si se desea ejecutar mediante cable continuar por el paso 4 una vez hecho el paso 1 y 2:
 
 1. Comprobar que su dispositivo haya sido reconocido y aparece con el comando
    (opcional).
@@ -91,14 +93,20 @@ adb devices
 adb reverse tcp:5000 tcp:5000
 ```
 
-3. Ejecución del frontend, donde se genera el código QR.
+3. Sustituir en el fichero api.js la siguiente linea por la ip local asignada a la máquina.
+
+```
+const DEV_API_URL = "http://tu-ip-local:5000/api";
+```
+
+4. Ejecución del frontend, donde se genera el código QR.
 
 ```
 cd .\frontend
 npm start --restart-cache
 ```
 
-4. Ejecución del backend.
+5. Ejecución del backend.
 
 ```
 cd .\backend
