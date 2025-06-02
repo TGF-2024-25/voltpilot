@@ -104,13 +104,20 @@ const VistaEstacionesFavoritas = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={estacionesFavoritas}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.listContainer}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-      />
+      {estacionesFavoritas.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text style={styles.modalText}>¡No tienes estaciones favoritas!</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={estacionesFavoritas}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.listContainer}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+        />
+      )}
+      {/* Modal de confirmación para eliminar estación favorita */}
       <Modal
         animationType="fade"
         transparent={true}

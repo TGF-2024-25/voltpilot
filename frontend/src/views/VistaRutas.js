@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, TouchableOpacity, Text, Modal, ScrollView } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 import Favoritos from "../components/Favoritos.js";
 import Autonomia from "../components/Autonomia.js";
@@ -12,8 +12,19 @@ import Preferencias from "../components/Preferencias.js";
 import InformacionRuta from "../components/InformacionRuta.js";
 import InstruccionesRuta from "../components/InstruccionesRuta.js";
 
-import { routingAPI } from '../services/api.js';
-import { formatConnectorType, centrarEnUbicacion, centrarEnDestino, addDestino, eliminarDestino, filtrar_estaciones, make_tramos, make_instrucciones, reducirRuta, addEstacionAsDestino } from '../utils/rutaUtils.js';
+import { routingAPI } from "../services/api.js";
+import {
+  formatConnectorType,
+  centrarEnUbicacion,
+  centrarEnDestino,
+  addDestino,
+  eliminarDestino,
+  filtrar_estaciones,
+  make_tramos,
+  make_instrucciones,
+  reducirRuta,
+  addEstacionAsDestino,
+} from "../utils/rutaUtils.js";
 
 import styles from "../styles/routesStyle.js";
 import stylesEstacion from "../styles/rutaEstacionStyle.js";
@@ -65,17 +76,16 @@ export default function VistaRutas() {
         infoTramos.push(...tramos);
 
         // Procesamos las instrucciones de la ruta
-        const instruccionesTramo =  make_instrucciones(data.steps);
+        const instruccionesTramo = make_instrucciones(data.steps);
         instruccionesCompleta = [...instruccionesCompleta, ...instruccionesTramo];
 
         // Solo mostrar estaciones para el primer tramo de momento
         let ruta_reduced = data.route;
-        if (data.distanciaKm > 300)
-          ruta_reduced = reducirRuta(data.route, 10);
+        if (data.distanciaKm > 300) ruta_reduced = reducirRuta(data.route, 10);
 
         // Evitar buscar estaciones si ya es una estación seleccionada
         const esEstacionSeleccionada = estSeleccionadas.some(
-          (est) => est.latitude === destinoActual.latitude && est.longitude === destinoActual.longitude
+          (est) => est.latitude === destinoActual.latitude && est.longitude === destinoActual.longitude,
         );
 
         if (!esEstacionSeleccionada) {
@@ -123,7 +133,7 @@ export default function VistaRutas() {
 
   // Si cambia el origen, se recalcula la ruta también
   useEffect(() => {
-    if (modRuta && destinos.length > 0 && destinos[0]?.latitude  && destinos[0]?.longitude) {
+    if (modRuta && destinos.length > 0 && destinos[0]?.latitude && destinos[0]?.longitude) {
       fetchRoute(yaParadoRef.current);
     }
   }, [origen]);
@@ -175,7 +185,10 @@ export default function VistaRutas() {
                     setDestinos(actualizados);
                   }}
                 />
-                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarDestino(setDestinos, destinos, index, setModRuta, yaParadoRef)}>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => eliminarDestino(setDestinos, destinos, index, setModRuta, yaParadoRef)}
+                >
                   <Text style={styles.deleteText}>x</Text>
                 </TouchableOpacity>
               </View>
@@ -205,7 +218,7 @@ export default function VistaRutas() {
 
         {/* Botón para componente Autonomía */}
         <Autonomia ref={autonomiaRef} />
-        
+
         {/* Botón para componente Preferencias */}
         <Preferencias ref={preferenciasRef} />
 
@@ -217,7 +230,14 @@ export default function VistaRutas() {
 
       {/* Vista de los componentes del mapa y marcadores de elementos */}
       {origen && (
-        <MapView style={styles.map} ref={mapRef} region={origen} provider={PROVIDER_DEFAULT} showsUserLocation={true}>
+        <MapView
+          style={styles.map}
+          ref={mapRef}
+          region={origen}
+          provider={PROVIDER_DEFAULT}
+          showsUserLocation={true}
+          showsMyLocationButton={false}
+        >
           {/*<Marker coordinate={origen} pinColor="lightblue" />*/}
 
           {destinos.map((destino, id) => (destino ? <Marker key={id} coordinate={destino} pinColor="#65558F" /> : null))}
@@ -234,12 +254,12 @@ export default function VistaRutas() {
             />
           ))}
 
-          {ruta.length > 0 && modRuta && (<Polyline coordinates={ruta} strokeWidth={5} strokeColor="#B093FD" /> )}
+          {ruta.length > 0 && modRuta && <Polyline coordinates={ruta} strokeWidth={5} strokeColor="#B093FD" />}
         </MapView>
       )}
 
       {/* Botón para componente que muestra las instrucciones conducción de la ruta */}
-      {modRuta && <InstruccionesRuta instruccionesRuta={instruccionesRuta} /> }
+      {modRuta && <InstruccionesRuta instruccionesRuta={instruccionesRuta} />}
 
       {/* Botón con Desplegable para Información de la Ruta*/}
       {modRuta && <InformacionRuta infoRuta={infoRuta} />}

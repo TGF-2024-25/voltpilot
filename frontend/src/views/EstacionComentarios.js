@@ -72,7 +72,7 @@ export default function VistaEstacionComentarios() {
         photoUri: null,
         text: comentario.comentarioData.text || "El usuario no ha dejado comentarios",
         rating: comentario.comentarioData.rating || 0,
-        source: "VoltiPilot",
+        source: "VoltPilot",
         timestamp: new Date(comentario.comentarioData.timestamp).toLocaleDateString("es-ES"), // Convertir timestamp a formato legible
       }));
 
@@ -165,7 +165,7 @@ export default function VistaEstacionComentarios() {
         <View style={styles.headerRow}>
           <Text style={styles.authorName}>{item.authorName}</Text>
           {/* Ícono de eliminar si el userId coincide */}
-          {item.userId === userId && item.source === "VoltiPilot" && (
+          {item.userId === userId && item.source === "VoltPilot" && (
             <TouchableOpacity onPress={() => openDeleteModal(item.commentId)} testID={`delete-icon-${item.commentId}`}>
               <Icon name="close" size={20} color="#65558F" style={styles.deleteIcon} />
             </TouchableOpacity>
