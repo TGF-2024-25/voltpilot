@@ -6,6 +6,7 @@ import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 export default function SearchBar({ placeholder, onSelect, showClearButton = false, clearButtonColor = "white", testID = "search-bar" }) {
   const searchBarRef = useRef(null); // Crea una referencia para el componente
+  const apikey = GOOGLE_MAPS_API_KEY;
 
   return (
     <GooglePlacesAutocomplete
@@ -21,7 +22,7 @@ export default function SearchBar({ placeholder, onSelect, showClearButton = fal
           onSelect({ latitude: lat, longitude: lng, name });
         }
       }}
-      query={{ key: GOOGLE_MAPS_API_KEY, components: "country:es", language: "es" }}
+      query={{ key: apikey, components: "country:es", language: "es" }}
       styles={{
         textInput: {
           backgroundColor: "white",
